@@ -8,34 +8,107 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
-body { font-family: Arial; text-align: center; }
-canvas { border:1px solid #ccc; margin:10px; }
-.box { display:inline-block; margin:10px; }
-img { border:1px solid #ccc; margin-top:5px; }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f7fb;
+  margin: 0;
+}
+
+h2 {
+  background: #111827;
+  color: white;
+  padding: 15px;
+  margin: 0;
+}
+
+.container {
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  margin: 15px auto;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 900px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  margin: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1e40af;
+}
+
+canvas {
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.box {
+  display: inline-block;
+  margin: 12px;
+  padding: 10px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+img {
+  border-radius: 8px;
+}
+
+.actions {
+  margin-top: 10px;
+}
 </style>
 </head>
+
 <body>
 
-<h2>Auto Mockup Generator</h2>
+<h2>👕 Auto Mockup Generator</h2>
 
-<p><b>1. Upload T-shirt Images (Multiple)</b></p>
-<input type="file" id="tshirts" multiple accept="image/*"><br><br>
+<div class="container">
 
-<p><b>2. Upload Design</b></p>
-<input type="file" id="design" accept="image/*"><br><br>
+<div class="card">
+  <p><b>1. Upload T-shirt Images</b></p>
+  <input type="file" id="tshirts" multiple accept="image/*">
 
-<button onclick="loadPreview()">Preview + Drag</button>
-<button onclick="generate()">Generate Mockups</button>
+  <p><b>2. Upload Design</b></p>
+  <input type="file" id="design" accept="image/*">
 
-<br><br>
-<button onclick="downloadSelected()">Download Selected</button>
-<button onclick="downloadZIP()">Download ZIP</button>
+  <div class="actions">
+    <button onclick="loadPreview()">Preview + Drag</button>
+    <button onclick="generate()">Generate Mockups</button>
+  </div>
+</div>
 
-<h3>Preview</h3>
-<canvas id="previewCanvas" width="400" height="500"></canvas>
+<div class="card">
+  <h3>Preview</h3>
+  <canvas id="previewCanvas" width="400" height="500"></canvas>
+</div>
 
-<h3>Output</h3>
-<div id="output"></div>
+<div class="card">
+  <h3>Output</h3>
+
+  <div class="actions">
+    <button onclick="downloadSelected()">Download Selected</button>
+    <button onclick="downloadZIP()">Download ZIP</button>
+  </div>
+
+  <div id="output"></div>
+</div>
+
+</div>
 
 <script>
 const canvas = new fabric.Canvas('previewCanvas');
@@ -43,7 +116,6 @@ let designObj = null;
 let tshirtFiles = [];
 let generatedImages = [];
 
-// Preview
 function loadPreview(){
   tshirtFiles = document.getElementById("tshirts").files;
   const designFile = document.getElementById("design").files[0];
@@ -84,7 +156,6 @@ function loadPreview(){
   designReader.readAsDataURL(designFile);
 }
 
-// Generate
 function generate(){
   if (!designObj || !tshirtFiles.length) {
     alert("Preview first!");
@@ -129,13 +200,11 @@ function generate(){
         design.onload = function(){
           ctx.drawImage(design, pos.left, pos.top, pos.width, pos.height);
 
-          // ✅ HD export fix
           const dataURL = canvasOut.toDataURL("image/png", 1.0);
           generatedImages.push(dataURL);
 
-          const currentIndex = index; // ✅ index fix
+          const currentIndex = index;
 
-          // UI box
           const box = document.createElement("div");
           box.className = "box";
 
@@ -168,7 +237,6 @@ function generate(){
   }
 }
 
-// Download fix (stable)
 function downloadImage(data, filename){
   const a = document.createElement("a");
   a.href = data;
@@ -179,7 +247,6 @@ function downloadImage(data, filename){
   document.body.removeChild(a);
 }
 
-// Download selected
 function downloadSelected(){
   const selected = document.querySelectorAll("#output input:checked");
 
@@ -194,7 +261,6 @@ function downloadSelected(){
   });
 }
 
-// ZIP download (stable)
 function downloadZIP(){
   const selected = document.querySelectorAll("#output input:checked");
 
