@@ -1,92 +1,189 @@
-<script>
-document.addEventListener("DOMContentLoaded", function(){
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Auto Mockup Tool</title>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f7fb;
+  margin: 0;
+}
+
+h2 {
+  background: #111827;
+  color: white;
+  padding: 15px;
+  margin: 0;
+}
+
+.container {
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  margin: 15px auto;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 900px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  margin: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1e40af;
+}
+
+canvas {
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.box {
+  display: inline-block;
+  margin: 12px;
+  padding: 10px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+img {
+  border-radius: 8px;
+}
+
+.actions {
+  margin-top: 10px;
+}
+
+#tshirtList img {
+  width: 60px;
+  margin: 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+#tshirtList img:hover {
+  border: 2px solid #2563eb;
+}
+</style>
+</head>
+
+<body>
+
+<h2>👕 Auto Mockup Generator</h2>
+
+<div class="container">
+
+<div class="card">
+  <p><b>1. Upload T-shirt Images</b></p>
+  <input type="file" id="tshirts" multiple accept="image/*">
+
+  <p><b>2. Upload Design (Optional)</b></p>
+  <input type="file" id="design" accept="image/*">
+
+  <div class="actions">
+    <button onclick="loadPreview()">Preview + Drag</button>
+    <button onclick="generate()">Generate Mockups</button>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Preview</h3>
+  <canvas id="previewCanvas" width="400" height="500"></canvas>
+
+  <h4>Select T-shirt</h4>
+  <div id="tshirtList"></div>
+</div>
+
+<div class="card">
+  <h3>Output</h3>
+
+  <div class="actions">
+    <button onclick="downloadSelected()">Download Selected</button>
+    <button onclick="downloadZIP()">Download ZIP</button>
+  </div>
+
+  <div id="output"></div>
+</div>
+
+</div>
+
+<script>
 const canvas = new fabric.Canvas('previewCanvas');
 let designObj = null;
 let tshirtFiles = [];
 let generatedImages = [];
-let timeout;
-let activeTshirtIndex = 0;
 
-// AUTO LOAD
-document.getElementById("tshirts").addEventListener("change", loadPreview);
-document.getElementById("design").addEventListener("change", loadPreview);
-
-// SAVE STATE
-function saveState(){
-  if(!designObj) return;
-  localStorage.setItem("designState", JSON.stringify({
-    left: designObj.left,
-    top: designObj.top,
-    scaleX: designObj.scaleX,
-    scaleY: designObj.scaleY
-  }));
-}
-
-// LOAD STATE
-function loadState(img){
-  const saved = localStorage.getItem("designState");
-  if(!saved) return;
-  img.set(JSON.parse(saved));
-}
-
-// LOAD PREVIEW
 function loadPreview(){
-  const filesInput = document.getElementById("tshirts").files;
-
-  if(filesInput.length){
-    tshirtFiles = Array.from(filesInput);
-    activeTshirtIndex = 0;
-  }
-
+  tshirtFiles = document.getElementById("tshirts").files;
   const designFile = document.getElementById("design").files[0];
 
-  if (!tshirtFiles.length) return;
+  if (!tshirtFiles.length) {
+    alert("Upload T-shirts first!");
+    return;
+  }
 
-  setTshirtBackgroundFromIndex();
+  // First T-shirt preview
+  const reader = new FileReader();
+  reader.onload = function(e){
+    setTshirtBackground(e.target.result);
+  };
+  reader.readAsDataURL(tshirtFiles[0]);
 
+  // OPTIONAL DESIGN
   if (designFile){
-    const dr = new FileReader();
-    dr.onload = function(e){
+    const designReader = new FileReader();
+    designReader.onload = function(e){
       fabric.Image.fromURL(e.target.result, function(img){
 
         if (designObj) canvas.remove(designObj);
 
-        loadState(img);
-
-        if(!img.left){
-          img.set({ left:150, top:200, scaleX:0.4, scaleY:0.4 });
-        }
+        img.set({
+          left: 150,
+          top: 200,
+          scaleX: 0.4,
+          scaleY: 0.4
+        });
 
         designObj = img;
         canvas.add(img);
         canvas.setActiveObject(img);
         canvas.renderAll();
-
-        autoGenerate();
       });
     };
-    dr.readAsDataURL(designFile);
+    designReader.readAsDataURL(designFile);
   }
 
-  renderTshirtList();
-  autoGenerate();
-}
+  // Thumbnails
+  const list = document.getElementById("tshirtList");
+  list.innerHTML = "";
 
-// AUTO GENERATE
-function autoGenerate(){
-  clearTimeout(timeout);
-  timeout = setTimeout(generate, 250);
-}
-
-// BACKGROUND
-function setTshirtBackgroundFromIndex(){
-  const file = tshirtFiles[activeTshirtIndex];
-  if(!file) return;
-
-  const reader = new FileReader();
-  reader.onload = e => setTshirtBackground(e.target.result);
-  reader.readAsDataURL(file);
+  Array.from(tshirtFiles).forEach(file => {
+    const r = new FileReader();
+    r.onload = function(e){
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      img.onclick = () => setTshirtBackground(e.target.result);
+      list.appendChild(img);
+    };
+    r.readAsDataURL(file);
+  });
 }
 
 function setTshirtBackground(src){
@@ -96,96 +193,17 @@ function setTshirtBackground(src){
   });
 }
 
-// RENDER VARIANTS
-function renderTshirtList(){
-  const list = document.getElementById("tshirtList");
-  list.innerHTML = "";
-
-  tshirtFiles.forEach((file, i) => {
-    const r = new FileReader();
-
-    r.onload = function(e){
-      const box = document.createElement("div");
-
-      const img = document.createElement("img");
-      img.src = e.target.result;
-
-      img.onclick = () => {
-        activeTshirtIndex = i;
-        setTshirtBackground(e.target.result);
-        highlightActive();
-      };
-
-      const del = document.createElement("button");
-      del.innerText = "❌";
-      del.onclick = () => deleteTshirt(i);
-
-      const rep = document.createElement("button");
-      rep.innerText = "🔁";
-      rep.onclick = () => replaceTshirt(i);
-
-      box.appendChild(img);
-      box.appendChild(document.createElement("br"));
-      box.appendChild(del);
-      box.appendChild(rep);
-
-      list.appendChild(box);
-    };
-
-    r.readAsDataURL(file);
-  });
-
-  highlightActive();
-}
-
-// HIGHLIGHT
-function highlightActive(){
-  const imgs = document.querySelectorAll("#tshirtList img");
-  imgs.forEach((img, i) => {
-    img.style.border = i === activeTshirtIndex
-      ? "3px solid #2563eb"
-      : "2px solid transparent";
-  });
-}
-
-// DELETE / REPLACE
-function deleteTshirt(index){
-  tshirtFiles.splice(index, 1);
-  activeTshirtIndex = 0;
-  renderTshirtList();
-  setTshirtBackgroundFromIndex();
-  autoGenerate();
-}
-
-function replaceTshirt(index){
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
-
-  input.onchange = function(e){
-    tshirtFiles[index] = e.target.files[0];
-    renderTshirtList();
-    setTshirtBackgroundFromIndex();
-    autoGenerate();
-  };
-
-  input.click();
-}
-
-// REALTIME
-canvas.on('object:modified', function(){
-  saveState();
-  autoGenerate();
-});
-
-// GENERATE
 function generate(){
-  if (!tshirtFiles.length) return;
+  if (!tshirtFiles.length) {
+    alert("Upload T-shirts first!");
+    return;
+  }
 
   document.getElementById("output").innerHTML = "";
   generatedImages = [];
 
-  let pos = null, designURL = null;
+  let pos = null;
+  let designURL = null;
 
   if (designObj){
     pos = {
@@ -194,12 +212,13 @@ function generate(){
       width: designObj.getScaledWidth(),
       height: designObj.getScaledHeight()
     };
-    designURL = designObj.toDataURL("image/png");
+
+    designURL = designObj.toDataURL({ format: "png", quality: 1 });
   }
 
   let index = 0;
 
-  tshirtFiles.forEach(file => {
+  for (let file of tshirtFiles) {
     const reader = new FileReader();
 
     reader.onload = function(ev){
@@ -207,34 +226,35 @@ function generate(){
       tshirtImg.src = ev.target.result;
 
       tshirtImg.onload = function(){
-        const c = document.createElement("canvas");
-        c.width = 400;
-        c.height = 500;
-        const ctx = c.getContext("2d");
+        const canvasOut = document.createElement("canvas");
+        canvasOut.width = 400;
+        canvasOut.height = 500;
+        const ctx = canvasOut.getContext("2d");
 
         ctx.drawImage(tshirtImg, 0, 0, 400, 500);
 
         if (designObj){
-          const d = new Image();
-          d.src = designURL;
+          const design = new Image();
+          design.src = designURL;
 
-          d.onload = function(){
-            ctx.drawImage(d, pos.left, pos.top, pos.width, pos.height);
-            saveOutput(c, index++);
+          design.onload = function(){
+            ctx.drawImage(design, pos.left, pos.top, pos.width, pos.height);
+            saveOutput(canvasOut, index);
+            index++;
           };
         } else {
-          saveOutput(c, index++);
+          saveOutput(canvasOut, index);
+          index++;
         }
       };
     };
 
     reader.readAsDataURL(file);
-  });
+  }
 }
 
-// OUTPUT
-function saveOutput(c, index){
-  const dataURL = c.toDataURL("image/png");
+function saveOutput(canvasOut, index){
+  const dataURL = canvasOut.toDataURL("image/png", 1.0);
   generatedImages.push(dataURL);
 
   const box = document.createElement("div");
@@ -261,7 +281,6 @@ function saveOutput(c, index){
   document.getElementById("output").appendChild(box);
 }
 
-// DOWNLOAD
 function downloadImage(data, filename){
   const a = document.createElement("a");
   a.href = data;
@@ -272,26 +291,41 @@ function downloadImage(data, filename){
 }
 
 function downloadSelected(){
-  document.querySelectorAll("#output input:checked")
-  .forEach((cb,i)=> downloadImage(generatedImages[cb.value], "selected_"+i+".png"));
+  const selected = document.querySelectorAll("#output input:checked");
+
+  if (!selected.length) {
+    alert("Select at least one!");
+    return;
+  }
+
+  selected.forEach((cb, i) => {
+    downloadImage(generatedImages[cb.value], "selected_" + i + ".png");
+  });
 }
 
 function downloadZIP(){
+  const selected = document.querySelectorAll("#output input:checked");
+
+  if (!selected.length) {
+    alert("Select at least one!");
+    return;
+  }
+
   const zip = new JSZip();
 
-  document.querySelectorAll("#output input:checked")
-  .forEach((cb,i)=>{
+  selected.forEach((cb, i) => {
     const base64 = generatedImages[cb.value].split(",")[1];
-    zip.file("mockup_"+i+".png", base64, {base64:true});
+    zip.file("mockup_" + i + ".png", base64, {base64:true});
   });
 
-  zip.generateAsync({type:"blob"}).then(content=>{
+  zip.generateAsync({type:"blob"}).then(function(content){
     const link = document.createElement("a");
     link.href = URL.createObjectURL(content);
     link.download = "mockups.zip";
     link.click();
   });
 }
-
-});
 </script>
+
+</body>
+</html>
