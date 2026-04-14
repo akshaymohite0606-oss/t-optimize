@@ -1,4 +1,3 @@
-<!-- ONLY JS PART UPDATED BELOW (baaki same hai) -->
 <script>
 const canvas = new fabric.Canvas('previewCanvas');
 let designObj = null;
@@ -33,7 +32,14 @@ function loadState(img){
 
 // LOAD PREVIEW
 function loadPreview(){
-  tshirtFiles = Array.from(document.getElementById("tshirts").files);
+  const filesInput = document.getElementById("tshirts").files;
+
+  // ⚡ preserve existing variants if replacing single
+  if(filesInput.length){
+    tshirtFiles = Array.from(filesInput);
+    activeTshirtIndex = 0;
+  }
+
   const designFile = document.getElementById("design").files[0];
 
   if (!tshirtFiles.length) return;
@@ -59,18 +65,27 @@ function loadPreview(){
         canvas.setActiveObject(img);
         canvas.renderAll();
 
-        generate();
+        autoGenerate();
       });
     };
     dr.readAsDataURL(designFile);
   }
 
   renderTshirtList();
+  autoGenerate();
 }
 
-// SET BACKGROUND BY INDEX
+// AUTO GENERATE (🔥 smooth system)
+function autoGenerate(){
+  clearTimeout(timeout);
+  timeout = setTimeout(generate, 250);
+}
+
+// SET BACKGROUND
 function setTshirtBackgroundFromIndex(){
   const file = tshirtFiles[activeTshirtIndex];
+  if(!file) return;
+
   const reader = new FileReader();
   reader.onload = e => setTshirtBackground(e.target.result);
   reader.readAsDataURL(file);
@@ -84,7 +99,7 @@ function setTshirtBackground(src){
   });
 }
 
-// RENDER TSHIRT LIST (🔥 main upgrade)
+// RENDER VARIANTS
 function renderTshirtList(){
   const list = document.getElementById("tshirtList");
   list.innerHTML = "";
@@ -121,25 +136,26 @@ function renderTshirtList(){
       box.appendChild(rep);
 
       list.appendChild(box);
-      highlightActive();
     };
 
     r.readAsDataURL(file);
   });
+
+  highlightActive();
 }
 
-// HIGHLIGHT
+// HIGHLIGHT ACTIVE
 function highlightActive(){
   const imgs = document.querySelectorAll("#tshirtList img");
 
   imgs.forEach((img, i) => {
     img.style.border = i === activeTshirtIndex
-      ? "3px solid red"
+      ? "3px solid #2563eb"
       : "2px solid transparent";
   });
 }
 
-// DELETE TSHIRT
+// DELETE VARIANT
 function deleteTshirt(index){
   tshirtFiles.splice(index, 1);
 
@@ -147,11 +163,12 @@ function deleteTshirt(index){
     activeTshirtIndex = 0;
   }
 
-  loadPreview();
-  generate();
+  renderTshirtList();
+  setTshirtBackgroundFromIndex();
+  autoGenerate();
 }
 
-// REPLACE TSHIRT
+// REPLACE VARIANT
 function replaceTshirt(index){
   const input = document.createElement("input");
   input.type = "file";
@@ -159,24 +176,25 @@ function replaceTshirt(index){
 
   input.onchange = function(e){
     tshirtFiles[index] = e.target.files[0];
-    loadPreview();
-    generate();
+
+    renderTshirtList();
+    setTshirtBackgroundFromIndex();
+    autoGenerate();
   };
 
   input.click();
 }
 
-// REALTIME
+// REALTIME SMOOTH
 canvas.on('object:moving', () => canvas.renderAll());
 canvas.on('object:scaling', () => canvas.renderAll());
 
 canvas.on('object:modified', function(){
   saveState();
-  clearTimeout(timeout);
-  timeout = setTimeout(generate, 300);
+  autoGenerate();
 });
 
-// GENERATE (same logic improved)
+// GENERATE
 function generate(){
   if (!tshirtFiles.length) return;
 
@@ -265,7 +283,7 @@ function deleteDesign(){
     canvas.remove(designObj);
     designObj = null;
     localStorage.removeItem("designState");
-    generate();
+    autoGenerate();
   }
 }
 
@@ -274,7 +292,9 @@ function downloadImage(data, filename){
   const a = document.createElement("a");
   a.href = data;
   a.download = filename;
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
 }
 
 function downloadSelected(){
