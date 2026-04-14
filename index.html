@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Auto Mockup Tool</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
+
+<style>
+body { font-family: Arial; text-align: center; }
+canvas { border:1px solid #ccc; margin:10px; }
+</style>
+</head>
+<body>
+
+<h2>Auto Mockup Generator</h2>
+
+<p><b>1. Upload T-shirt Images (Multiple)</b></p>
+<input type="file" id="tshirts" multiple accept="image/*"><br><br>
+
+<p><b>2. Upload Design</b></p>
+<input type="file" id="design" accept="image/*"><br><br>
+
+<button onclick="loadPreview()">Preview + Drag</button>
+<button onclick="generate()">Generate Mockups</button>
+
+<h3>Preview (Drag & Resize here)</h3>
+<canvas id="previewCanvas" width="400" height="500"></canvas>
+
+<h3>Output</h3>
+<div id="output"></div>
+
+<script>
+const canvas = new fabric.Canvas('previewCanvas');
+let designObj = null;
+let tshirtFiles = [];
+
+// Load preview (first T-shirt)
+function loadPreview(){
+  tshirtFiles = document.getElementById("tshirts").files;
+  const designFile = document.getElementById("design").files[0];
+
+  if (!tshirtFiles.length || !designFile) {
+    alert("Upload both first!");
+    return;
+  }
+
+  // Load first T-shirt as background
+  const reader = new FileReader();
+  reader.onload = function(e){
+    fabric.Image.fromURL(e.target.result, function(img){
+      img.scaleToWidth(400);
+      canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+    });
+  };
+  reader.readAsDataURL(tshirtFiles[0]);
+
+  // Load design (DRAG ENABLED)
+  const designReader = new FileReader();
+  designReader.onload = function(e){
+    fabric.Image.fromURL(e.target.result, function(img){
+
+      if (designObj) canvas.remove(designObj);
+
+      img.set({
+        left: 150,
+        top: 200,
+        scaleX: 0.4,
+        scaleY: 0.4,
+        cornerSize: 12
+      });
+
+      designObj = img;
+      canvas.add(img);
+      canvas.setActiveObject(img);
+      canvas.renderAll();
+    });
+  };
+  designReader.readAsDataURL(designFile);
+}
+
+// Generate all (mirror apply)
+function generate(){
+  if (!designObj || !tshirtFiles.length) {
+    alert("Preview first!");
+    return;
+  }
+
+  document.getElementById("output").innerHTML = "";
+
+  const pos = {
+    left: designObj.left,
+    top: designObj.top,
+    width: designObj.getScaledWidth(),
+    height: designObj.getScaledHeight()
+  };
+
+  const designURL = designObj.toDataURL();
+
+  for (let file of tshirtFiles) {
+    const reader = new FileReader();
+
+    reader.onload = function(ev){
+      const tshirtImg = new Image();
+      tshirtImg.src = ev.target.result;
+
+      tshirtImg.onload = function(){
+        const canvasOut = document.createElement("canvas");
+        canvasOut.width = 400;
+        canvasOut.height = 500;
+        const ctx = canvasOut.getContext("2d");
+
+        ctx.drawImage(tshirtImg, 0, 0, 400, 500);
+
+        const design = new Image();
+        design.src = designURL;
+
+        design.onload = function(){
+          ctx.drawImage(
+            design,
+            pos.left,
+            pos.top,
+            pos.width,
+            pos.height
+          );
+
+          document.getElementById("output").appendChild(canvasOut);
+        };
+      };
+    };
+
+    reader.readAsDataURL(file);
+  }
+}
+</script>
+
+</body>
+</html>
