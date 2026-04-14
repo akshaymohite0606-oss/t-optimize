@@ -49,6 +49,28 @@ button:hover {
   background: #1e40af;
 }
 
+button.btn-danger {
+  background: #dc2626;
+}
+
+button.btn-danger:hover {
+  background: #b91c1c;
+}
+
+button.btn-warning {
+  background: #d97706;
+}
+
+button.btn-warning:hover {
+  background: #b45309;
+}
+
+button.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  margin: 2px;
+}
+
 canvas {
   border-radius: 10px;
   border: 1px solid #ddd;
@@ -61,6 +83,7 @@ canvas {
   background: white;
   border-radius: 10px;
   box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  vertical-align: top;
 }
 
 img {
@@ -71,15 +94,72 @@ img {
   margin-top: 10px;
 }
 
-#tshirtList img {
-  width: 60px;
-  margin: 5px;
-  cursor: pointer;
-  border: 2px solid transparent;
+#tshirtList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-#tshirtList img:hover {
-  border: 2px solid #2563eb;
+.tshirt-thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 10px;
+  background: #f9fafb;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.tshirt-thumb:hover {
+  border-color: #2563eb;
+}
+
+.tshirt-thumb.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.tshirt-thumb img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.thumb-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.file-label {
+  display: inline-block;
+  background: #f3f4f6;
+  color: #374151;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px dashed #9ca3af;
+  font-size: 13px;
+  margin: 4px;
+}
+
+.file-label:hover {
+  background: #e5e7eb;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.tag {
+  font-size: 11px;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 12px;
 }
 </style>
 </head>
@@ -92,22 +172,41 @@ img {
 
 <div class="card">
   <p><b>1. Upload T-shirt Images</b></p>
-  <input type="file" id="tshirts" multiple accept="image/*">
+  <label class="file-label" for="tshirts">+ T-shirts chunein</label>
+  <input class="hidden-input" type="file" id="tshirts" multiple accept="image/*" onchange="addTshirts(this.files)">
 
   <p><b>2. Upload Design (Optional)</b></p>
-  <input type="file" id="design" accept="image/*">
+  <label class="file-label" for="design">+ Design chunein</label>
+  <input class="hidden-input" type="file" id="design" accept="image/*" onchange="loadDesign(this.files[0])">
+  <span id="designName" class="tag" style="display:none"></span>
+  <button class="btn-danger btn-sm" id="removeDesignBtn" style="display:none" onclick="removeDesign()">Design Hatao</button>
 
   <div class="actions">
     <button onclick="loadPreview()">Preview + Drag</button>
-    <button onclick="generate()">Generate Mockups</button>
+    <button onclick="generate()">Mockups Banao</button>
   </div>
 </div>
 
 <div class="card">
   <h3>Preview</h3>
+
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+    <label style="font-size:13px;color:#374151;font-weight:600;">🟦 Print Zone:</label>
+    <label style="font-size:12px;color:#6b7280;">X:</label>
+    <input type="number" id="zoneX" value="110" min="0" max="380" style="width:60px;padding:4px 6px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;" oninput="updateZoneFromInputs()">
+    <label style="font-size:12px;color:#6b7280;">Y:</label>
+    <input type="number" id="zoneY" value="120" min="0" max="480" style="width:60px;padding:4px 6px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;" oninput="updateZoneFromInputs()">
+    <label style="font-size:12px;color:#6b7280;">W:</label>
+    <input type="number" id="zoneW" value="180" min="20" max="400" style="width:60px;padding:4px 6px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;" oninput="updateZoneFromInputs()">
+    <label style="font-size:12px;color:#6b7280;">H:</label>
+    <input type="number" id="zoneH" value="180" min="20" max="500" style="width:60px;padding:4px 6px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;" oninput="updateZoneFromInputs()">
+    <button class="btn-sm" onclick="fitDesignToZone()" style="background:#059669;">Design Fit Karo</button>
+  </div>
+  <div style="font-size:11px;color:#9ca3af;margin-bottom:8px;">💡 Neele box ko drag/resize karo — yahi position sab T-shirts pe apply hogi</div>
+
   <canvas id="previewCanvas" width="400" height="500"></canvas>
 
-  <h4>Select T-shirt</h4>
+  <h4>T-shirts <span class="tag" id="countTag">0 files</span></h4>
   <div id="tshirtList"></div>
 </div>
 
@@ -115,8 +214,8 @@ img {
   <h3>Output</h3>
 
   <div class="actions">
-    <button onclick="downloadSelected()">Download Selected</button>
-    <button onclick="downloadZIP()">Download ZIP</button>
+    <button onclick="downloadSelected()">Selected Download</button>
+    <button onclick="downloadZIP()">ZIP Download</button>
   </div>
 
   <div id="output"></div>
@@ -124,165 +223,373 @@ img {
 
 </div>
 
+<!-- Hidden replace input -->
+<input class="hidden-input" type="file" id="replaceInput" accept="image/*">
+
 <script>
 const canvas = new fabric.Canvas('previewCanvas');
 let designObj = null;
-let tshirtFiles = [];
+let tshirtDataURLs = [];
+let tshirtNames = [];
 let generatedImages = [];
+let activeThumbIndex = 0;
 
-function loadPreview(){
-  tshirtFiles = document.getElementById("tshirts").files;
-  const designFile = document.getElementById("design").files[0];
+let tshirtLayer = null;
 
-  if (!tshirtFiles.length) {
-    alert("Upload T-shirts first!");
-    return;
+// ---- Print Zone (blue highlight box) ----
+let printZone = null;
+
+function initPrintZone() {
+  if (printZone) canvas.remove(printZone);
+  const x = parseInt(document.getElementById('zoneX').value) || 110;
+  const y = parseInt(document.getElementById('zoneY').value) || 120;
+  const w = parseInt(document.getElementById('zoneW').value) || 180;
+  const h = parseInt(document.getElementById('zoneH').value) || 180;
+
+  printZone = new fabric.Rect({
+    left: x, top: y, width: w, height: h,
+    fill: 'rgba(37,99,235,0.10)',
+    stroke: '#2563eb',
+    strokeWidth: 2,
+    strokeDashArray: [6, 4],
+    selectable: true,
+    hasRotatingPoint: false,
+    lockRotation: true,
+    cornerColor: '#2563eb',
+    cornerSize: 10,
+    transparentCorners: false,
+    name: 'printZone'
+  });
+
+  canvas.add(printZone);
+
+  // keep design always on top of zone
+  if (designObj) {
+    canvas.bringToFront(designObj);
   }
 
-  // First T-shirt preview
-  const reader = new FileReader();
-  reader.onload = function(e){
-    setTshirtBackground(e.target.result);
-  };
-  reader.readAsDataURL(tshirtFiles[0]);
+  canvas.on('object:modified', function(e) {
+    if (e.target === printZone) syncZoneInputs();
+  });
+  canvas.on('object:moving', function(e) {
+    if (e.target === printZone) syncZoneInputs();
+  });
+  canvas.on('object:scaling', function(e) {
+    if (e.target === printZone) syncZoneInputs();
+  });
 
-  // OPTIONAL DESIGN
-  if (designFile){
-    const designReader = new FileReader();
-    designReader.onload = function(e){
-      fabric.Image.fromURL(e.target.result, function(img){
+  canvas.renderAll();
+}
 
-        if (designObj) canvas.remove(designObj);
+function syncZoneInputs() {
+  if (!printZone) return;
+  document.getElementById('zoneX').value = Math.round(printZone.left);
+  document.getElementById('zoneY').value = Math.round(printZone.top);
+  document.getElementById('zoneW').value = Math.round(printZone.getScaledWidth());
+  document.getElementById('zoneH').value = Math.round(printZone.getScaledHeight());
+}
 
-        img.set({
-          left: 150,
-          top: 200,
-          scaleX: 0.4,
-          scaleY: 0.4
-        });
+function updateZoneFromInputs() {
+  if (!printZone) return;
+  const x = parseInt(document.getElementById('zoneX').value) || 0;
+  const y = parseInt(document.getElementById('zoneY').value) || 0;
+  const w = parseInt(document.getElementById('zoneW').value) || 20;
+  const h = parseInt(document.getElementById('zoneH').value) || 20;
+  printZone.set({ left: x, top: y, width: w, height: h, scaleX: 1, scaleY: 1 });
+  canvas.renderAll();
+}
 
-        designObj = img;
-        canvas.add(img);
-        canvas.setActiveObject(img);
-        canvas.renderAll();
-      });
-    };
-    designReader.readAsDataURL(designFile);
-  }
+function fitDesignToZone() {
+  if (!designObj || !printZone) { alert('Pehle design aur print zone dono hone chahiye!'); return; }
+  const zx = printZone.left;
+  const zy = printZone.top;
+  const zw = printZone.getScaledWidth();
+  const zh = printZone.getScaledHeight();
+  const dw = designObj.width;
+  const dh = designObj.height;
+  const scaleX = zw / dw;
+  const scaleY = zh / dh;
+  const scale = Math.min(scaleX, scaleY);
+  designObj.set({
+    left: zx + (zw - dw * scale) / 2,
+    top: zy + (zh - dh * scale) / 2,
+    scaleX: scale,
+    scaleY: scale
+  });
+  canvas.bringToFront(designObj);
+  canvas.renderAll();
+}
 
-  // Thumbnails
-  const list = document.getElementById("tshirtList");
-  list.innerHTML = "";
+// ---- T-shirt management (no page reload) ----
 
-  Array.from(tshirtFiles).forEach(file => {
+function addTshirts(files) {
+  Array.from(files).forEach(file => {
     const r = new FileReader();
-    r.onload = function(e){
-      const img = document.createElement("img");
-      img.src = e.target.result;
-      img.onclick = () => setTshirtBackground(e.target.result);
-      list.appendChild(img);
+    r.onload = function(e) {
+      tshirtDataURLs.push(e.target.result);
+      tshirtNames.push(file.name);
+      renderTshirtList();
+      if (tshirtDataURLs.length === 1) {
+        setTshirtBackground(tshirtDataURLs[0], 0);
+        setTimeout(initPrintZone, 300);
+      }
     };
     r.readAsDataURL(file);
   });
+  // reset input so same file can be re-added if needed
+  document.getElementById('tshirts').value = '';
 }
 
-function setTshirtBackground(src){
-  fabric.Image.fromURL(src, function(img){
-    img.scaleToWidth(400);
-    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+function deleteTshirt(index) {
+  tshirtDataURLs.splice(index, 1);
+  tshirtNames.splice(index, 1);
+  if (activeThumbIndex >= tshirtDataURLs.length) {
+    activeThumbIndex = Math.max(0, tshirtDataURLs.length - 1);
+  }
+  renderTshirtList();
+  if (tshirtDataURLs.length > 0) {
+    setTshirtBackground(tshirtDataURLs[activeThumbIndex], activeThumbIndex);
+  } else {
+    if (tshirtLayer) { canvas.remove(tshirtLayer); tshirtLayer = null; }
+    canvas.renderAll();
+  }
+}
+
+function replaceTshirt(index) {
+  const input = document.getElementById('replaceInput');
+  input.onchange = function() {
+    if (!input.files[0]) return;
+    const r = new FileReader();
+    r.onload = function(e) {
+      tshirtDataURLs[index] = e.target.result;
+      tshirtNames[index] = input.files[0].name;
+      renderTshirtList();
+      setTshirtBackground(tshirtDataURLs[index], index);
+      input.value = '';
+    };
+    r.readAsDataURL(input.files[0]);
+  };
+  input.click();
+}
+
+function renderTshirtList() {
+  const list = document.getElementById('tshirtList');
+  list.innerHTML = '';
+  document.getElementById('countTag').textContent = tshirtDataURLs.length + ' file' + (tshirtDataURLs.length !== 1 ? 's' : '');
+
+  tshirtDataURLs.forEach((src, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'tshirt-thumb' + (i === activeThumbIndex ? ' active' : '');
+
+    const img = document.createElement('img');
+    img.src = src;
+    img.title = tshirtNames[i];
+    img.onclick = () => { activeThumbIndex = i; setTshirtBackground(src, i); renderTshirtList(); };
+
+    const name = document.createElement('div');
+    name.style.cssText = 'font-size:10px;color:#6b7280;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center';
+    name.textContent = tshirtNames[i];
+
+    const btns = document.createElement('div');
+    btns.className = 'thumb-btns';
+
+    const replaceBtn = document.createElement('button');
+    replaceBtn.className = 'btn-warning btn-sm';
+    replaceBtn.textContent = 'Replace';
+    replaceBtn.onclick = (e) => { e.stopPropagation(); replaceTshirt(i); };
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn-danger btn-sm';
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.onclick = (e) => { e.stopPropagation(); deleteTshirt(i); };
+
+    btns.appendChild(replaceBtn);
+    btns.appendChild(deleteBtn);
+
+    wrap.appendChild(img);
+    wrap.appendChild(name);
+    wrap.appendChild(btns);
+    list.appendChild(wrap);
   });
 }
 
-function generate(){
-  if (!tshirtFiles.length) {
-    alert("Upload T-shirts first!");
-    return;
-  }
+// ---- Design management ----
 
-  document.getElementById("output").innerHTML = "";
+function loadDesign(file) {
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = function(e) {
+    if (designObj) canvas.remove(designObj);
+    fabric.Image.fromURL(e.target.result, function(img) {
+      img.set({ left: 150, top: 200, scaleX: 0.4, scaleY: 0.4 });
+      designObj = img;
+      canvas.add(img);
+      canvas.bringToFront(img);
+      canvas.setActiveObject(img);
+      canvas.renderAll();
+    });
+    document.getElementById('designName').textContent = file.name;
+    document.getElementById('designName').style.display = 'inline-block';
+    document.getElementById('removeDesignBtn').style.display = 'inline-block';
+  };
+  r.readAsDataURL(file);
+  document.getElementById('design').value = '';
+}
+
+function removeDesign() {
+  if (designObj) { canvas.remove(designObj); designObj = null; canvas.renderAll(); }
+  document.getElementById('designName').style.display = 'none';
+  document.getElementById('removeDesignBtn').style.display = 'none';
+}
+
+// ---- Preview ----
+
+function loadPreview() {
+  if (!tshirtDataURLs.length) { alert('Pehle T-shirts upload karein!'); return; }
+  setTshirtBackground(tshirtDataURLs[activeThumbIndex], activeThumbIndex);
+}
+
+function setTshirtBackground(src, index) {
+  activeThumbIndex = index;
+  if (tshirtLayer) { canvas.remove(tshirtLayer); tshirtLayer = null; }
+
+  fabric.Image.fromURL(src, function(img) {
+    img.scaleToWidth(400);
+    img.set({
+      left: 0, top: 0,
+      selectable: false,
+      evented: false,
+      lockMovementX: true, lockMovementY: true,
+      lockScalingX: true, lockScalingY: true,
+      lockRotation: true,
+      hasControls: false, hasBorders: false,
+      name: 'tshirtLayer'
+    });
+    tshirtLayer = img;
+    canvas.add(img);
+    canvas.sendToBack(img);
+    if (printZone) canvas.bringToFront(printZone);
+    if (designObj) canvas.bringToFront(designObj);
+    canvas.renderAll();
+  });
+}
+
+// ---- Generate ----
+
+function generate() {
+  if (!tshirtDataURLs.length) { alert('Pehle T-shirts upload karein!'); return; }
+
+  document.getElementById('output').innerHTML = '';
   generatedImages = [];
 
   let pos = null;
   let designURL = null;
 
-  if (designObj){
+  if (designObj) {
     pos = {
       left: designObj.left,
       top: designObj.top,
       width: designObj.getScaledWidth(),
       height: designObj.getScaledHeight()
     };
-
-    designURL = designObj.toDataURL({ format: "png", quality: 1 });
+    designURL = designObj.toDataURL({ format: 'png', quality: 1 });
   }
 
-  let index = 0;
+  tshirtDataURLs.forEach(function(src, index) {
+    const tshirtImg = new Image();
+    tshirtImg.crossOrigin = 'anonymous';
+    tshirtImg.src = src;
+    tshirtImg.onload = function() {
+      const canvasOut = document.createElement('canvas');
+      canvasOut.width = 400;
+      canvasOut.height = 500;
+      const ctx = canvasOut.getContext('2d');
+      ctx.drawImage(tshirtImg, 0, 0, 400, 500);
 
-  for (let file of tshirtFiles) {
-    const reader = new FileReader();
-
-    reader.onload = function(ev){
-      const tshirtImg = new Image();
-      tshirtImg.src = ev.target.result;
-
-      tshirtImg.onload = function(){
-        const canvasOut = document.createElement("canvas");
-        canvasOut.width = 400;
-        canvasOut.height = 500;
-        const ctx = canvasOut.getContext("2d");
-
-        ctx.drawImage(tshirtImg, 0, 0, 400, 500);
-
-        if (designObj){
-          const design = new Image();
-          design.src = designURL;
-
-          design.onload = function(){
-            ctx.drawImage(design, pos.left, pos.top, pos.width, pos.height);
-            saveOutput(canvasOut, index);
-            index++;
-          };
-        } else {
+      if (designObj) {
+        const design = new Image();
+        design.src = designURL;
+        design.onload = function() {
+          ctx.drawImage(design, pos.left, pos.top, pos.width, pos.height);
           saveOutput(canvasOut, index);
-          index++;
-        }
-      };
+        };
+      } else {
+        saveOutput(canvasOut, index);
+      }
     };
-
-    reader.readAsDataURL(file);
-  }
+  });
 }
 
-function saveOutput(canvasOut, index){
-  const dataURL = canvasOut.toDataURL("image/png", 1.0);
+function saveOutput(canvasOut, index) {
+  const dataURL = canvasOut.toDataURL('image/png', 1.0);
   generatedImages.push(dataURL);
+  const imgIndex = generatedImages.length - 1;
 
-  const box = document.createElement("div");
-  box.className = "box";
+  const box = document.createElement('div');
+  box.className = 'box';
+  box.id = 'output-box-' + imgIndex;
 
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.value = generatedImages.length - 1;
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.value = imgIndex;
 
-  const img = document.createElement("img");
+  const img = document.createElement('img');
   img.src = dataURL;
   img.width = 150;
 
-  const btn = document.createElement("button");
-  btn.innerText = "Download";
-  btn.onclick = () => downloadImage(dataURL, "mockup_" + index + ".png");
+  const br = document.createElement('br');
+  const btnRow = document.createElement('div');
+  btnRow.style.marginTop = '6px';
+
+  const dlBtn = document.createElement('button');
+  dlBtn.className = 'btn-sm';
+  dlBtn.textContent = 'Download';
+  dlBtn.onclick = () => downloadImage(dataURL, 'mockup_' + index + '.png');
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'btn-danger btn-sm';
+  delBtn.textContent = 'Delete';
+  delBtn.onclick = () => {
+    document.getElementById('output-box-' + imgIndex).remove();
+    generatedImages[imgIndex] = null;
+  };
+
+  const repBtn = document.createElement('button');
+  repBtn.className = 'btn-warning btn-sm';
+  repBtn.textContent = 'Replace';
+  repBtn.onclick = () => {
+    const inp = document.getElementById('replaceInput');
+    inp.onchange = function() {
+      if (!inp.files[0]) return;
+      const r = new FileReader();
+      r.onload = function(e) {
+        img.src = e.target.result;
+        generatedImages[imgIndex] = e.target.result;
+        dlBtn.onclick = () => downloadImage(e.target.result, 'mockup_' + index + '.png');
+        inp.value = '';
+      };
+      r.readAsDataURL(inp.files[0]);
+    };
+    inp.click();
+  };
+
+  btnRow.appendChild(dlBtn);
+  btnRow.appendChild(delBtn);
+  btnRow.appendChild(repBtn);
 
   box.appendChild(checkbox);
-  box.appendChild(document.createElement("br"));
+  box.appendChild(br);
   box.appendChild(img);
-  box.appendChild(document.createElement("br"));
-  box.appendChild(btn);
+  box.appendChild(document.createElement('br'));
+  box.appendChild(btnRow);
 
-  document.getElementById("output").appendChild(box);
+  document.getElementById('output').appendChild(box);
 }
 
-function downloadImage(data, filename){
-  const a = document.createElement("a");
+// ---- Download helpers ----
+
+function downloadImage(data, filename) {
+  const a = document.createElement('a');
   a.href = data;
   a.download = filename;
   document.body.appendChild(a);
@@ -290,38 +597,30 @@ function downloadImage(data, filename){
   document.body.removeChild(a);
 }
 
-function downloadSelected(){
-  const selected = document.querySelectorAll("#output input:checked");
-
-  if (!selected.length) {
-    alert("Select at least one!");
-    return;
-  }
-
+function downloadSelected() {
+  const selected = document.querySelectorAll('#output input:checked');
+  if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
   selected.forEach((cb, i) => {
-    downloadImage(generatedImages[cb.value], "selected_" + i + ".png");
+    if (generatedImages[cb.value]) downloadImage(generatedImages[cb.value], 'selected_' + i + '.png');
   });
 }
 
-function downloadZIP(){
-  const selected = document.querySelectorAll("#output input:checked");
-
-  if (!selected.length) {
-    alert("Select at least one!");
-    return;
-  }
+function downloadZIP() {
+  const selected = document.querySelectorAll('#output input:checked');
+  if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
 
   const zip = new JSZip();
-
   selected.forEach((cb, i) => {
-    const base64 = generatedImages[cb.value].split(",")[1];
-    zip.file("mockup_" + i + ".png", base64, {base64:true});
+    if (generatedImages[cb.value]) {
+      const base64 = generatedImages[cb.value].split(',')[1];
+      zip.file('mockup_' + i + '.png', base64, { base64: true });
+    }
   });
 
-  zip.generateAsync({type:"blob"}).then(function(content){
-    const link = document.createElement("a");
+  zip.generateAsync({ type: 'blob' }).then(function(content) {
+    const link = document.createElement('a');
     link.href = URL.createObjectURL(content);
-    link.download = "mockups.zip";
+    link.download = 'mockups.zip';
     link.click();
   });
 }
