@@ -5,10 +5,13 @@
 <title>Auto Mockup Tool</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
 body { font-family: Arial; text-align: center; }
 canvas { border:1px solid #ccc; margin:10px; }
+.box { display:inline-block; margin:10px; }
+img { border:1px solid #ccc; margin-top:5px; }
 </style>
 </head>
 <body>
@@ -24,7 +27,11 @@ canvas { border:1px solid #ccc; margin:10px; }
 <button onclick="loadPreview()">Preview + Drag</button>
 <button onclick="generate()">Generate Mockups</button>
 
-<h3>Preview (Drag & Resize here)</h3>
+<br><br>
+<button onclick="downloadSelected()">Download Selected</button>
+<button onclick="downloadZIP()">Download ZIP</button>
+
+<h3>Preview</h3>
 <canvas id="previewCanvas" width="400" height="500"></canvas>
 
 <h3>Output</h3>
@@ -34,8 +41,9 @@ canvas { border:1px solid #ccc; margin:10px; }
 const canvas = new fabric.Canvas('previewCanvas');
 let designObj = null;
 let tshirtFiles = [];
+let generatedImages = [];
 
-// Load preview (first T-shirt)
+// Preview
 function loadPreview(){
   tshirtFiles = document.getElementById("tshirts").files;
   const designFile = document.getElementById("design").files[0];
@@ -45,7 +53,6 @@ function loadPreview(){
     return;
   }
 
-  // Load first T-shirt as background
   const reader = new FileReader();
   reader.onload = function(e){
     fabric.Image.fromURL(e.target.result, function(img){
@@ -55,7 +62,6 @@ function loadPreview(){
   };
   reader.readAsDataURL(tshirtFiles[0]);
 
-  // Load design (DRAG ENABLED)
   const designReader = new FileReader();
   designReader.onload = function(e){
     fabric.Image.fromURL(e.target.result, function(img){
@@ -66,8 +72,7 @@ function loadPreview(){
         left: 150,
         top: 200,
         scaleX: 0.4,
-        scaleY: 0.4,
-        cornerSize: 12
+        scaleY: 0.4
       });
 
       designObj = img;
@@ -79,7 +84,7 @@ function loadPreview(){
   designReader.readAsDataURL(designFile);
 }
 
-// Generate all (mirror apply)
+// Generate
 function generate(){
   if (!designObj || !tshirtFiles.length) {
     alert("Preview first!");
@@ -87,6 +92,7 @@ function generate(){
   }
 
   document.getElementById("output").innerHTML = "";
+  generatedImages = [];
 
   const pos = {
     left: designObj.left,
@@ -95,7 +101,12 @@ function generate(){
     height: designObj.getScaledHeight()
   };
 
-  const designURL = designObj.toDataURL();
+  const designURL = designObj.toDataURL({
+    format: "png",
+    quality: 1
+  });
+
+  let index = 0;
 
   for (let file of tshirtFiles) {
     const reader = new FileReader();
@@ -116,21 +127,105 @@ function generate(){
         design.src = designURL;
 
         design.onload = function(){
-          ctx.drawImage(
-            design,
-            pos.left,
-            pos.top,
-            pos.width,
-            pos.height
-          );
+          ctx.drawImage(design, pos.left, pos.top, pos.width, pos.height);
 
-          document.getElementById("output").appendChild(canvasOut);
+          // ✅ HD export fix
+          const dataURL = canvasOut.toDataURL("image/png", 1.0);
+          generatedImages.push(dataURL);
+
+          const currentIndex = index; // ✅ index fix
+
+          // UI box
+          const box = document.createElement("div");
+          box.className = "box";
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.value = generatedImages.length - 1;
+
+          const img = document.createElement("img");
+          img.src = dataURL;
+          img.width = 150;
+
+          const btn = document.createElement("button");
+          btn.innerText = "Download";
+          btn.onclick = () => downloadImage(dataURL, "mockup_" + currentIndex + ".png");
+
+          box.appendChild(checkbox);
+          box.appendChild(document.createElement("br"));
+          box.appendChild(img);
+          box.appendChild(document.createElement("br"));
+          box.appendChild(btn);
+
+          document.getElementById("output").appendChild(box);
+
+          index++;
         };
       };
     };
 
     reader.readAsDataURL(file);
   }
+}
+
+// Download fix (stable)
+function downloadImage(data, filename){
+  const a = document.createElement("a");
+  a.href = data;
+  a.download = filename;
+
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// Download selected
+function downloadSelected(){
+  const selected = document.querySelectorAll("#output input:checked");
+
+  if (!selected.length) {
+    alert("Select at least one!");
+    return;
+  }
+
+  selected.forEach((cb, i) => {
+    const index = cb.value;
+    downloadImage(generatedImages[index], "selected_" + i + ".png");
+  });
+}
+
+// ZIP download (stable)
+function downloadZIP(){
+  const selected = document.querySelectorAll("#output input:checked");
+
+  if (!selected.length) {
+    alert("Select at least one!");
+    return;
+  }
+
+  const zip = new JSZip();
+
+  selected.forEach((cb, i) => {
+    const index = cb.value;
+    const base64 = generatedImages[index].split(",")[1];
+    zip.file("mockup_" + i + ".png", base64, {base64:true});
+  });
+
+  zip.generateAsync({type:"blob"}).then(function(content){
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(content);
+
+    link.href = url;
+    link.download = "mockups.zip";
+
+    document.body.appendChild(link);
+    link.click();
+
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 100);
+  });
 }
 </script>
 
