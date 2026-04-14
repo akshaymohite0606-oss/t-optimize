@@ -70,6 +70,18 @@ img {
 .actions {
   margin-top: 10px;
 }
+
+/* 🔥 NEW: thumbnail UI */
+#tshirtList img {
+  width: 60px;
+  margin: 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+#tshirtList img:hover {
+  border: 2px solid #2563eb;
+}
 </style>
 </head>
 
@@ -95,6 +107,10 @@ img {
 <div class="card">
   <h3>Preview</h3>
   <canvas id="previewCanvas" width="400" height="500"></canvas>
+
+  <!-- 🔥 NEW: T-shirt selector -->
+  <h4>Select T-shirt</h4>
+  <div id="tshirtList"></div>
 </div>
 
 <div class="card">
@@ -116,6 +132,7 @@ let designObj = null;
 let tshirtFiles = [];
 let generatedImages = [];
 
+// 🔥 Load Preview + Thumbnails
 function loadPreview(){
   tshirtFiles = document.getElementById("tshirts").files;
   const designFile = document.getElementById("design").files[0];
@@ -125,15 +142,14 @@ function loadPreview(){
     return;
   }
 
+  // First T-shirt preview
   const reader = new FileReader();
   reader.onload = function(e){
-    fabric.Image.fromURL(e.target.result, function(img){
-      img.scaleToWidth(400);
-      canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-    });
+    setTshirtBackground(e.target.result);
   };
   reader.readAsDataURL(tshirtFiles[0]);
 
+  // Design
   const designReader = new FileReader();
   designReader.onload = function(e){
     fabric.Image.fromURL(e.target.result, function(img){
@@ -154,6 +170,31 @@ function loadPreview(){
     });
   };
   designReader.readAsDataURL(designFile);
+
+  // 🔥 Create thumbnails
+  const list = document.getElementById("tshirtList");
+  list.innerHTML = "";
+
+  Array.from(tshirtFiles).forEach(file => {
+    const r = new FileReader();
+    r.onload = function(e){
+      const img = document.createElement("img");
+      img.src = e.target.result;
+
+      img.onclick = () => setTshirtBackground(e.target.result);
+
+      list.appendChild(img);
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+// 🔥 Change T-shirt without losing design
+function setTshirtBackground(src){
+  fabric.Image.fromURL(src, function(img){
+    img.scaleToWidth(400);
+    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+  });
 }
 
 function generate(){
@@ -172,10 +213,7 @@ function generate(){
     height: designObj.getScaledHeight()
   };
 
-  const designURL = designObj.toDataURL({
-    format: "png",
-    quality: 1
-  });
+  const designURL = designObj.toDataURL({ format: "png", quality: 1 });
 
   let index = 0;
 
@@ -203,8 +241,6 @@ function generate(){
           const dataURL = canvasOut.toDataURL("image/png", 1.0);
           generatedImages.push(dataURL);
 
-          const currentIndex = index;
-
           const box = document.createElement("div");
           box.className = "box";
 
@@ -218,7 +254,7 @@ function generate(){
 
           const btn = document.createElement("button");
           btn.innerText = "Download";
-          btn.onclick = () => downloadImage(dataURL, "mockup_" + currentIndex + ".png");
+          btn.onclick = () => downloadImage(dataURL, "mockup_" + index + ".png");
 
           box.appendChild(checkbox);
           box.appendChild(document.createElement("br"));
@@ -241,7 +277,6 @@ function downloadImage(data, filename){
   const a = document.createElement("a");
   a.href = data;
   a.download = filename;
-
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -256,8 +291,7 @@ function downloadSelected(){
   }
 
   selected.forEach((cb, i) => {
-    const index = cb.value;
-    downloadImage(generatedImages[index], "selected_" + i + ".png");
+    downloadImage(generatedImages[cb.value], "selected_" + i + ".png");
   });
 }
 
@@ -272,25 +306,15 @@ function downloadZIP(){
   const zip = new JSZip();
 
   selected.forEach((cb, i) => {
-    const index = cb.value;
-    const base64 = generatedImages[index].split(",")[1];
+    const base64 = generatedImages[cb.value].split(",")[1];
     zip.file("mockup_" + i + ".png", base64, {base64:true});
   });
 
   zip.generateAsync({type:"blob"}).then(function(content){
     const link = document.createElement("a");
-    const url = URL.createObjectURL(content);
-
-    link.href = url;
+    link.href = URL.createObjectURL(content);
     link.download = "mockups.zip";
-
-    document.body.appendChild(link);
     link.click();
-
-    setTimeout(() => {
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }, 100);
   });
 }
 </script>
