@@ -71,7 +71,6 @@ img {
   margin-top: 10px;
 }
 
-/* 🔥 NEW: thumbnail UI */
 #tshirtList img {
   width: 60px;
   margin: 5px;
@@ -95,7 +94,7 @@ img {
   <p><b>1. Upload T-shirt Images</b></p>
   <input type="file" id="tshirts" multiple accept="image/*">
 
-  <p><b>2. Upload Design</b></p>
+  <p><b>2. Upload Design (Optional)</b></p>
   <input type="file" id="design" accept="image/*">
 
   <div class="actions">
@@ -108,7 +107,6 @@ img {
   <h3>Preview</h3>
   <canvas id="previewCanvas" width="400" height="500"></canvas>
 
-  <!-- 🔥 NEW: T-shirt selector -->
   <h4>Select T-shirt</h4>
   <div id="tshirtList"></div>
 </div>
@@ -132,13 +130,12 @@ let designObj = null;
 let tshirtFiles = [];
 let generatedImages = [];
 
-// 🔥 Load Preview + Thumbnails
 function loadPreview(){
   tshirtFiles = document.getElementById("tshirts").files;
   const designFile = document.getElementById("design").files[0];
 
-  if (!tshirtFiles.length || !designFile) {
-    alert("Upload both first!");
+  if (!tshirtFiles.length) {
+    alert("Upload T-shirts first!");
     return;
   }
 
@@ -149,29 +146,31 @@ function loadPreview(){
   };
   reader.readAsDataURL(tshirtFiles[0]);
 
-  // Design
-  const designReader = new FileReader();
-  designReader.onload = function(e){
-    fabric.Image.fromURL(e.target.result, function(img){
+  // OPTIONAL DESIGN
+  if (designFile){
+    const designReader = new FileReader();
+    designReader.onload = function(e){
+      fabric.Image.fromURL(e.target.result, function(img){
 
-      if (designObj) canvas.remove(designObj);
+        if (designObj) canvas.remove(designObj);
 
-      img.set({
-        left: 150,
-        top: 200,
-        scaleX: 0.4,
-        scaleY: 0.4
+        img.set({
+          left: 150,
+          top: 200,
+          scaleX: 0.4,
+          scaleY: 0.4
+        });
+
+        designObj = img;
+        canvas.add(img);
+        canvas.setActiveObject(img);
+        canvas.renderAll();
       });
+    };
+    designReader.readAsDataURL(designFile);
+  }
 
-      designObj = img;
-      canvas.add(img);
-      canvas.setActiveObject(img);
-      canvas.renderAll();
-    });
-  };
-  designReader.readAsDataURL(designFile);
-
-  // 🔥 Create thumbnails
+  // Thumbnails
   const list = document.getElementById("tshirtList");
   list.innerHTML = "";
 
@@ -180,16 +179,13 @@ function loadPreview(){
     r.onload = function(e){
       const img = document.createElement("img");
       img.src = e.target.result;
-
       img.onclick = () => setTshirtBackground(e.target.result);
-
       list.appendChild(img);
     };
     r.readAsDataURL(file);
   });
 }
 
-// 🔥 Change T-shirt without losing design
 function setTshirtBackground(src){
   fabric.Image.fromURL(src, function(img){
     img.scaleToWidth(400);
@@ -198,22 +194,27 @@ function setTshirtBackground(src){
 }
 
 function generate(){
-  if (!designObj || !tshirtFiles.length) {
-    alert("Preview first!");
+  if (!tshirtFiles.length) {
+    alert("Upload T-shirts first!");
     return;
   }
 
   document.getElementById("output").innerHTML = "";
   generatedImages = [];
 
-  const pos = {
-    left: designObj.left,
-    top: designObj.top,
-    width: designObj.getScaledWidth(),
-    height: designObj.getScaledHeight()
-  };
+  let pos = null;
+  let designURL = null;
 
-  const designURL = designObj.toDataURL({ format: "png", quality: 1 });
+  if (designObj){
+    pos = {
+      left: designObj.left,
+      top: designObj.top,
+      width: designObj.getScaledWidth(),
+      height: designObj.getScaledHeight()
+    };
+
+    designURL = designObj.toDataURL({ format: "png", quality: 1 });
+  }
 
   let index = 0;
 
@@ -232,45 +233,52 @@ function generate(){
 
         ctx.drawImage(tshirtImg, 0, 0, 400, 500);
 
-        const design = new Image();
-        design.src = designURL;
+        if (designObj){
+          const design = new Image();
+          design.src = designURL;
 
-        design.onload = function(){
-          ctx.drawImage(design, pos.left, pos.top, pos.width, pos.height);
-
-          const dataURL = canvasOut.toDataURL("image/png", 1.0);
-          generatedImages.push(dataURL);
-
-          const box = document.createElement("div");
-          box.className = "box";
-
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.value = generatedImages.length - 1;
-
-          const img = document.createElement("img");
-          img.src = dataURL;
-          img.width = 150;
-
-          const btn = document.createElement("button");
-          btn.innerText = "Download";
-          btn.onclick = () => downloadImage(dataURL, "mockup_" + index + ".png");
-
-          box.appendChild(checkbox);
-          box.appendChild(document.createElement("br"));
-          box.appendChild(img);
-          box.appendChild(document.createElement("br"));
-          box.appendChild(btn);
-
-          document.getElementById("output").appendChild(box);
-
+          design.onload = function(){
+            ctx.drawImage(design, pos.left, pos.top, pos.width, pos.height);
+            saveOutput(canvasOut, index);
+            index++;
+          };
+        } else {
+          saveOutput(canvasOut, index);
           index++;
-        };
+        }
       };
     };
 
     reader.readAsDataURL(file);
   }
+}
+
+function saveOutput(canvasOut, index){
+  const dataURL = canvasOut.toDataURL("image/png", 1.0);
+  generatedImages.push(dataURL);
+
+  const box = document.createElement("div");
+  box.className = "box";
+
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.value = generatedImages.length - 1;
+
+  const img = document.createElement("img");
+  img.src = dataURL;
+  img.width = 150;
+
+  const btn = document.createElement("button");
+  btn.innerText = "Download";
+  btn.onclick = () => downloadImage(dataURL, "mockup_" + index + ".png");
+
+  box.appendChild(checkbox);
+  box.appendChild(document.createElement("br"));
+  box.appendChild(img);
+  box.appendChild(document.createElement("br"));
+  box.appendChild(btn);
+
+  document.getElementById("output").appendChild(box);
 }
 
 function downloadImage(data, filename){
