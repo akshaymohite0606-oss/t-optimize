@@ -261,6 +261,8 @@ header .version {
   overflow: hidden;
   flex-shrink: 0;
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  /* WHITE background for preview canvas */
+  background: #ffffff;
 }
 #canvasWrapper canvas {
   border-radius: 0;
@@ -510,15 +512,7 @@ input[type=checkbox] {
 <input class="hidden-input" type="file" id="replaceInput" accept="image/*">
 
 <script>
-// =====================================================================
-// ARCHITECTURE:
-// - Fabric canvas: T-shirt (movable/resizable) + Design (movable/resizable)
-// - Overlay canvas (HTML5): Blue print zone — ALWAYS on top
-// - variantStates[]: Stores per-variant {left, top, scaleX, scaleY} transforms
-//   so switching variants RESTORES the previously adjusted state.
-// =====================================================================
-
-const fabricCanvas = new fabric.Canvas('previewCanvas');
+const fabricCanvas = new fabric.Canvas('previewCanvas', { backgroundColor: '#ffffff' });
 const overlayCanvas = document.getElementById('overlayCanvas');
 const octx = overlayCanvas.getContext('2d');
 
@@ -529,19 +523,13 @@ let tshirtNames = [];
 let generatedImages = [];
 let activeThumbIndex = 0;
 
-// =====================================================================
-// KEY FIX: Per-variant state storage
-// Each entry: { left, top, scaleX, scaleY, saved: bool }
-// =====================================================================
 let variantStates = [];
 
-// Print zone state
 let zone = { x: 110, y: 120, w: 180, h: 180 };
 
 const HANDLE = 10;
 let dragState = null;
 
-// ---- Draw blue zone on overlay ----
 function drawOverlay() {
   octx.clearRect(0, 0, 400, 500);
   const { x, y, w, h } = zone;
@@ -591,7 +579,6 @@ function syncInputsFromZone() {
   document.getElementById('zoneH').value = Math.round(zone.h);
 }
 
-// ---- Overlay hit div setup ----
 const hitDiv = document.createElement('div');
 hitDiv.style.cssText = 'position:absolute;top:0;left:0;width:400px;height:500px;z-index:20;cursor:default;';
 document.getElementById('canvasWrapper').appendChild(hitDiv);
@@ -681,13 +668,6 @@ function fitDesignToZone() {
   fabricCanvas.renderAll();
 }
 
-// =====================================================================
-// VARIANT STATE MANAGEMENT
-// =====================================================================
-
-/**
- * Capture the current tshirtLayer transform and store it for the given index.
- */
 function captureVariantState(index) {
   if (!tshirtLayer || index < 0 || index >= tshirtDataURLs.length) return;
   variantStates[index] = {
@@ -700,10 +680,6 @@ function captureVariantState(index) {
   updateVariantStateUI();
 }
 
-/**
- * Apply a stored variant state to the current tshirtLayer.
- * Returns true if a saved state was found and applied.
- */
 function applyVariantState(index) {
   const state = variantStates[index];
   if (!state || !tshirtLayer) return false;
@@ -718,9 +694,6 @@ function applyVariantState(index) {
   return true;
 }
 
-/**
- * Called manually via "Save Variant" button.
- */
 function saveCurrentVariantState() {
   captureVariantState(activeThumbIndex);
   const badge = document.getElementById('stateBadge');
@@ -731,9 +704,6 @@ function saveCurrentVariantState() {
   renderTshirtList();
 }
 
-/**
- * Update the info panel on the right.
- */
 function updateVariantInfoPanel() {
   if (!tshirtLayer || tshirtDataURLs.length === 0) return;
   document.getElementById('si-index').textContent = activeThumbIndex;
@@ -757,12 +727,8 @@ function updateVariantInfoPanel() {
   }
 }
 
-/**
- * Live-update info panel on fabric object:modified
- */
 fabricCanvas.on('object:modified', function(e) {
   if (e.target && e.target.name === 'tshirtLayer') {
-    // Auto-save state on every move/scale
     captureVariantState(activeThumbIndex);
     updateVariantInfoPanel();
   }
@@ -786,7 +752,6 @@ function updateVariantStateUI() {
   document.getElementById('savedCount').textContent = savedCount;
   document.getElementById('variantCount').textContent = tshirtDataURLs.length;
 
-  // Variant state list
   const listEl = document.getElementById('variantStateList');
   listEl.innerHTML = '';
   tshirtDataURLs.forEach((_, i) => {
@@ -804,14 +769,12 @@ function updateVariantStateUI() {
   });
 }
 
-// ---- T-shirt management ----
 function addTshirts(files) {
   Array.from(files).forEach(file => {
     const r = new FileReader();
     r.onload = e => {
       tshirtDataURLs.push(e.target.result);
       tshirtNames.push(file.name);
-      // Initialize state slot as null (unsaved/default)
       variantStates.push(null);
       renderTshirtList();
       updateVariantStateUI();
@@ -825,11 +788,10 @@ function addTshirts(files) {
 }
 
 function deleteTshirt(index) {
-  // Save current state before deletion
   captureVariantState(activeThumbIndex);
   tshirtDataURLs.splice(index, 1);
   tshirtNames.splice(index, 1);
-  variantStates.splice(index, 1); // Remove the state for this variant too
+  variantStates.splice(index, 1);
   if (activeThumbIndex >= tshirtDataURLs.length) activeThumbIndex = Math.max(0, tshirtDataURLs.length - 1);
   renderTshirtList();
   updateVariantStateUI();
@@ -849,7 +811,6 @@ function replaceTshirt(index) {
     r.onload = e => {
       tshirtDataURLs[index] = e.target.result;
       tshirtNames[index] = input.files[0].name;
-      // Keep existing state for this index if it was saved, else reset
       if (!variantStates[index]?.saved) variantStates[index] = null;
       renderTshirtList();
       setTshirtBackground(tshirtDataURLs[index], index);
@@ -896,25 +857,14 @@ function renderTshirtList() {
   });
 }
 
-/**
- * KEY FIX: switchVariant saves the current variant state BEFORE switching,
- * then restores the new variant's saved state (if any) after loading.
- */
 function switchVariant(newIndex) {
   if (newIndex === activeThumbIndex && tshirtLayer) return;
-
-  // 1. Save current variant state before leaving
   captureVariantState(activeThumbIndex);
-
-  // 2. Switch
   activeThumbIndex = newIndex;
   renderTshirtList();
-
-  // 3. Load new variant — applyVariantState happens INSIDE setTshirtBackground
   setTshirtBackground(tshirtDataURLs[newIndex], newIndex);
 }
 
-// ---- Design management ----
 function loadDesign(file) {
   if (!file) return;
   const r = new FileReader();
@@ -939,18 +889,11 @@ function removeDesign() {
   document.getElementById('designInfo').style.display = 'none';
 }
 
-// ---- Preview ----
 function loadPreview() {
   if (!tshirtDataURLs.length) { alert('Pehle T-shirts upload karein!'); return; }
   setTshirtBackground(tshirtDataURLs[activeThumbIndex], activeThumbIndex);
 }
 
-/**
- * KEY FIX: setTshirtBackground now:
- * 1. Loads the new image
- * 2. Tries to RESTORE the saved state for this variant
- * 3. If no saved state, uses default (scaleToWidth)
- */
 function setTshirtBackground(src, index) {
   activeThumbIndex = index;
   if (tshirtLayer) { fabricCanvas.remove(tshirtLayer); tshirtLayer = null; }
@@ -959,7 +902,6 @@ function setTshirtBackground(src, index) {
     const saved = variantStates[index];
 
     if (saved) {
-      // RESTORE previously saved transform for this variant
       img.set({
         left:   saved.left,
         top:    saved.top,
@@ -967,7 +909,6 @@ function setTshirtBackground(src, index) {
         scaleY: saved.scaleY,
       });
     } else {
-      // DEFAULT: scale to fit canvas width
       img.scaleToWidth(400);
       img.set({ left: 0, top: 0 });
     }
@@ -991,7 +932,6 @@ function setTshirtBackground(src, index) {
     fabricCanvas.renderAll();
     drawOverlay();
 
-    // Show hint that states persist
     document.getElementById('variantSaveHint').style.display = 'flex';
 
     updateVariantInfoPanel();
@@ -999,11 +939,9 @@ function setTshirtBackground(src, index) {
   });
 }
 
-// ---- Generate ----
 function generate() {
   if (!tshirtDataURLs.length) { alert('Pehle T-shirts upload karein!'); return; }
 
-  // Save current variant before generating
   captureVariantState(activeThumbIndex);
 
   document.getElementById('output').innerHTML = '';
@@ -1024,7 +962,10 @@ function generate() {
       co.width = 400; co.height = 500;
       const ctx = co.getContext('2d');
 
-      // Use saved state for this variant if available, else default
+      // White background for generated output too
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 400, 500);
+
       const state = variantStates[index];
       if (state) {
         const sw = tshirtImg.naturalWidth * state.scaleX;
@@ -1118,7 +1059,6 @@ function downloadZIP() {
   });
 }
 
-// Init
 drawOverlay();
 </script>
 </body>
