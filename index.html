@@ -784,7 +784,6 @@ function updateZoneFrontFromInputs() {
   frontZone.w = parseInt(document.getElementById('frontZoneW').value) || 20;
   frontZone.h = parseInt(document.getElementById('frontZoneH').value) || 20;
   drawOverlayFront();
-  alert('✅ Auto Saved!');
 }
 
 function fitDesignToZoneFront() {
@@ -857,7 +856,6 @@ frontCanvas.on('object:modified', function(e) {
   if (e.target && e.target.name === 'tshirtLayerFront') {
     captureVariantStateFront(frontActiveThumbIndex);
     updateVariantInfoPanelFront();
-    alert('✅ Auto Saved!');
   }
 });
 frontCanvas.on('object:moving', function(e) {
@@ -1003,11 +1001,9 @@ function renderTshirtListFront() {
 function switchVariantFront(newIndex) {
   if (newIndex === frontActiveThumbIndex && frontTshirtLayer) {
     captureVariantStateFront(frontActiveThumbIndex);
-    alert('✅ Auto Saved!');
     return;
   }
   captureVariantStateFront(frontActiveThumbIndex);
-  alert('✅ Auto Saved!');
   frontActiveThumbIndex = newIndex;
   renderTshirtListFront();
   setTshirtBackgroundFront(frontTshirtDataURLs[newIndex], newIndex);
@@ -1312,7 +1308,6 @@ window.addEventListener('mouseup', function() {
   if (backDragState) {
     backDragState = null;
     backHitDiv.style.pointerEvents = 'none';
-    alert('✅ Auto Saved!');
   }
 });
 
@@ -1343,7 +1338,6 @@ function updateZoneBackFromInputs() {
   backZone.w = parseInt(document.getElementById('backZoneW').value) || 20;
   backZone.h = parseInt(document.getElementById('backZoneH').value) || 20;
   drawOverlayBack();
-  alert('✅ Auto Saved!');
 }
 
 function fitDesignToZoneBack() {
@@ -1416,7 +1410,6 @@ backCanvas.on('object:modified', function(e) {
   if (e.target && e.target.name === 'tshirtLayerBack') {
     captureVariantStateBack(backActiveThumbIndex);
     updateVariantInfoPanelBack();
-    alert('✅ Auto Saved!');
   }
 });
 backCanvas.on('object:moving', function(e) {
@@ -1562,11 +1555,9 @@ function renderTshirtListBack() {
 function switchVariantBack(newIndex) {
   if (newIndex === backActiveThumbIndex && backTshirtLayer) {
     captureVariantStateBack(backActiveThumbIndex);
-    alert('✅ Auto Saved!');
     return;
   }
   captureVariantStateBack(backActiveThumbIndex);
-  alert('✅ Auto Saved!');
   backActiveThumbIndex = newIndex;
   renderTshirtListBack();
   setTshirtBackgroundBack(backTshirtDataURLs[newIndex], newIndex);
