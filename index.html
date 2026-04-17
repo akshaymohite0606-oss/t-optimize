@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Auto Mockup Tool</title>
+<title>Auto Mockup Tool v5</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -26,13 +26,7 @@
   --sans: 'DM Sans', sans-serif;
 }
 
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
-  margin: 0;
-  min-height: 100vh;
-}
+body { font-family: var(--sans); background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; }
 
 header {
   background: var(--surface);
@@ -47,27 +41,9 @@ header {
   z-index: 100;
 }
 header .logo-icon { font-size: 22px; }
-header h1 {
-  font-family: var(--mono);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--accent);
-  letter-spacing: 0.05em;
-  margin: 0;
-  text-transform: uppercase;
-}
-header .version {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  padding: 2px 7px;
-  border-radius: 4px;
-  margin-left: auto;
-}
+header h1 { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: 0.05em; margin: 0; text-transform: uppercase; }
+header .version { font-family: var(--mono); font-size: 10px; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); padding: 2px 7px; border-radius: 4px; margin-left: auto; }
 
-/* ---- Layout ---- */
 .app {
   display: grid;
   grid-template-columns: 280px 1fr 1fr;
@@ -76,7 +52,6 @@ header .version {
   min-height: calc(100vh - 56px);
 }
 
-/* ---- Sidebar ---- */
 .sidebar {
   grid-row: 1 / 3;
   background: var(--surface);
@@ -100,7 +75,6 @@ header .version {
   border-bottom: 1px solid var(--border);
 }
 
-/* Side header labels */
 .side-header {
   font-family: var(--mono);
   font-size: 11px;
@@ -114,7 +88,6 @@ header .version {
 .side-header.front { background: rgba(108,99,255,0.15); color: var(--accent); border: 1px solid rgba(108,99,255,0.3); }
 .side-header.back  { background: rgba(255,101,132,0.15); color: var(--accent2); border: 1px solid rgba(255,101,132,0.3); }
 
-/* ---- Upload zones ---- */
 .upload-zone {
   border: 1.5px dashed var(--border);
   border-radius: 10px;
@@ -125,18 +98,10 @@ header .version {
   font-size: 12px;
   color: var(--muted);
 }
-.upload-zone:hover {
-  border-color: var(--accent);
-  background: rgba(108,99,255,0.06);
-  color: var(--text);
-}
-.upload-zone.back-zone:hover {
-  border-color: var(--accent2);
-  background: rgba(255,101,132,0.06);
-}
+.upload-zone:hover { border-color: var(--accent); background: rgba(108,99,255,0.06); color: var(--text); }
+.upload-zone.back-zone:hover { border-color: var(--accent2); background: rgba(255,101,132,0.06); }
 .upload-zone .icon { font-size: 18px; margin-bottom: 3px; }
 
-/* ---- Buttons ---- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -158,21 +123,13 @@ header .version {
 .btn.warn { background: var(--warn); color: #000; }
 .btn.success { background: var(--success); }
 .btn.back-btn { background: var(--accent2); }
-.btn.ghost {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-}
+.btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
 .btn.ghost:hover { border-color: var(--accent); color: var(--accent); }
 .btn.sm { padding: 5px 10px; font-size: 11px; border-radius: 6px; }
+.btn.xs { padding: 3px 7px; font-size: 10px; border-radius: 5px; }
 .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 
-/* ---- T-shirt thumbnails ---- */
-.tshirt-list-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-}
+.tshirt-list-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .tshirt-thumb {
   display: flex;
   flex-direction: column;
@@ -189,34 +146,12 @@ header .version {
 .tshirt-thumb:hover { border-color: var(--accent); }
 .tshirt-thumb.active { border-color: var(--accent); background: rgba(108,99,255,0.12); }
 .tshirt-thumb.active-back { border-color: var(--accent2); background: rgba(255,101,132,0.12); }
-.tshirt-thumb.saved-state::after {
-  content: '✓';
-  position: absolute;
-  top: 3px;
-  right: 4px;
-  font-size: 9px;
-  color: var(--accent3);
-  font-weight: 700;
-}
+.tshirt-thumb.saved-state::after { content: '✓'; position: absolute; top: 3px; right: 4px; font-size: 9px; color: var(--accent3); font-weight: 700; }
 .tshirt-thumb img { width: 46px; height: 46px; object-fit: cover; border-radius: 6px; }
-.tshirt-thumb .tname {
-  font-size: 9px;
-  color: var(--muted);
-  max-width: 66px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: center;
-}
-.tshirt-thumb .thumb-btns {
-  display: none;
-  gap: 3px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
+.tshirt-thumb .tname { font-size: 9px; color: var(--muted); max-width: 66px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
+.tshirt-thumb .thumb-btns { display: none; gap: 3px; flex-wrap: wrap; justify-content: center; }
 .tshirt-thumb:hover .thumb-btns { display: flex; }
 
-/* ---- Main panels ---- */
 .main-panel {
   padding: 16px;
   display: flex;
@@ -242,7 +177,6 @@ header .version {
 .panel-header.front { background: rgba(108,99,255,0.12); color: var(--accent); border: 1px solid rgba(108,99,255,0.25); }
 .panel-header.back  { background: rgba(255,101,132,0.12); color: var(--accent2); border: 1px solid rgba(255,101,132,0.25); }
 
-/* ---- Zone controls ---- */
 .zone-controls {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -253,37 +187,13 @@ header .version {
   gap: 8px;
   flex-wrap: wrap;
 }
-.zone-controls label {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-.zone-input {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--text);
-  border-radius: 6px;
-  padding: 4px 7px;
-  font-size: 12px;
-  width: 55px;
-  font-family: var(--mono);
-  transition: border-color 0.2s;
-}
+.zone-controls label { font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.zone-input { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 4px 7px; font-size: 12px; width: 55px; font-family: var(--mono); transition: border-color 0.2s; }
 .zone-input:focus { outline: none; border-color: var(--accent); }
 
-.hint {
-  font-size: 11px;
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
+.hint { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
 
-/* ---- Canvas wrapper ---- */
-#canvasWrapperFront,
-#canvasWrapperBack {
+#canvasWrapperFront, #canvasWrapperBack {
   position: relative;
   display: inline-block;
   width: 380px;
@@ -294,12 +204,8 @@ header .version {
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
   background: #ffffff;
 }
-#canvasWrapperFront canvas,
-#canvasWrapperBack canvas {
-  border-radius: 0;
-}
-#overlayCanvasFront,
-#overlayCanvasBack {
+#canvasWrapperFront canvas, #canvasWrapperBack canvas { border-radius: 0; }
+#overlayCanvasFront, #overlayCanvasBack {
   position: absolute;
   top: 0; left: 0;
   pointer-events: none;
@@ -307,227 +213,159 @@ header .version {
   border: none !important;
 }
 
-/* ---- Variant state panel (below canvases) ---- */
-.variant-info {
+/* ===== LAYER PANEL ===== */
+.layer-panel {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 14px;
-  width: 100%;
+  overflow: hidden;
 }
-.variant-info h4 {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--accent);
-  margin: 0 0 10px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-.variant-info h4.back-title { color: var(--accent2); }
-.state-row {
+.layer-panel-header {
   display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: var(--muted);
-  padding: 3px 0;
-  border-bottom: 1px solid var(--border);
-  font-family: var(--mono);
-}
-.state-row span:last-child { color: var(--text); }
-.state-badge {
-  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  padding: 3px 8px;
-  border-radius: 20px;
-  margin-top: 6px;
-  font-family: var(--mono);
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
 }
+.layer-panel-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.layer-order-controls {
+  display: flex;
+  gap: 3px;
+}
+.layer-order-controls button {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: var(--mono);
+  transition: all 0.15s;
+  line-height: 1;
+}
+.layer-order-controls button:hover { border-color: var(--accent); color: var(--accent); }
+.layer-order-controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.layer-list { padding: 6px; display: flex; flex-direction: column; gap: 4px; min-height: 50px; }
+.layer-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--surface2);
+  position: relative;
+  user-select: none;
+}
+.layer-item:hover { border-color: var(--border); background: rgba(255,255,255,0.03); }
+.layer-item.selected { border-color: var(--accent); background: rgba(108,99,255,0.1); }
+.layer-item.selected-back { border-color: var(--accent2); background: rgba(255,101,132,0.1); }
+.layer-item.locked { opacity: 0.6; }
+.layer-item.locked .layer-name::after { content: ' 🔒'; font-size: 9px; }
+
+.layer-visibility { width: 18px; text-align: center; font-size: 13px; flex-shrink: 0; cursor: pointer; }
+.layer-type-icon { font-size: 14px; flex-shrink: 0; }
+.layer-name { font-family: var(--mono); font-size: 10px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.layer-index { font-family: var(--mono); font-size: 9px; color: var(--muted); padding: 1px 5px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; }
+.layer-lock-btn { background: none; border: none; cursor: pointer; font-size: 12px; padding: 2px; border-radius: 3px; transition: background 0.15s; color: var(--muted); }
+.layer-lock-btn:hover { background: rgba(255,255,255,0.08); }
+.layer-lock-btn.is-locked { color: var(--warn); }
+
+.layer-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  border-top: 1px solid var(--border);
+  background: var(--surface2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.layer-toolbar-label { font-family: var(--mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-right: 2px; }
+.ltb { 
+  background: var(--surface); 
+  border: 1px solid var(--border); 
+  color: var(--muted); 
+  padding: 4px 8px; 
+  border-radius: 5px; 
+  font-size: 10px; 
+  cursor: pointer; 
+  font-family: var(--mono);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.ltb:hover { border-color: var(--accent); color: var(--accent); background: rgba(108,99,255,0.08); }
+.ltb:disabled { opacity: 0.3; cursor: not-allowed; }
+.ltb.danger:hover { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,0.08); }
+
+.no-layers-msg { font-family: var(--mono); font-size: 10px; color: var(--muted); text-align: center; padding: 16px 8px; }
+
+/* variant info */
+.variant-info { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; width: 100%; }
+.variant-info h4 { font-family: var(--mono); font-size: 11px; color: var(--accent); margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.1em; }
+.variant-info h4.back-title { color: var(--accent2); }
+.state-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); padding: 3px 0; border-bottom: 1px solid var(--border); font-family: var(--mono); }
+.state-row span:last-child { color: var(--text); }
+.state-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 3px 8px; border-radius: 20px; margin-top: 6px; font-family: var(--mono); }
 .state-badge.saved { background: rgba(67,232,176,0.1); color: var(--accent3); border: 1px solid rgba(67,232,176,0.3); }
 .state-badge.unsaved { background: rgba(245,158,11,0.1); color: var(--warn); border: 1px solid rgba(245,158,11,0.3); }
 
-/* ---- Output ---- */
-.output-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 8px;
-}
-.output-box {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  align-items: center;
-  transition: border-color 0.2s;
-}
+.output-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.output-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 5px; align-items: center; transition: border-color 0.2s; }
 .output-box:hover { border-color: var(--accent); }
 .output-box img { border-radius: 7px; }
 .output-box label { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); cursor: pointer; }
 
-input[type=checkbox] {
-  accent-color: var(--accent);
-  width: 14px; height: 14px;
-  cursor: pointer;
-}
+input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
 
-/* ---- Format Selector ---- */
-.format-selector {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 8px 12px;
-  flex-wrap: wrap;
-}
-.format-selector label {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-.format-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 12px;
-  border-radius: 6px;
-  border: 1.5px solid var(--border);
-  background: var(--surface2);
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s;
-  letter-spacing: 0.05em;
-}
+.format-selector { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; flex-wrap: wrap; }
+.format-selector label { font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.format-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface2); color: var(--muted); font-family: var(--mono); font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s; letter-spacing: 0.05em; }
 .format-btn:hover { border-color: var(--accent); color: var(--accent); }
-.format-btn.active-format {
-  border-color: var(--accent3);
-  background: rgba(67,232,176,0.1);
-  color: var(--accent3);
-}
-.format-btn.active-format-jpg {
-  border-color: var(--warn);
-  background: rgba(245,158,11,0.1);
-  color: var(--warn);
-}
-.res-tag {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--accent3);
-  background: rgba(67,232,176,0.08);
-  border: 1px solid rgba(67,232,176,0.2);
-  padding: 3px 8px;
-  border-radius: 5px;
-  margin-left: auto;
-}
+.format-btn.active-format { border-color: var(--accent3); background: rgba(67,232,176,0.1); color: var(--accent3); }
+.format-btn.active-format-jpg { border-color: var(--warn); background: rgba(245,158,11,0.1); color: var(--warn); }
+.res-tag { font-family: var(--mono); font-size: 10px; color: var(--accent3); background: rgba(67,232,176,0.08); border: 1px solid rgba(67,232,176,0.2); padding: 3px 8px; border-radius: 5px; margin-left: auto; }
 
-/* ---- Progress overlay ---- */
-.progress-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(15,15,19,0.85);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
-  backdrop-filter: blur(4px);
-}
+.progress-overlay { display: none; position: fixed; inset: 0; background: rgba(15,15,19,0.85); z-index: 9999; align-items: center; justify-content: center; flex-direction: column; gap: 16px; backdrop-filter: blur(4px); }
 .progress-overlay.active { display: flex; }
-.progress-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 28px 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  min-width: 280px;
-}
-.progress-title {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--text);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
-.progress-bar-track {
-  width: 240px;
-  height: 6px;
-  background: var(--surface2);
-  border-radius: 3px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-.progress-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--accent3));
-  border-radius: 3px;
-  width: 0%;
-  transition: width 0.3s ease;
-}
-.progress-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-}
+.progress-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 40px; display: flex; flex-direction: column; align-items: center; gap: 14px; min-width: 280px; }
+.progress-title { font-family: var(--mono); font-size: 13px; color: var(--text); font-weight: 700; letter-spacing: 0.05em; }
+.progress-bar-track { width: 240px; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; border: 1px solid var(--border); }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); border-radius: 3px; width: 0%; transition: width 0.3s ease; }
+.progress-label { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 
-/* ---- Bottom bar ---- */
-.bottom-bar {
-  grid-column: 1 / -1;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  padding: 12px 24px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.bottom-bar { grid-column: 1 / -1; background: var(--surface); border-top: 1px solid var(--border); padding: 12px 24px; display: flex; align-items: center; gap: 10px; }
 .bottom-bar .spacer { flex: 1; }
 
-.design-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 3px 9px;
-  font-size: 11px;
-  color: var(--muted);
-  font-family: var(--mono);
-}
-
-.section-title {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
-}
-
+.design-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 3px 9px; font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.section-title { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text); letter-spacing: 0.05em; margin-bottom: 4px; }
 .hidden-input { display: none; }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Layer drag ghost */
+.layer-item.dragging { opacity: 0.4; }
+.layer-item.drag-over { border-color: var(--accent3) !important; }
+
+/* Separator in layer toolbar */
+.ltb-sep { width: 1px; height: 18px; background: var(--border); margin: 0 2px; }
 </style>
 </head>
 <body>
 
-<!-- Progress Overlay -->
 <div class="progress-overlay" id="progressOverlay">
   <div class="progress-box">
     <div class="progress-title" id="progressTitle">⚡ Generating High-Res Mockups...</div>
@@ -539,18 +377,15 @@ input[type=checkbox] {
 <header>
   <span class="logo-icon">👕</span>
   <h1>Auto Mockup Generator</h1>
-  <span class="version">v4.0 — HD Export · Front &amp; Back</span>
+  <span class="version">v5.0 — Layer Manager · HD Export · Front &amp; Back</span>
 </header>
 
 <div class="app">
 
   <!-- ===== SIDEBAR ===== -->
   <aside class="sidebar">
-
-    <!-- FRONT UPLOADS -->
     <div>
       <div class="side-header front">🔵 Front Side</div>
-
       <div class="panel-label">T-shirt Variants (Front)</div>
       <div class="upload-zone" onclick="document.getElementById('frontTshirts').click()">
         <div class="icon">🗂️</div>
@@ -582,10 +417,8 @@ input[type=checkbox] {
 
     <hr style="border-color:var(--border);margin:4px 0;">
 
-    <!-- BACK UPLOADS -->
     <div>
       <div class="side-header back">🔴 Back Side</div>
-
       <div class="panel-label">T-shirt Variants (Back)</div>
       <div class="upload-zone back-zone" onclick="document.getElementById('backTshirts').click()">
         <div class="icon">🗂️</div>
@@ -617,21 +450,18 @@ input[type=checkbox] {
 
     <hr style="border-color:var(--border);margin:4px 0;">
 
-    <!-- ZIP DOWNLOAD -->
     <div>
       <div class="panel-label">Combined Output</div>
       <div class="btn-row" style="flex-direction:column;">
         <button class="btn ghost" onclick="downloadCombinedZIP()" style="width:100%;justify-content:center;">📦 Download ZIP (Front + Back)</button>
       </div>
     </div>
-
   </aside>
 
   <!-- ===== FRONT PANEL ===== -->
   <main class="main-panel" id="frontPanel">
     <div class="panel-header front">🔵 Front Mockup</div>
 
-    <!-- Zone Controls Front -->
     <div class="zone-controls">
       <label>🟦 Zone</label>
       <label>X:</label><input type="number" id="frontZoneX" value="110" class="zone-input" oninput="updateZoneFrontFromInputs()">
@@ -642,17 +472,42 @@ input[type=checkbox] {
       <button class="btn sm ghost" onclick="saveCurrentVariantStateFront()">💾 Save</button>
     </div>
 
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <div class="hint">💡 Drag blue box to reposition · Yellow handles = T-shirt</div>
-    </div>
+    <div class="hint">💡 Drag blue box to reposition · Click layer to select · Lock to freeze</div>
 
-    <!-- Canvas Front -->
     <div id="canvasWrapperFront">
       <canvas id="previewCanvasFront" width="380" height="480"></canvas>
       <canvas id="overlayCanvasFront" width="380" height="480"></canvas>
     </div>
 
-    <!-- Variant State Panel - BELOW canvas -->
+    <!-- LAYER PANEL FRONT -->
+    <div class="layer-panel" id="layerPanelFront">
+      <div class="layer-panel-header">
+        <span class="layer-panel-title">🗂 Layers (Front)</span>
+        <div class="layer-order-controls">
+          <button title="Bring to Front" onclick="layerBringToFront('front')" id="f-btn-tofront">⤒ Top</button>
+          <button title="Bring Forward" onclick="layerBringForward('front')" id="f-btn-forward">↑ Fwd</button>
+          <button title="Send Backward" onclick="layerSendBackward('front')" id="f-btn-back">↓ Bck</button>
+          <button title="Send to Back" onclick="layerSendToBack('front')" id="f-btn-toback">⤓ Bot</button>
+        </div>
+      </div>
+      <div class="layer-list" id="frontLayerList">
+        <div class="no-layers-msg">No layers yet. Upload a T-shirt or design.</div>
+      </div>
+      <div class="layer-toolbar">
+        <span class="layer-toolbar-label">Selected:</span>
+        <button class="ltb" onclick="layerBringToFront('front')">⤒ To Front</button>
+        <button class="ltb" onclick="layerBringForward('front')">↑ Forward</button>
+        <button class="ltb" onclick="layerSendBackward('front')">↓ Backward</button>
+        <button class="ltb" onclick="layerSendToBack('front')">⤓ To Back</button>
+        <div class="ltb-sep"></div>
+        <button class="ltb" onclick="layerToggleLock('front')" id="f-lock-btn">🔓 Lock</button>
+        <button class="ltb" onclick="layerToggleVisibility('front')" id="f-vis-btn">👁 Hide</button>
+        <div class="ltb-sep"></div>
+        <button class="ltb danger" onclick="layerDeleteSelected('front')">🗑 Delete</button>
+      </div>
+    </div>
+
+    <!-- Variant State Panel -->
     <div class="variant-info">
       <h4>📌 Front Variant State</h4>
       <div class="state-row"><span>Index</span><span id="fsi-index">—</span></div>
@@ -670,7 +525,6 @@ input[type=checkbox] {
       </div>
     </div>
 
-    <!-- Format Selector Front -->
     <div class="format-selector">
       <label>📐 Export Format</label>
       <button class="format-btn active-format" id="frontFmtPNG" onclick="setFrontFormat('png')">🖼 PNG</button>
@@ -678,7 +532,6 @@ input[type=checkbox] {
       <span class="res-tag">2000 × 2000 px</span>
     </div>
 
-    <!-- Output Front -->
     <div>
       <div class="panel-label" style="margin-top:6px;">Front Output</div>
       <div class="btn-row">
@@ -694,7 +547,6 @@ input[type=checkbox] {
   <main class="main-panel" id="backPanel">
     <div class="panel-header back">🔴 Back Mockup</div>
 
-    <!-- Zone Controls Back -->
     <div class="zone-controls">
       <label>🟥 Zone</label>
       <label>X:</label><input type="number" id="backZoneX" value="110" class="zone-input" oninput="updateZoneBackFromInputs()">
@@ -705,17 +557,42 @@ input[type=checkbox] {
       <button class="btn sm ghost" onclick="saveCurrentVariantStateBack()">💾 Save</button>
     </div>
 
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <div class="hint">💡 Drag red box to reposition · Yellow handles = T-shirt</div>
-    </div>
+    <div class="hint">💡 Drag red box to reposition · Click layer to select · Lock to freeze</div>
 
-    <!-- Canvas Back -->
     <div id="canvasWrapperBack">
       <canvas id="previewCanvasBack" width="380" height="480"></canvas>
       <canvas id="overlayCanvasBack" width="380" height="480"></canvas>
     </div>
 
-    <!-- Variant State Panel - BELOW canvas -->
+    <!-- LAYER PANEL BACK -->
+    <div class="layer-panel" id="layerPanelBack">
+      <div class="layer-panel-header">
+        <span class="layer-panel-title">🗂 Layers (Back)</span>
+        <div class="layer-order-controls">
+          <button title="Bring to Front" onclick="layerBringToFront('back')" id="b-btn-tofront">⤒ Top</button>
+          <button title="Bring Forward" onclick="layerBringForward('back')" id="b-btn-forward">↑ Fwd</button>
+          <button title="Send Backward" onclick="layerSendBackward('back')" id="b-btn-back">↓ Bck</button>
+          <button title="Send to Back" onclick="layerSendToBack('back')" id="b-btn-toback">⤓ Bot</button>
+        </div>
+      </div>
+      <div class="layer-list" id="backLayerList">
+        <div class="no-layers-msg">No layers yet. Upload a T-shirt or design.</div>
+      </div>
+      <div class="layer-toolbar">
+        <span class="layer-toolbar-label">Selected:</span>
+        <button class="ltb" onclick="layerBringToFront('back')">⤒ To Front</button>
+        <button class="ltb" onclick="layerBringForward('back')">↑ Forward</button>
+        <button class="ltb" onclick="layerSendBackward('back')">↓ Backward</button>
+        <button class="ltb" onclick="layerSendToBack('back')">⤓ To Back</button>
+        <div class="ltb-sep"></div>
+        <button class="ltb" onclick="layerToggleLock('back')" id="b-lock-btn">🔓 Lock</button>
+        <button class="ltb" onclick="layerToggleVisibility('back')" id="b-vis-btn">👁 Hide</button>
+        <div class="ltb-sep"></div>
+        <button class="ltb danger" onclick="layerDeleteSelected('back')">🗑 Delete</button>
+      </div>
+    </div>
+
+    <!-- Variant State Panel -->
     <div class="variant-info">
       <h4 class="back-title">📌 Back Variant State</h4>
       <div class="state-row"><span>Index</span><span id="bsi-index">—</span></div>
@@ -733,7 +610,6 @@ input[type=checkbox] {
       </div>
     </div>
 
-    <!-- Format Selector Back -->
     <div class="format-selector">
       <label>📐 Export Format</label>
       <button class="format-btn active-format" id="backFmtPNG" onclick="setBackFormat('png')">🖼 PNG</button>
@@ -741,7 +617,6 @@ input[type=checkbox] {
       <span class="res-tag">2000 × 2000 px</span>
     </div>
 
-    <!-- Output Back -->
     <div>
       <div class="panel-label" style="margin-top:6px;">Back Output</div>
       <div class="btn-row">
@@ -753,7 +628,6 @@ input[type=checkbox] {
     </div>
   </main>
 
-  <!-- ===== BOTTOM BAR ===== -->
   <div class="bottom-bar">
     <span style="font-size:11px;color:var(--muted);font-family:var(--mono);">
       Front Variants: <span id="frontVariantCount">0</span> &nbsp;|&nbsp;
@@ -764,7 +638,7 @@ input[type=checkbox] {
       Back Gen: <span id="backGenCount">0</span>
     </span>
     <div class="spacer"></div>
-    <span style="font-size:10px;color:var(--muted);font-family:var(--mono);">Auto Mockup Generator v4.0 · 2000×2000 HD Export</span>
+    <span style="font-size:10px;color:var(--muted);font-family:var(--mono);">Auto Mockup Generator v5.0 · Layer Manager · 2000×2000 HD Export</span>
   </div>
 
 </div>
@@ -773,28 +647,432 @@ input[type=checkbox] {
 <input class="hidden-input" type="file" id="backReplaceInput" accept="image/*">
 
 <script>
-/* ============================================================
-   ========== HIGH-RES EXPORT CONSTANTS ====================
-   ============================================================ */
-
-// Preview canvas dimensions
-const PREVIEW_W = 380;
-const PREVIEW_H = 480;
-
-// Final export dimensions (1:1 square, 2000×2000)
+/* =====================================================================
+   CONSTANTS
+   ===================================================================== */
+const PREVIEW_W   = 380;
+const PREVIEW_H   = 480;
 const EXPORT_SIZE = 2000;
+const SCALE_X     = EXPORT_SIZE / PREVIEW_W;
+const SCALE_Y     = EXPORT_SIZE / PREVIEW_H;
 
-// Scale ratio from preview → export
-const EXPORT_SCALE = EXPORT_SIZE / PREVIEW_W; // ~5.26x from 380px preview
-
-// Fabric.js multiplier for high-res export (3x on the Fabric canvas)
-const FABRIC_MULTIPLIER = 3;
-
-// Format state
 let frontExportFormat = 'png';
-let backExportFormat = 'png';
+let backExportFormat  = 'png';
 
-/* ---- Format Selector Helpers ---- */
+/* =====================================================================
+   LAYER MANAGER
+   Every canvas (front / back) has a LayerManager instance.
+   It tracks all Fabric objects with metadata (name, type, locked, visible).
+   ===================================================================== */
+class LayerManager {
+  constructor(fabricCanvas, side) {
+    this.canvas    = fabricCanvas;
+    this.side      = side; // 'front' | 'back'
+    this.layers    = []; // [{id, obj, name, type, locked, visible}]
+    this._idSeq    = 0;
+    this.selected  = null; // id of currently selected layer
+  }
+
+  _nextId() { return ++this._idSeq; }
+
+  /** Register a Fabric object as a layer */
+  add(obj, name, type) {
+    // Attach layerId to the Fabric object itself for quick reverse lookup
+    const id = this._nextId();
+    obj._layerId = id;
+    this.layers.push({ id, obj, name, type, locked: false, visible: true });
+    this._applyLockState(id);
+    this.canvas.add(obj);
+    // Enforce default Z: tshirt at bottom, design above
+    this._enforceDefaultOrder();
+    this.render();
+    return id;
+  }
+
+  /** Enforce that any tshirt layer is always below any design layer */
+  _enforceDefaultOrder() {
+    // Send all tshirt layers to back, preserve relative order of others
+    const tshirtLayers = this.layers.filter(l => l.type === 'tshirt');
+    const otherLayers  = this.layers.filter(l => l.type !== 'tshirt');
+    tshirtLayers.forEach(l => this.canvas.sendToBack(l.obj));
+    // Bring others on top, in their current relative order
+    otherLayers.forEach(l => this.canvas.bringToFront(l.obj));
+    this.canvas.renderAll();
+  }
+
+  /** Remove a layer by id */
+  remove(id) {
+    const idx = this.layers.findIndex(l => l.id === id);
+    if (idx === -1) return;
+    const layer = this.layers[idx];
+    this.canvas.remove(layer.obj);
+    this.layers.splice(idx, 1);
+    if (this.selected === id) this.selected = null;
+    this.render();
+    this.canvas.renderAll();
+  }
+
+  /** Remove by Fabric object reference */
+  removeObj(obj) {
+    const layer = this.layers.find(l => l.obj === obj);
+    if (layer) this.remove(layer.id);
+  }
+
+  /** Get layer by Fabric object */
+  getByObj(obj) {
+    return this.layers.find(l => l.obj === obj) || null;
+  }
+
+  /** Get layer by id */
+  getById(id) {
+    return this.layers.find(l => l.id === id) || null;
+  }
+
+  /** Select a layer (and set it active on canvas) */
+  select(id) {
+    this.selected = id;
+    const layer = this.getById(id);
+    if (layer && !layer.locked && layer.visible) {
+      this.canvas.setActiveObject(layer.obj);
+      this.canvas.renderAll();
+    }
+    this.render();
+  }
+
+  /** Get selected layer */
+  getSelected() {
+    if (!this.selected) return null;
+    return this.getById(this.selected);
+  }
+
+  /* ---- Z-order operations ---- */
+  bringToFront(id) {
+    const layer = this.getById(id);
+    if (!layer || layer.locked) return;
+    this.canvas.bringToFront(layer.obj);
+    this.canvas.renderAll();
+    this.syncLayerOrderFromCanvas();
+  }
+
+  bringForward(id) {
+    const layer = this.getById(id);
+    if (!layer || layer.locked) return;
+    this.canvas.bringForward(layer.obj);
+    this.canvas.renderAll();
+    this.syncLayerOrderFromCanvas();
+  }
+
+  sendBackward(id) {
+    const layer = this.getById(id);
+    if (!layer || layer.locked) return;
+    this.canvas.sendBackwards(layer.obj);
+    this.canvas.renderAll();
+    this.syncLayerOrderFromCanvas();
+  }
+
+  sendToBack(id) {
+    const layer = this.getById(id);
+    if (!layer || layer.locked) return;
+    this.canvas.sendToBack(layer.obj);
+    this.canvas.renderAll();
+    this.syncLayerOrderFromCanvas();
+  }
+
+  /** After any z-order change, sync this.layers array order to canvas order */
+  syncLayerOrderFromCanvas() {
+    const canvasObjs = this.canvas.getObjects();
+    this.layers.sort((a, b) => {
+      return canvasObjs.indexOf(a.obj) - canvasObjs.indexOf(b.obj);
+    });
+    this.render();
+  }
+
+  /* ---- Lock / Unlock ---- */
+  toggleLock(id) {
+    const layer = this.getById(id);
+    if (!layer) return;
+    layer.locked = !layer.locked;
+    this._applyLockState(id);
+    this.render();
+  }
+
+  _applyLockState(id) {
+    const layer = this.getById(id);
+    if (!layer) return;
+    layer.obj.set({
+      selectable:     !layer.locked,
+      evented:        !layer.locked,
+      lockMovementX:  layer.locked,
+      lockMovementY:  layer.locked,
+      lockScalingX:   layer.locked,
+      lockScalingY:   layer.locked,
+    });
+    if (layer.locked && this.canvas.getActiveObject() === layer.obj) {
+      this.canvas.discardActiveObject();
+    }
+    this.canvas.renderAll();
+  }
+
+  /* ---- Visibility ---- */
+  toggleVisibility(id) {
+    const layer = this.getById(id);
+    if (!layer) return;
+    layer.visible = !layer.visible;
+    layer.obj.set('visible', layer.visible);
+    if (!layer.visible && this.canvas.getActiveObject() === layer.obj) {
+      this.canvas.discardActiveObject();
+    }
+    this.canvas.renderAll();
+    this.render();
+  }
+
+  /** Prevent layer order from changing during object transform */
+  preserveOrderOnTransform() {
+    // Called before each transform; records current z-indices
+    this._savedOrder = this.canvas.getObjects().slice();
+  }
+
+  restoreOrderAfterTransform() {
+    // Restore saved order if it changed (shouldn't happen normally, but guard)
+    if (!this._savedOrder) return;
+    const current = this.canvas.getObjects();
+    let changed = current.some((o, i) => o !== this._savedOrder[i]);
+    if (changed) {
+      this._savedOrder.forEach((obj, idx) => {
+        this.canvas.moveTo(obj, idx);
+      });
+      this.canvas.renderAll();
+    }
+    this._savedOrder = null;
+  }
+
+  /** Rename a layer */
+  rename(id, newName) {
+    const layer = this.getById(id);
+    if (layer) { layer.name = newName; this.render(); }
+  }
+
+  /** Clear all layers */
+  clear() {
+    this.layers.forEach(l => this.canvas.remove(l.obj));
+    this.layers = [];
+    this.selected = null;
+    this.render();
+    this.canvas.renderAll();
+  }
+
+  /** Render the layer panel UI */
+  render() {
+    const listEl  = document.getElementById(this.side + 'LayerList');
+    const lockBtn = document.getElementById((this.side === 'front' ? 'f' : 'b') + '-lock-btn');
+    const visBtn  = document.getElementById((this.side === 'front' ? 'f' : 'b') + '-vis-btn');
+    if (!listEl) return;
+
+    listEl.innerHTML = '';
+    if (this.layers.length === 0) {
+      listEl.innerHTML = '<div class="no-layers-msg">No layers yet. Upload a T-shirt or design.</div>';
+      return;
+    }
+
+    // Render in REVERSE order (top layer shown at top of list, like Photoshop)
+    const reversed = [...this.layers].reverse();
+    reversed.forEach((layer, visualIdx) => {
+      const item = document.createElement('div');
+      const isSelected = layer.id === this.selected;
+      item.className = 'layer-item' +
+        (isSelected ? (this.side === 'back' ? ' selected-back' : ' selected') : '') +
+        (layer.locked ? ' locked' : '');
+      item.dataset.layerId = layer.id;
+
+      // Visibility toggle
+      const visSpan = document.createElement('span');
+      visSpan.className = 'layer-visibility';
+      visSpan.textContent = layer.visible ? '👁' : '🚫';
+      visSpan.title = layer.visible ? 'Hide layer' : 'Show layer';
+      visSpan.onclick = (e) => { e.stopPropagation(); this.toggleVisibility(layer.id); };
+
+      // Type icon
+      const typeIcon = document.createElement('span');
+      typeIcon.className = 'layer-type-icon';
+      typeIcon.textContent = layer.type === 'tshirt' ? '👕' : (layer.type === 'design' ? '🎨' : '📝');
+
+      // Name
+      const nameEl = document.createElement('span');
+      nameEl.className = 'layer-name';
+      nameEl.textContent = layer.name;
+      nameEl.title = 'Double-click to rename';
+      nameEl.ondblclick = (e) => {
+        e.stopPropagation();
+        const n = prompt('Rename layer:', layer.name);
+        if (n && n.trim()) this.rename(layer.id, n.trim());
+      };
+
+      // Z-index badge
+      const zBadge = document.createElement('span');
+      zBadge.className = 'layer-index';
+      const canvasIdx = this.canvas.getObjects().indexOf(layer.obj);
+      zBadge.textContent = 'z:' + canvasIdx;
+      zBadge.title = 'Canvas z-index (0 = bottom)';
+
+      // Lock button
+      const lockEl = document.createElement('button');
+      lockEl.className = 'layer-lock-btn' + (layer.locked ? ' is-locked' : '');
+      lockEl.textContent = layer.locked ? '🔒' : '🔓';
+      lockEl.title = layer.locked ? 'Unlock layer' : 'Lock layer';
+      lockEl.onclick = (e) => { e.stopPropagation(); this.toggleLock(layer.id); this.updateToolbarLabels(); };
+
+      item.appendChild(visSpan);
+      item.appendChild(typeIcon);
+      item.appendChild(nameEl);
+      item.appendChild(zBadge);
+      item.appendChild(lockEl);
+
+      item.onclick = () => { this.select(layer.id); this.updateToolbarLabels(); };
+
+      // Drag-to-reorder (visual only, not z-order drag)
+      item.draggable = true;
+      item.addEventListener('dragstart', () => item.classList.add('dragging'));
+      item.addEventListener('dragend',   () => { item.classList.remove('dragging'); item.classList.remove('drag-over'); });
+      item.addEventListener('dragover',  (e) => { e.preventDefault(); item.classList.add('drag-over'); });
+      item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+      item.addEventListener('drop', (e) => {
+        e.preventDefault();
+        item.classList.remove('drag-over');
+        // Swap via moveTo
+        const srcId  = parseInt(document.querySelector('.layer-item.dragging')?.dataset.layerId);
+        const dstId  = layer.id;
+        if (srcId && srcId !== dstId) {
+          const srcLayer = this.getById(srcId);
+          const dstLayer = this.getById(dstId);
+          if (srcLayer && dstLayer && !srcLayer.locked && !dstLayer.locked) {
+            const dstIdx = this.canvas.getObjects().indexOf(dstLayer.obj);
+            this.canvas.moveTo(srcLayer.obj, dstIdx);
+            this.canvas.renderAll();
+            this.syncLayerOrderFromCanvas();
+          }
+        }
+      });
+
+      listEl.appendChild(item);
+    });
+
+    this.updateToolbarLabels();
+  }
+
+  updateToolbarLabels() {
+    const pre = this.side === 'front' ? 'f' : 'b';
+    const lockBtn = document.getElementById(pre + '-lock-btn');
+    const visBtn  = document.getElementById(pre + '-vis-btn');
+    const sel = this.getSelected();
+    if (lockBtn) lockBtn.textContent = sel?.locked ? '🔒 Unlock' : '🔓 Lock';
+    if (visBtn)  visBtn.textContent  = (!sel || sel.visible) ? '👁 Hide' : '👁 Show';
+  }
+}
+
+/* =====================================================================
+   CANVAS SETUP
+   ===================================================================== */
+const frontCanvas = new fabric.Canvas('previewCanvasFront', { backgroundColor: '#ffffff' });
+const backCanvas  = new fabric.Canvas('previewCanvasBack',  { backgroundColor: '#ffffff' });
+
+const frontLM = new LayerManager(frontCanvas, 'front');
+const backLM  = new LayerManager(backCanvas,  'back');
+
+// Overlay canvases
+const frontOverlayCanvas = document.getElementById('overlayCanvasFront');
+const frontOctx = frontOverlayCanvas.getContext('2d');
+const backOverlayCanvas = document.getElementById('overlayCanvasBack');
+const backOctx = backOverlayCanvas.getContext('2d');
+
+/* =====================================================================
+   LAYER OPERATIONS — bound to UI buttons
+   ===================================================================== */
+function _getLM(side) { return side === 'front' ? frontLM : backLM; }
+
+function layerBringToFront(side) {
+  const lm = _getLM(side);
+  if (!lm.selected) return;
+  lm.bringToFront(lm.selected);
+}
+function layerBringForward(side) {
+  const lm = _getLM(side);
+  if (!lm.selected) return;
+  lm.bringForward(lm.selected);
+}
+function layerSendBackward(side) {
+  const lm = _getLM(side);
+  if (!lm.selected) return;
+  lm.sendBackward(lm.selected);
+}
+function layerSendToBack(side) {
+  const lm = _getLM(side);
+  if (!lm.selected) return;
+  lm.sendToBack(lm.selected);
+}
+function layerToggleLock(side) {
+  const lm = _getLM(side);
+  if (!lm.selected) return;
+  lm.toggleLock(lm.selected);
+  lm.updateToolbarLabels();
+}
+function layerToggleVisibility(side) {
+  const lm = _getLM(side);
+  if (!lm.selected) return;
+  lm.toggleVisibility(lm.selected);
+}
+function layerDeleteSelected(side) {
+  const lm = _getLM(side);
+  if (!lm.selected) return;
+  const layer = lm.getSelected();
+  if (!layer) return;
+  if (!confirm(`Delete layer "${layer.name}"?`)) return;
+  // Also clear references
+  if (side === 'front') {
+    if (layer.type === 'tshirt') { frontTshirtLayer = null; }
+    if (layer.type === 'design') { frontDesignObj = null; frontDesignOriginalSrc = null; document.getElementById('frontDesignInfo').style.display = 'none'; }
+  } else {
+    if (layer.type === 'tshirt') { backTshirtLayer = null; }
+    if (layer.type === 'design') { backDesignObj = null; backDesignOriginalSrc = null; document.getElementById('backDesignInfo').style.display = 'none'; }
+  }
+  lm.remove(lm.selected);
+}
+
+/* =====================================================================
+   PREVENT LAYER REORDERING DURING TRANSFORMS
+   ===================================================================== */
+['object:moving','object:scaling','object:rotating'].forEach(evt => {
+  frontCanvas.on(evt, () => frontLM.syncLayerOrderFromCanvas());
+  backCanvas.on(evt,  () => backLM.syncLayerOrderFromCanvas());
+});
+['object:modified'].forEach(evt => {
+  frontCanvas.on(evt, () => { frontLM.syncLayerOrderFromCanvas(); });
+  backCanvas.on(evt,  () => { backLM.syncLayerOrderFromCanvas(); });
+});
+
+/* Sync layer panel selection when user clicks canvas objects */
+frontCanvas.on('selection:created', (e) => {
+  const obj = e.selected?.[0];
+  if (obj) { const l = frontLM.getByObj(obj); if (l) frontLM.select(l.id); }
+});
+frontCanvas.on('selection:updated', (e) => {
+  const obj = e.selected?.[0];
+  if (obj) { const l = frontLM.getByObj(obj); if (l) frontLM.select(l.id); }
+});
+frontCanvas.on('selection:cleared', () => { frontLM.selected = null; frontLM.render(); });
+
+backCanvas.on('selection:created', (e) => {
+  const obj = e.selected?.[0];
+  if (obj) { const l = backLM.getByObj(obj); if (l) backLM.select(l.id); }
+});
+backCanvas.on('selection:updated', (e) => {
+  const obj = e.selected?.[0];
+  if (obj) { const l = backLM.getByObj(obj); if (l) backLM.select(l.id); }
+});
+backCanvas.on('selection:cleared', () => { backLM.selected = null; backLM.render(); });
+
+/* =====================================================================
+   EXPORT CONSTANTS / HELPERS
+   ===================================================================== */
 function setFrontFormat(fmt) {
   frontExportFormat = fmt;
   document.getElementById('frontFmtPNG').className = 'format-btn' + (fmt === 'png' ? ' active-format' : '');
@@ -806,7 +1084,6 @@ function setBackFormat(fmt) {
   document.getElementById('backFmtJPG').className = 'format-btn' + (fmt === 'jpg' ? ' active-format-jpg' : '');
 }
 
-/* ---- Progress Overlay ---- */
 function showProgress(title) {
   document.getElementById('progressTitle').textContent = title;
   document.getElementById('progressBar').style.width = '0%';
@@ -817,185 +1094,68 @@ function updateProgress(pct, label) {
   document.getElementById('progressBar').style.width = pct + '%';
   document.getElementById('progressLabel').textContent = label;
 }
-function hideProgress() {
-  document.getElementById('progressOverlay').classList.remove('active');
-}
+function hideProgress() { document.getElementById('progressOverlay').classList.remove('active'); }
 
-/* ============================================================
-   ========== HIGH-RES RENDERING ENGINE ===================
-   ============================================================
-
-   Preview canvas : 380 × 480  (UI only — never read for export)
-   Export canvas  : 2000 × 2000 (completely independent draw)
-
-   Scale mapping
-   ─────────────
-   scaleX = EXPORT_SIZE / PREVIEW_W  =  2000 / 380  ≈ 5.263
-   scaleY = EXPORT_SIZE / PREVIEW_H  =  2000 / 480  ≈ 4.167
-
-   Every coordinate from the preview is multiplied by the
-   correct axis-specific ratio:
-
-     exportX  = previewLeft   × scaleX
-     exportY  = previewTop    × scaleY
-     exportW  = previewWidth  × scaleX   (or natW × fabricScaleX × scaleX)
-     exportH  = previewHeight × scaleY   (or natH × fabricScaleY × scaleY)
-
-   All drawing uses the ORIGINAL uploaded image data (full-res
-   data URLs), never the Fabric preview bitmaps.
-   ============================================================ */
-
-// Pixel-exact scale ratios — X and Y are intentionally different
-// because preview is 380×480 (portrait) but export is 2000×2000 (square).
-const SCALE_X = EXPORT_SIZE / PREVIEW_W;   // 2000 / 380 ≈ 5.263
-const SCALE_Y = EXPORT_SIZE / PREVIEW_H;   // 2000 / 480 ≈ 4.167
-
-/**
- * Render a print-ready 2000×2000 mockup from original image sources.
- *
- * @param {string}      tshirtSrc  – Full-res t-shirt data URL (from FileReader)
- * @param {object|null} tState     – Fabric variant state {left,top,scaleX,scaleY}
- *                                   in 380×480 preview coordinates
- * @param {string|null} designSrc  – Full-res design data URL (from FileReader)
- * @param {object|null} designPos  – Design bounding box {left,top,width,height}
- *                                   in 380×480 preview coordinates
- *                                   (width/height = getScaledWidth/Height from Fabric)
- * @returns {Promise<HTMLCanvasElement>}
- */
+/* =====================================================================
+   HIGH-RES RENDER ENGINE
+   ===================================================================== */
 function renderHighResCanvas(tshirtSrc, tState, designSrc, designPos) {
   return new Promise((resolve, reject) => {
-
-    // ── 1. Create the 2000×2000 export canvas ──────────────────────────────
-    const co  = document.createElement('canvas');
+    const co = document.createElement('canvas');
     co.width  = EXPORT_SIZE;
     co.height = EXPORT_SIZE;
     const ctx = co.getContext('2d');
-
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
-
-    // Pure white background (same as preview)
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, EXPORT_SIZE, EXPORT_SIZE);
 
-    // ── 2. Load & draw the T-shirt from its original full-res source ───────
     const tshirtImg = new Image();
-
-    tshirtImg.onerror = () => reject(new Error('T-shirt image failed to load'));
-
+    tshirtImg.onerror = () => reject(new Error('T-shirt load failed'));
     tshirtImg.onload = () => {
       const natW = tshirtImg.naturalWidth;
       const natH = tshirtImg.naturalHeight;
-
       if (tState) {
-        /*
-         * Fabric stores position as (left, top) in preview px,
-         * and scale as multipliers on the natural image size.
-         *
-         * In the preview the object occupies:
-         *   x = left,               y = top
-         *   w = natW × scaleX,      h = natH × scaleY
-         *
-         * Map each axis independently to the 2000×2000 export:
-         *   exportX = left   × SCALE_X
-         *   exportY = top    × SCALE_Y
-         *   exportW = (natW × scaleX) × SCALE_X
-         *   exportH = (natH × scaleY) × SCALE_Y
-         */
-        const destX = tState.left   * SCALE_X;
-        const destY = tState.top    * SCALE_Y;
-        const destW = natW * tState.scaleX * SCALE_X;
-        const destH = natH * tState.scaleY * SCALE_Y;
-
-        ctx.drawImage(tshirtImg, destX, destY, destW, destH);
+        ctx.drawImage(tshirtImg,
+          tState.left   * SCALE_X,
+          tState.top    * SCALE_Y,
+          natW * tState.scaleX * SCALE_X,
+          natH * tState.scaleY * SCALE_Y
+        );
       } else {
-        /*
-         * No saved state: default preview behaviour is scaleToWidth(380),
-         * top-left at (0, 0). Replicate that on the export canvas:
-         *   preview renders as 380 × (natH × 380/natW)
-         *   export  renders as 2000 × (natH × 2000/natW)
-         * which is exactly natW/H drawn at full EXPORT_SIZE width.
-         */
         const defaultH = (natH / natW) * EXPORT_SIZE;
         ctx.drawImage(tshirtImg, 0, 0, EXPORT_SIZE, defaultH);
       }
-
-      // ── 3. Optionally draw the design on top ─────────────────────────────
-      if (!designSrc || !designPos) {
-        resolve(co);
-        return;
-      }
-
+      if (!designSrc || !designPos) { resolve(co); return; }
       const designImg = new Image();
-
-      designImg.onerror = () => {
-        // Design failed — still resolve with the t-shirt alone
-        console.warn('Design image failed to load; exporting t-shirt only.');
-        resolve(co);
-      };
-
+      designImg.onerror = () => resolve(co);
       designImg.onload = () => {
-        /*
-         * designPos.width  = fabricObj.getScaledWidth()   (preview px)
-         * designPos.height = fabricObj.getScaledHeight()  (preview px)
-         *
-         * The design's natural resolution is preserved; we tell the canvas
-         * to draw it at the export-scaled size so it is never upscaled from
-         * a tiny preview bitmap.
-         *
-         * Map each axis independently:
-         *   exportX = designPos.left   × SCALE_X
-         *   exportY = designPos.top    × SCALE_Y
-         *   exportW = designPos.width  × SCALE_X
-         *   exportH = designPos.height × SCALE_Y
-         */
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-
-        const destX = designPos.left   * SCALE_X;
-        const destY = designPos.top    * SCALE_Y;
-        const destW = designPos.width  * SCALE_X;
-        const destH = designPos.height * SCALE_Y;
-
-        ctx.drawImage(designImg, destX, destY, destW, destH);
+        ctx.drawImage(designImg,
+          designPos.left   * SCALE_X,
+          designPos.top    * SCALE_Y,
+          designPos.width  * SCALE_X,
+          designPos.height * SCALE_Y
+        );
         resolve(co);
       };
-
       designImg.src = designSrc;
     };
-
     tshirtImg.src = tshirtSrc;
   });
 }
 
-/**
- * Convert a canvas to a data URL in the chosen format at max quality.
- */
 function canvasToDataURL(canvas, format) {
-  if (format === 'jpg' || format === 'jpeg') {
-    return canvas.toDataURL('image/jpeg', 1.0);
-  }
-  return canvas.toDataURL('image/png');
+  return format === 'jpg' || format === 'jpeg'
+    ? canvas.toDataURL('image/jpeg', 1.0)
+    : canvas.toDataURL('image/png');
 }
+function fmtExt(fmt) { return fmt === 'jpg' ? 'jpg' : 'png'; }
 
-/**
- * Get file extension string.
- */
-function fmtExt(fmt) {
-  return fmt === 'jpg' ? 'jpg' : 'png';
-}
-
-
-/* ============================================================
-   =================== FRONT SYSTEM ==========================
-   ============================================================ */
-
-const frontCanvas = new fabric.Canvas('previewCanvasFront', { backgroundColor: '#ffffff' });
-const frontOverlayCanvas = document.getElementById('overlayCanvasFront');
-const frontOctx = frontOverlayCanvas.getContext('2d');
-
+/* =====================================================================
+   FRONT SYSTEM
+   ===================================================================== */
 let frontDesignObj = null;
-let frontDesignOriginalSrc = null; // Store original full-res design src
+let frontDesignOriginalSrc = null;
 let frontTshirtLayer = null;
 let frontTshirtDataURLs = [];
 let frontTshirtNames = [];
@@ -1016,9 +1176,8 @@ function drawOverlayFront() {
   frontOctx.lineWidth = 2;
   frontOctx.strokeRect(x, y, w, h);
   frontOctx.setLineDash([]);
-  const corners = getFrontCorners();
-  frontOctx.fillStyle = '#6c63ff';
-  corners.forEach(c => {
+  getFrontCorners().forEach(c => {
+    frontOctx.fillStyle = '#6c63ff';
     frontOctx.fillRect(c.x - FRONT_HANDLE/2, c.y - FRONT_HANDLE/2, FRONT_HANDLE, FRONT_HANDLE);
   });
   frontOctx.fillStyle = '#6c63ff';
@@ -1035,19 +1194,12 @@ function getFrontCorners() {
     { x: x+w, y: y+h, cursor: 'se-resize', id: 'se' },
   ];
 }
-
 function hitFrontCorner(mx, my) {
-  return getFrontCorners().find(c =>
-    mx >= c.x - FRONT_HANDLE && mx <= c.x + FRONT_HANDLE &&
-    my >= c.y - FRONT_HANDLE && my <= c.y + FRONT_HANDLE
-  );
+  return getFrontCorners().find(c => mx >= c.x-FRONT_HANDLE && mx <= c.x+FRONT_HANDLE && my >= c.y-FRONT_HANDLE && my <= c.y+FRONT_HANDLE);
 }
-
 function hitFrontZoneBody(mx, my) {
-  return mx >= frontZone.x && mx <= frontZone.x + frontZone.w &&
-         my >= frontZone.y && my <= frontZone.y + frontZone.h;
+  return mx >= frontZone.x && mx <= frontZone.x+frontZone.w && my >= frontZone.y && my <= frontZone.y+frontZone.h;
 }
-
 function syncInputsFromZoneFront() {
   document.getElementById('frontZoneX').value = Math.round(frontZone.x);
   document.getElementById('frontZoneY').value = Math.round(frontZone.y);
@@ -1061,53 +1213,31 @@ document.getElementById('canvasWrapperFront').appendChild(frontHitDiv);
 
 frontHitDiv.addEventListener('mousemove', function(e) {
   const rect = frontHitDiv.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
   if (frontDragState) { handleFrontDrag(mx, my); return; }
   const corner = hitFrontCorner(mx, my);
-  if (corner) {
-    frontHitDiv.style.cursor = corner.cursor;
-    frontHitDiv.style.pointerEvents = 'auto';
-  } else if (hitFrontZoneBody(mx, my)) {
-    frontHitDiv.style.cursor = 'move';
-    frontHitDiv.style.pointerEvents = 'auto';
-  } else {
-    frontHitDiv.style.cursor = 'default';
-    frontHitDiv.style.pointerEvents = 'none';
-  }
+  if (corner) { frontHitDiv.style.cursor = corner.cursor; frontHitDiv.style.pointerEvents = 'auto'; }
+  else if (hitFrontZoneBody(mx, my)) { frontHitDiv.style.cursor = 'move'; frontHitDiv.style.pointerEvents = 'auto'; }
+  else { frontHitDiv.style.cursor = 'default'; frontHitDiv.style.pointerEvents = 'none'; }
 });
-
 frontHitDiv.addEventListener('mousedown', function(e) {
   const rect = frontHitDiv.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
   const corner = hitFrontCorner(mx, my);
-  if (corner) {
-    frontDragState = { mode: 'resize', corner: corner.id, startMx: mx, startMy: my, startZone: { ...frontZone } };
-    e.preventDefault(); return;
-  }
-  if (hitFrontZoneBody(mx, my)) {
-    frontDragState = { mode: 'move', startMx: mx, startMy: my, startZone: { ...frontZone } };
-    e.preventDefault();
-  }
+  if (corner) { frontDragState = { mode: 'resize', corner: corner.id, startMx: mx, startMy: my, startZone: { ...frontZone } }; e.preventDefault(); return; }
+  if (hitFrontZoneBody(mx, my)) { frontDragState = { mode: 'move', startMx: mx, startMy: my, startZone: { ...frontZone } }; e.preventDefault(); }
 });
-
 window.addEventListener('mousemove', function(e) {
   if (!frontDragState) return;
   const rect = frontHitDiv.getBoundingClientRect();
   handleFrontDrag(e.clientX - rect.left, e.clientY - rect.top);
 });
-
 window.addEventListener('mouseup', function() {
-  if (frontDragState) {
-    frontDragState = null;
-    frontHitDiv.style.pointerEvents = 'none';
-  }
+  if (frontDragState) { frontDragState = null; frontHitDiv.style.pointerEvents = 'none'; }
 });
 
 function handleFrontDrag(mx, my) {
-  const dx = mx - frontDragState.startMx;
-  const dy = my - frontDragState.startMy;
+  const dx = mx - frontDragState.startMx, dy = my - frontDragState.startMy;
   const sz = frontDragState.startZone;
   if (frontDragState.mode === 'move') {
     frontZone.x = Math.max(0, Math.min(380 - frontZone.w, sz.x + dx));
@@ -1115,17 +1245,16 @@ function handleFrontDrag(mx, my) {
   } else {
     const id = frontDragState.corner;
     let nx = sz.x, ny = sz.y, nw = sz.w, nh = sz.h;
-    if (id === 'nw') { nx = sz.x+dx; ny = sz.y+dy; nw = sz.w-dx; nh = sz.h-dy; }
-    if (id === 'ne') { ny = sz.y+dy; nw = sz.w+dx; nh = sz.h-dy; }
-    if (id === 'sw') { nx = sz.x+dx; nw = sz.w-dx; nh = sz.h+dy; }
-    if (id === 'se') { nw = sz.w+dx; nh = sz.h+dy; }
+    if (id==='nw') { nx=sz.x+dx; ny=sz.y+dy; nw=sz.w-dx; nh=sz.h-dy; }
+    if (id==='ne') { ny=sz.y+dy; nw=sz.w+dx; nh=sz.h-dy; }
+    if (id==='sw') { nx=sz.x+dx; nw=sz.w-dx; nh=sz.h+dy; }
+    if (id==='se') { nw=sz.w+dx; nh=sz.h+dy; }
     if (nw >= 20) { frontZone.x = nx; frontZone.w = nw; }
     if (nh >= 20) { frontZone.y = ny; frontZone.h = nh; }
   }
   syncInputsFromZoneFront();
   drawOverlayFront();
 }
-
 function updateZoneFrontFromInputs() {
   frontZone.x = parseInt(document.getElementById('frontZoneX').value) || 0;
   frontZone.y = parseInt(document.getElementById('frontZoneY').value) || 0;
@@ -1133,15 +1262,12 @@ function updateZoneFrontFromInputs() {
   frontZone.h = parseInt(document.getElementById('frontZoneH').value) || 20;
   drawOverlayFront();
 }
-
 function fitDesignToZoneFront() {
   if (!frontDesignObj) { alert('Pehle front design upload karein!'); return; }
-  const dw = frontDesignObj.width;
-  const dh = frontDesignObj.height;
-  const scale = Math.min(frontZone.w / dw, frontZone.h / dh);
+  const scale = Math.min(frontZone.w / frontDesignObj.width, frontZone.h / frontDesignObj.height);
   frontDesignObj.set({
-    left: frontZone.x + (frontZone.w - dw * scale) / 2,
-    top:  frontZone.y + (frontZone.h - dh * scale) / 2,
+    left: frontZone.x + (frontZone.w - frontDesignObj.width * scale) / 2,
+    top:  frontZone.y + (frontZone.h - frontDesignObj.height * scale) / 2,
     scaleX: scale, scaleY: scale
   });
   frontCanvas.renderAll();
@@ -1150,41 +1276,20 @@ function fitDesignToZoneFront() {
 function captureVariantStateFront(index) {
   if (!frontTshirtLayer || index < 0 || index >= frontTshirtDataURLs.length) return;
   frontVariantStates[index] = {
-    left:   frontTshirtLayer.left,
-    top:    frontTshirtLayer.top,
-    scaleX: frontTshirtLayer.scaleX,
-    scaleY: frontTshirtLayer.scaleY,
-    saved:  true
+    left: frontTshirtLayer.left, top: frontTshirtLayer.top,
+    scaleX: frontTshirtLayer.scaleX, scaleY: frontTshirtLayer.scaleY, saved: true
   };
   updateVariantStateUIFront();
 }
-
-function applyVariantStateFront(index) {
-  const state = frontVariantStates[index];
-  if (!state || !frontTshirtLayer) return false;
-  frontTshirtLayer.set({
-    left:   state.left,
-    top:    state.top,
-    scaleX: state.scaleX,
-    scaleY: state.scaleY
-  });
-  frontTshirtLayer.setCoords();
-  frontCanvas.renderAll();
-  return true;
-}
-
 function saveCurrentVariantStateFront() {
   captureVariantStateFront(frontActiveThumbIndex);
   const badge = document.getElementById('frontStateBadge');
-  badge.className = 'state-badge saved';
-  badge.textContent = '✓ State Saved';
-  badge.style.display = 'inline-flex';
+  badge.className = 'state-badge saved'; badge.textContent = '✓ State Saved'; badge.style.display = 'inline-flex';
   updateVariantInfoPanelFront();
   renderTshirtListFront();
 }
-
 function updateVariantInfoPanelFront() {
-  if (!frontTshirtLayer || frontTshirtDataURLs.length === 0) return;
+  if (!frontTshirtLayer || !frontTshirtDataURLs.length) return;
   document.getElementById('fsi-index').textContent = frontActiveThumbIndex;
   document.getElementById('fsi-name').textContent = frontTshirtNames[frontActiveThumbIndex] || '—';
   document.getElementById('fsi-left').textContent = Math.round(frontTshirtLayer.left);
@@ -1196,37 +1301,27 @@ function updateVariantInfoPanelFront() {
   const hasSaved = frontVariantStates[frontActiveThumbIndex]?.saved;
   const badge = document.getElementById('frontStateBadge');
   badge.style.display = 'inline-flex';
-  if (hasSaved) { badge.className = 'state-badge saved'; badge.textContent = '✓ State Saved'; }
-  else { badge.className = 'state-badge unsaved'; badge.textContent = '⚠ Not Saved Yet'; }
+  badge.className = 'state-badge ' + (hasSaved ? 'saved' : 'unsaved');
+  badge.textContent = hasSaved ? '✓ State Saved' : '⚠ Not Saved Yet';
 }
 
-frontCanvas.on('object:modified', function(e) {
-  if (e.target && e.target.name === 'tshirtLayerFront') {
-    captureVariantStateFront(frontActiveThumbIndex);
-    updateVariantInfoPanelFront();
-  }
+frontCanvas.on('object:modified', e => {
+  if (e.target?.name === 'tshirtLayerFront') { captureVariantStateFront(frontActiveThumbIndex); updateVariantInfoPanelFront(); }
+  frontLM.syncLayerOrderFromCanvas();
 });
-frontCanvas.on('object:moving', function(e) {
-  if (e.target && e.target.name === 'tshirtLayerFront') updateLiveInfoFront(e);
-});
-frontCanvas.on('object:scaling', function(e) {
-  if (e.target && e.target.name === 'tshirtLayerFront') updateLiveInfoFront(e);
-});
+frontCanvas.on('object:moving', e => { if (e.target?.name === 'tshirtLayerFront') updateLiveInfoFront(e); });
+frontCanvas.on('object:scaling', e => { if (e.target?.name === 'tshirtLayerFront') updateLiveInfoFront(e); });
 
 function updateLiveInfoFront(e) {
-  if (e.target && e.target.name === 'tshirtLayerFront') {
-    document.getElementById('fsi-left').textContent = Math.round(e.target.left);
-    document.getElementById('fsi-top').textContent = Math.round(e.target.top);
-    document.getElementById('fsi-sx').textContent = e.target.scaleX.toFixed(4);
-    document.getElementById('fsi-sy').textContent = e.target.scaleY.toFixed(4);
-    document.getElementById('fsi-w').textContent = Math.round(e.target.getScaledWidth()) + 'px';
-    document.getElementById('fsi-h').textContent = Math.round(e.target.getScaledHeight()) + 'px';
-  }
+  document.getElementById('fsi-left').textContent = Math.round(e.target.left);
+  document.getElementById('fsi-top').textContent = Math.round(e.target.top);
+  document.getElementById('fsi-sx').textContent = e.target.scaleX.toFixed(4);
+  document.getElementById('fsi-sy').textContent = e.target.scaleY.toFixed(4);
+  document.getElementById('fsi-w').textContent = Math.round(e.target.getScaledWidth()) + 'px';
+  document.getElementById('fsi-h').textContent = Math.round(e.target.getScaledHeight()) + 'px';
 }
-
 function updateVariantStateUIFront() {
-  const savedCount = frontVariantStates.filter(s => s && s.saved).length;
-  document.getElementById('frontSavedCount').textContent = savedCount;
+  document.getElementById('frontSavedCount').textContent = frontVariantStates.filter(s => s?.saved).length;
   document.getElementById('frontVariantCount').textContent = frontTshirtDataURLs.length;
   const listEl = document.getElementById('frontVariantStateList');
   listEl.innerHTML = '';
@@ -1236,7 +1331,7 @@ function updateVariantStateUIFront() {
     row.style.cssText = 'padding:3px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;';
     const name = document.createElement('span');
     name.style.cssText = 'max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)';
-    name.textContent = `#${i} ${frontTshirtNames[i] || 'variant'}`;
+    name.textContent = `#${i} ${frontTshirtNames[i]||'variant'}`;
     const status = document.createElement('span');
     status.style.color = s?.saved ? 'var(--accent3)' : 'var(--muted)';
     status.textContent = s?.saved ? '✓ saved' : '○ default';
@@ -1254,9 +1349,7 @@ function addTshirtsFront(files) {
       frontVariantStates.push(null);
       renderTshirtListFront();
       updateVariantStateUIFront();
-      if (frontTshirtDataURLs.length === 1) {
-        setTshirtBackgroundFront(frontTshirtDataURLs[0], 0);
-      }
+      if (frontTshirtDataURLs.length === 1) setTshirtBackgroundFront(frontTshirtDataURLs[0], 0);
     };
     r.readAsDataURL(file);
   });
@@ -1274,8 +1367,7 @@ function deleteTshirtFront(index) {
   if (frontTshirtDataURLs.length > 0) {
     setTshirtBackgroundFront(frontTshirtDataURLs[frontActiveThumbIndex], frontActiveThumbIndex);
   } else {
-    if (frontTshirtLayer) { frontCanvas.remove(frontTshirtLayer); frontTshirtLayer = null; }
-    frontCanvas.renderAll();
+    if (frontTshirtLayer) { frontLM.removeObj(frontTshirtLayer); frontTshirtLayer = null; }
   }
 }
 
@@ -1306,39 +1398,21 @@ function renderTshirtListFront() {
     let cls = 'tshirt-thumb' + (i === frontActiveThumbIndex ? ' active' : '');
     if (frontVariantStates[i]?.saved) cls += ' saved-state';
     wrap.className = cls;
-
     const img = document.createElement('img');
     img.src = src; img.title = frontTshirtNames[i];
     img.onclick = () => switchVariantFront(i);
-
     const name = document.createElement('div');
-    name.className = 'tname';
-    name.textContent = frontTshirtNames[i];
-
+    name.className = 'tname'; name.textContent = frontTshirtNames[i];
     wrap.ondblclick = (e) => {
       e.stopPropagation();
-      const newName = prompt('Rename variant:', frontTshirtNames[i]);
-      if (newName !== null && newName.trim() !== '') {
-        frontTshirtNames[i] = newName.trim();
-        renderTshirtListFront();
-        updateVariantStateUIFront();
-        if (i === frontActiveThumbIndex) updateVariantInfoPanelFront();
-      }
+      const n = prompt('Rename variant:', frontTshirtNames[i]);
+      if (n && n.trim()) { frontTshirtNames[i] = n.trim(); renderTshirtListFront(); updateVariantStateUIFront(); if (i === frontActiveThumbIndex) updateVariantInfoPanelFront(); }
     };
-
-    const btns = document.createElement('div');
-    btns.className = 'thumb-btns';
-
-    const rb = document.createElement('button');
-    rb.className = 'btn warn sm'; rb.textContent = '↺';
-    rb.title = 'Replace image';
+    const btns = document.createElement('div'); btns.className = 'thumb-btns';
+    const rb = document.createElement('button'); rb.className = 'btn warn sm'; rb.textContent = '↺'; rb.title = 'Replace';
     rb.onclick = e => { e.stopPropagation(); replaceTshirtFront(i); };
-
-    const db = document.createElement('button');
-    db.className = 'btn danger sm'; db.textContent = '✕';
-    db.title = 'Delete variant';
+    const db = document.createElement('button'); db.className = 'btn danger sm'; db.textContent = '✕'; db.title = 'Delete';
     db.onclick = e => { e.stopPropagation(); deleteTshirtFront(i); };
-
     btns.appendChild(rb); btns.appendChild(db);
     wrap.appendChild(img); wrap.appendChild(name); wrap.appendChild(btns);
     list.appendChild(wrap);
@@ -1346,10 +1420,7 @@ function renderTshirtListFront() {
 }
 
 function switchVariantFront(newIndex) {
-  if (newIndex === frontActiveThumbIndex && frontTshirtLayer) {
-    captureVariantStateFront(frontActiveThumbIndex);
-    return;
-  }
+  if (newIndex === frontActiveThumbIndex && frontTshirtLayer) { captureVariantStateFront(frontActiveThumbIndex); return; }
   captureVariantStateFront(frontActiveThumbIndex);
   frontActiveThumbIndex = newIndex;
   renderTshirtListFront();
@@ -1360,14 +1431,22 @@ function loadDesignFront(file) {
   if (!file) return;
   const r = new FileReader();
   r.onload = e => {
-    frontDesignOriginalSrc = e.target.result; // Store original full-res src
-    if (frontDesignObj) frontCanvas.remove(frontDesignObj);
+    frontDesignOriginalSrc = e.target.result;
+    if (frontDesignObj) { frontLM.removeObj(frontDesignObj); frontDesignObj = null; }
     fabric.Image.fromURL(e.target.result, img => {
-      img.set({ left: 150, top: 180, scaleX: 0.4, scaleY: 0.4 });
+      img.set({ left: 150, top: 180, scaleX: 0.4, scaleY: 0.4,
+        selectable: true, evented: true, lockRotation: true, hasRotatingPoint: false,
+        cornerColor: '#43e8b0', cornerStrokeColor: '#059669', cornerSize: 12, transparentCorners: false,
+        name: 'designLayerFront'
+      });
       frontDesignObj = img;
-      frontCanvas.add(img);
+      // Add via LM (which places it above tshirt automatically)
+      frontLM.add(img, '🎨 ' + file.name, 'design');
       frontCanvas.setActiveObject(img);
       frontCanvas.renderAll();
+      // Select this layer in LM
+      const l = frontLM.getByObj(img);
+      if (l) frontLM.select(l.id);
     });
     document.getElementById('frontDesignName').textContent = '🎨 ' + file.name;
     document.getElementById('frontDesignInfo').style.display = 'block';
@@ -1377,7 +1456,7 @@ function loadDesignFront(file) {
 }
 
 function removeDesignFront() {
-  if (frontDesignObj) { frontCanvas.remove(frontDesignObj); frontDesignObj = null; frontCanvas.renderAll(); }
+  if (frontDesignObj) { frontLM.removeObj(frontDesignObj); frontDesignObj = null; }
   frontDesignOriginalSrc = null;
   document.getElementById('frontDesignInfo').style.display = 'none';
 }
@@ -1389,79 +1468,54 @@ function loadPreviewFront() {
 
 function setTshirtBackgroundFront(src, index) {
   frontActiveThumbIndex = index;
-  if (frontTshirtLayer) { frontCanvas.remove(frontTshirtLayer); frontTshirtLayer = null; }
+  // Remove old tshirt layer from LM (not design)
+  if (frontTshirtLayer) { frontLM.removeObj(frontTshirtLayer); frontTshirtLayer = null; }
 
   fabric.Image.fromURL(src, img => {
     const saved = frontVariantStates[index];
     if (saved) {
       img.set({ left: saved.left, top: saved.top, scaleX: saved.scaleX, scaleY: saved.scaleY });
     } else {
-      img.scaleToWidth(380);
-      img.set({ left: 0, top: 0 });
+      img.scaleToWidth(380); img.set({ left: 0, top: 0 });
     }
     img.set({
-      selectable: true,
-      evented: true,
-      lockRotation: true,
-      hasRotatingPoint: false,
-      cornerColor: '#f59e0b',
-      cornerStrokeColor: '#b45309',
-      cornerSize: 12,
-      transparentCorners: false,
+      selectable: true, evented: true, lockRotation: true, hasRotatingPoint: false,
+      cornerColor: '#f59e0b', cornerStrokeColor: '#b45309', cornerSize: 12, transparentCorners: false,
       name: 'tshirtLayerFront'
     });
     frontTshirtLayer = img;
-    frontCanvas.add(img);
-    frontCanvas.sendToBack(img);
-    if (frontDesignObj) frontCanvas.bringToFront(frontDesignObj);
+    // Add via LM — it will enforce tshirt goes to bottom
+    frontLM.add(img, '👕 ' + (frontTshirtNames[index] || 'T-shirt'), 'tshirt');
     frontCanvas.renderAll();
     drawOverlayFront();
     updateVariantInfoPanelFront();
     updateVariantStateUIFront();
+    // Select the tshirt layer in panel
+    const l = frontLM.getByObj(img);
+    if (l) frontLM.select(l.id);
   });
 }
 
 async function generateFront() {
   if (!frontTshirtDataURLs.length) { alert('Pehle front T-shirts upload karein!'); return; }
   captureVariantStateFront(frontActiveThumbIndex);
-
   document.getElementById('frontOutput').innerHTML = '';
   frontGeneratedImages = [];
-
-  // Capture design position from Fabric canvas (in preview coords)
-  let designSrc = null;
-  let designPos = null;
+  let designSrc = null, designPos = null;
   if (frontDesignObj && frontDesignOriginalSrc) {
-    designSrc = frontDesignOriginalSrc; // Full-res source, NOT toDataURL (no quality loss)
-    designPos = {
-      left:   frontDesignObj.left,
-      top:    frontDesignObj.top,
-      width:  frontDesignObj.getScaledWidth(),
-      height: frontDesignObj.getScaledHeight()
-    };
+    designSrc = frontDesignOriginalSrc;
+    designPos = { left: frontDesignObj.left, top: frontDesignObj.top,
+      width: frontDesignObj.getScaledWidth(), height: frontDesignObj.getScaledHeight() };
   }
-
   const total = frontTshirtDataURLs.length;
   const fmt = frontExportFormat;
-  showProgress(`⚡ Generating ${total} Front Mockup${total > 1 ? 's' : ''} (2000×2000 ${fmt.toUpperCase()})...`);
-
+  showProgress(`⚡ Generating ${total} Front Mockup${total>1?'s':''} (2000×2000 ${fmt.toUpperCase()})...`);
   for (let index = 0; index < total; index++) {
-    updateProgress(
-      Math.round((index / total) * 100),
-      `Rendering variant ${index + 1} of ${total}...`
-    );
-
-    // Small async yield to let browser breathe between renders
+    updateProgress(Math.round((index/total)*100), `Rendering variant ${index+1} of ${total}...`);
     await new Promise(r => setTimeout(r, 20));
-
-    const tshirtSrc = frontTshirtDataURLs[index];
-    const tState = frontVariantStates[index];
-
-    const hiresCanvas = await renderHighResCanvas(tshirtSrc, tState, designSrc, designPos);
-    const dataURL = canvasToDataURL(hiresCanvas, fmt);
-    saveFrontOutput(dataURL, index, fmt);
+    const hiresCanvas = await renderHighResCanvas(frontTshirtDataURLs[index], frontVariantStates[index], designSrc, designPos);
+    saveFrontOutput(canvasToDataURL(hiresCanvas, fmt), index, fmt);
   }
-
   updateProgress(100, 'Done!');
   await new Promise(r => setTimeout(r, 400));
   hideProgress();
@@ -1471,91 +1525,43 @@ function saveFrontOutput(dataURL, index, fmt) {
   frontGeneratedImages.push(dataURL);
   const imgIndex = frontGeneratedImages.length - 1;
   const ext = fmtExt(fmt);
-
-  const box = document.createElement('div');
-  box.className = 'output-box'; box.id = 'front-output-box-' + imgIndex;
-
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox'; checkbox.value = imgIndex;
-
-  const labelEl = document.createElement('label');
-  labelEl.appendChild(checkbox);
-  labelEl.appendChild(document.createTextNode(` Front V${index + 1} · ${fmt.toUpperCase()}`));
-
-  const img = document.createElement('img');
-  img.src = dataURL; img.width = 130;
-
-  // Resolution badge
+  const box = document.createElement('div'); box.className = 'output-box'; box.id = 'front-output-box-' + imgIndex;
+  const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.value = imgIndex;
+  const labelEl = document.createElement('label'); labelEl.appendChild(checkbox); labelEl.appendChild(document.createTextNode(` Front V${index+1} · ${fmt.toUpperCase()}`));
+  const img = document.createElement('img'); img.src = dataURL; img.width = 130;
   const resBadge = document.createElement('div');
   resBadge.style.cssText = 'font-family:var(--mono);font-size:9px;color:var(--accent3);background:rgba(67,232,176,0.08);border:1px solid rgba(67,232,176,0.2);padding:2px 6px;border-radius:4px;';
   resBadge.textContent = '2000 × 2000 px';
-
-  const btnRow = document.createElement('div');
-  btnRow.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;justify-content:center;';
-
-  const dlBtn = document.createElement('button');
-  dlBtn.className = 'btn sm'; dlBtn.textContent = '⬇';
-  dlBtn.title = `Download ${fmt.toUpperCase()}`;
-  dlBtn.onclick = () => downloadImage(dataURL, `front_v${index + 1}_2000px.${ext}`);
-
-  const delBtn = document.createElement('button');
-  delBtn.className = 'btn danger sm'; delBtn.textContent = '✕';
-  delBtn.title = 'Delete';
-  delBtn.onclick = () => {
-    document.getElementById('front-output-box-' + imgIndex).remove();
-    frontGeneratedImages[imgIndex] = null;
-    updateFrontGenCount();
-  };
-
+  const btnRow = document.createElement('div'); btnRow.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;justify-content:center;';
+  const dlBtn = document.createElement('button'); dlBtn.className = 'btn sm'; dlBtn.textContent = '⬇'; dlBtn.title = `Download ${fmt.toUpperCase()}`;
+  dlBtn.onclick = () => downloadImage(dataURL, `front_v${index+1}_2000px.${ext}`);
+  const delBtn = document.createElement('button'); delBtn.className = 'btn danger sm'; delBtn.textContent = '✕';
+  delBtn.onclick = () => { document.getElementById('front-output-box-'+imgIndex).remove(); frontGeneratedImages[imgIndex] = null; updateFrontGenCount(); };
   btnRow.appendChild(dlBtn); btnRow.appendChild(delBtn);
   box.appendChild(labelEl); box.appendChild(img); box.appendChild(resBadge); box.appendChild(btnRow);
   document.getElementById('frontOutput').appendChild(box);
   updateFrontGenCount();
 }
-
-function updateFrontGenCount() {
-  document.getElementById('frontGenCount').textContent = document.querySelectorAll('#frontOutput .output-box').length;
-}
-
-function selectAllOutputsFront() {
-  document.querySelectorAll('#frontOutput input[type=checkbox]').forEach(cb => cb.checked = true);
-}
-
+function updateFrontGenCount() { document.getElementById('frontGenCount').textContent = document.querySelectorAll('#frontOutput .output-box').length; }
+function selectAllOutputsFront() { document.querySelectorAll('#frontOutput input[type=checkbox]').forEach(cb => cb.checked = true); }
 function downloadSelectedFront() {
   const selected = document.querySelectorAll('#frontOutput input:checked');
   if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
   const ext = fmtExt(frontExportFormat);
-  selected.forEach((cb, i) => {
-    if (frontGeneratedImages[cb.value]) downloadImage(frontGeneratedImages[cb.value], `front_selected_${i+1}_2000px.${ext}`);
-  });
+  selected.forEach((cb, i) => { if (frontGeneratedImages[cb.value]) downloadImage(frontGeneratedImages[cb.value], `front_selected_${i+1}_2000px.${ext}`); });
 }
-
 function downloadZIPFront() {
   const selected = document.querySelectorAll('#frontOutput input:checked');
   if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
   const ext = fmtExt(frontExportFormat);
   const zip = new JSZip();
-  selected.forEach((cb, i) => {
-    if (frontGeneratedImages[cb.value]) {
-      const base64 = frontGeneratedImages[cb.value].split(',')[1];
-      zip.file(`front_${i+1}_2000px.${ext}`, base64, { base64: true });
-    }
-  });
-  zip.generateAsync({ type: 'blob' }).then(content => {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content); link.download = `front_mockups_2000px.zip`; link.click();
-  });
+  selected.forEach((cb, i) => { if (frontGeneratedImages[cb.value]) zip.file(`front_${i+1}_2000px.${ext}`, frontGeneratedImages[cb.value].split(',')[1], { base64: true }); });
+  zip.generateAsync({ type: 'blob' }).then(content => { const a = document.createElement('a'); a.href = URL.createObjectURL(content); a.download = `front_mockups_2000px.zip`; a.click(); });
 }
 
-
-/* ============================================================
-   =================== BACK SYSTEM ===========================
-   ============================================================ */
-
-const backCanvas = new fabric.Canvas('previewCanvasBack', { backgroundColor: '#ffffff' });
-const backOverlayCanvas = document.getElementById('overlayCanvasBack');
-const backOctx = backOverlayCanvas.getContext('2d');
-
+/* =====================================================================
+   BACK SYSTEM (mirrors Front)
+   ===================================================================== */
 let backDesignObj = null;
 let backDesignOriginalSrc = null;
 let backTshirtLayer = null;
@@ -1578,9 +1584,8 @@ function drawOverlayBack() {
   backOctx.lineWidth = 2;
   backOctx.strokeRect(x, y, w, h);
   backOctx.setLineDash([]);
-  const corners = getBackCorners();
-  backOctx.fillStyle = '#ff6584';
-  corners.forEach(c => {
+  getBackCorners().forEach(c => {
+    backOctx.fillStyle = '#ff6584';
     backOctx.fillRect(c.x - BACK_HANDLE/2, c.y - BACK_HANDLE/2, BACK_HANDLE, BACK_HANDLE);
   });
   backOctx.fillStyle = '#ff6584';
@@ -1597,19 +1602,12 @@ function getBackCorners() {
     { x: x+w, y: y+h, cursor: 'se-resize', id: 'se' },
   ];
 }
-
 function hitBackCorner(mx, my) {
-  return getBackCorners().find(c =>
-    mx >= c.x - BACK_HANDLE && mx <= c.x + BACK_HANDLE &&
-    my >= c.y - BACK_HANDLE && my <= c.y + BACK_HANDLE
-  );
+  return getBackCorners().find(c => mx >= c.x-BACK_HANDLE && mx <= c.x+BACK_HANDLE && my >= c.y-BACK_HANDLE && my <= c.y+BACK_HANDLE);
 }
-
 function hitBackZoneBody(mx, my) {
-  return mx >= backZone.x && mx <= backZone.x + backZone.w &&
-         my >= backZone.y && my <= backZone.y + backZone.h;
+  return mx >= backZone.x && mx <= backZone.x+backZone.w && my >= backZone.y && my <= backZone.y+backZone.h;
 }
-
 function syncInputsFromZoneBack() {
   document.getElementById('backZoneX').value = Math.round(backZone.x);
   document.getElementById('backZoneY').value = Math.round(backZone.y);
@@ -1623,53 +1621,31 @@ document.getElementById('canvasWrapperBack').appendChild(backHitDiv);
 
 backHitDiv.addEventListener('mousemove', function(e) {
   const rect = backHitDiv.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
   if (backDragState) { handleBackDrag(mx, my); return; }
   const corner = hitBackCorner(mx, my);
-  if (corner) {
-    backHitDiv.style.cursor = corner.cursor;
-    backHitDiv.style.pointerEvents = 'auto';
-  } else if (hitBackZoneBody(mx, my)) {
-    backHitDiv.style.cursor = 'move';
-    backHitDiv.style.pointerEvents = 'auto';
-  } else {
-    backHitDiv.style.cursor = 'default';
-    backHitDiv.style.pointerEvents = 'none';
-  }
+  if (corner) { backHitDiv.style.cursor = corner.cursor; backHitDiv.style.pointerEvents = 'auto'; }
+  else if (hitBackZoneBody(mx, my)) { backHitDiv.style.cursor = 'move'; backHitDiv.style.pointerEvents = 'auto'; }
+  else { backHitDiv.style.cursor = 'default'; backHitDiv.style.pointerEvents = 'none'; }
 });
-
 backHitDiv.addEventListener('mousedown', function(e) {
   const rect = backHitDiv.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
   const corner = hitBackCorner(mx, my);
-  if (corner) {
-    backDragState = { mode: 'resize', corner: corner.id, startMx: mx, startMy: my, startZone: { ...backZone } };
-    e.preventDefault(); return;
-  }
-  if (hitBackZoneBody(mx, my)) {
-    backDragState = { mode: 'move', startMx: mx, startMy: my, startZone: { ...backZone } };
-    e.preventDefault();
-  }
+  if (corner) { backDragState = { mode: 'resize', corner: corner.id, startMx: mx, startMy: my, startZone: { ...backZone } }; e.preventDefault(); return; }
+  if (hitBackZoneBody(mx, my)) { backDragState = { mode: 'move', startMx: mx, startMy: my, startZone: { ...backZone } }; e.preventDefault(); }
 });
-
 window.addEventListener('mousemove', function(e) {
   if (!backDragState) return;
   const rect = backHitDiv.getBoundingClientRect();
   handleBackDrag(e.clientX - rect.left, e.clientY - rect.top);
 });
-
 window.addEventListener('mouseup', function() {
-  if (backDragState) {
-    backDragState = null;
-    backHitDiv.style.pointerEvents = 'none';
-  }
+  if (backDragState) { backDragState = null; backHitDiv.style.pointerEvents = 'none'; }
 });
 
 function handleBackDrag(mx, my) {
-  const dx = mx - backDragState.startMx;
-  const dy = my - backDragState.startMy;
+  const dx = mx - backDragState.startMx, dy = my - backDragState.startMy;
   const sz = backDragState.startZone;
   if (backDragState.mode === 'move') {
     backZone.x = Math.max(0, Math.min(380 - backZone.w, sz.x + dx));
@@ -1677,17 +1653,16 @@ function handleBackDrag(mx, my) {
   } else {
     const id = backDragState.corner;
     let nx = sz.x, ny = sz.y, nw = sz.w, nh = sz.h;
-    if (id === 'nw') { nx = sz.x+dx; ny = sz.y+dy; nw = sz.w-dx; nh = sz.h-dy; }
-    if (id === 'ne') { ny = sz.y+dy; nw = sz.w+dx; nh = sz.h-dy; }
-    if (id === 'sw') { nx = sz.x+dx; nw = sz.w-dx; nh = sz.h+dy; }
-    if (id === 'se') { nw = sz.w+dx; nh = sz.h+dy; }
+    if (id==='nw') { nx=sz.x+dx; ny=sz.y+dy; nw=sz.w-dx; nh=sz.h-dy; }
+    if (id==='ne') { ny=sz.y+dy; nw=sz.w+dx; nh=sz.h-dy; }
+    if (id==='sw') { nx=sz.x+dx; nw=sz.w-dx; nh=sz.h+dy; }
+    if (id==='se') { nw=sz.w+dx; nh=sz.h+dy; }
     if (nw >= 20) { backZone.x = nx; backZone.w = nw; }
     if (nh >= 20) { backZone.y = ny; backZone.h = nh; }
   }
   syncInputsFromZoneBack();
   drawOverlayBack();
 }
-
 function updateZoneBackFromInputs() {
   backZone.x = parseInt(document.getElementById('backZoneX').value) || 0;
   backZone.y = parseInt(document.getElementById('backZoneY').value) || 0;
@@ -1695,15 +1670,12 @@ function updateZoneBackFromInputs() {
   backZone.h = parseInt(document.getElementById('backZoneH').value) || 20;
   drawOverlayBack();
 }
-
 function fitDesignToZoneBack() {
   if (!backDesignObj) { alert('Pehle back design upload karein!'); return; }
-  const dw = backDesignObj.width;
-  const dh = backDesignObj.height;
-  const scale = Math.min(backZone.w / dw, backZone.h / dh);
+  const scale = Math.min(backZone.w / backDesignObj.width, backZone.h / backDesignObj.height);
   backDesignObj.set({
-    left: backZone.x + (backZone.w - dw * scale) / 2,
-    top:  backZone.y + (backZone.h - dh * scale) / 2,
+    left: backZone.x + (backZone.w - backDesignObj.width * scale) / 2,
+    top:  backZone.y + (backZone.h - backDesignObj.height * scale) / 2,
     scaleX: scale, scaleY: scale
   });
   backCanvas.renderAll();
@@ -1712,41 +1684,20 @@ function fitDesignToZoneBack() {
 function captureVariantStateBack(index) {
   if (!backTshirtLayer || index < 0 || index >= backTshirtDataURLs.length) return;
   backVariantStates[index] = {
-    left:   backTshirtLayer.left,
-    top:    backTshirtLayer.top,
-    scaleX: backTshirtLayer.scaleX,
-    scaleY: backTshirtLayer.scaleY,
-    saved:  true
+    left: backTshirtLayer.left, top: backTshirtLayer.top,
+    scaleX: backTshirtLayer.scaleX, scaleY: backTshirtLayer.scaleY, saved: true
   };
   updateVariantStateUIBack();
 }
-
-function applyVariantStateBack(index) {
-  const state = backVariantStates[index];
-  if (!state || !backTshirtLayer) return false;
-  backTshirtLayer.set({
-    left:   state.left,
-    top:    state.top,
-    scaleX: state.scaleX,
-    scaleY: state.scaleY
-  });
-  backTshirtLayer.setCoords();
-  backCanvas.renderAll();
-  return true;
-}
-
 function saveCurrentVariantStateBack() {
   captureVariantStateBack(backActiveThumbIndex);
   const badge = document.getElementById('backStateBadge');
-  badge.className = 'state-badge saved';
-  badge.textContent = '✓ State Saved';
-  badge.style.display = 'inline-flex';
+  badge.className = 'state-badge saved'; badge.textContent = '✓ State Saved'; badge.style.display = 'inline-flex';
   updateVariantInfoPanelBack();
   renderTshirtListBack();
 }
-
 function updateVariantInfoPanelBack() {
-  if (!backTshirtLayer || backTshirtDataURLs.length === 0) return;
+  if (!backTshirtLayer || !backTshirtDataURLs.length) return;
   document.getElementById('bsi-index').textContent = backActiveThumbIndex;
   document.getElementById('bsi-name').textContent = backTshirtNames[backActiveThumbIndex] || '—';
   document.getElementById('bsi-left').textContent = Math.round(backTshirtLayer.left);
@@ -1758,37 +1709,27 @@ function updateVariantInfoPanelBack() {
   const hasSaved = backVariantStates[backActiveThumbIndex]?.saved;
   const badge = document.getElementById('backStateBadge');
   badge.style.display = 'inline-flex';
-  if (hasSaved) { badge.className = 'state-badge saved'; badge.textContent = '✓ State Saved'; }
-  else { badge.className = 'state-badge unsaved'; badge.textContent = '⚠ Not Saved Yet'; }
+  badge.className = 'state-badge ' + (hasSaved ? 'saved' : 'unsaved');
+  badge.textContent = hasSaved ? '✓ State Saved' : '⚠ Not Saved Yet';
 }
 
-backCanvas.on('object:modified', function(e) {
-  if (e.target && e.target.name === 'tshirtLayerBack') {
-    captureVariantStateBack(backActiveThumbIndex);
-    updateVariantInfoPanelBack();
-  }
+backCanvas.on('object:modified', e => {
+  if (e.target?.name === 'tshirtLayerBack') { captureVariantStateBack(backActiveThumbIndex); updateVariantInfoPanelBack(); }
+  backLM.syncLayerOrderFromCanvas();
 });
-backCanvas.on('object:moving', function(e) {
-  if (e.target && e.target.name === 'tshirtLayerBack') updateLiveInfoBack(e);
-});
-backCanvas.on('object:scaling', function(e) {
-  if (e.target && e.target.name === 'tshirtLayerBack') updateLiveInfoBack(e);
-});
+backCanvas.on('object:moving', e => { if (e.target?.name === 'tshirtLayerBack') updateLiveInfoBack(e); });
+backCanvas.on('object:scaling', e => { if (e.target?.name === 'tshirtLayerBack') updateLiveInfoBack(e); });
 
 function updateLiveInfoBack(e) {
-  if (e.target && e.target.name === 'tshirtLayerBack') {
-    document.getElementById('bsi-left').textContent = Math.round(e.target.left);
-    document.getElementById('bsi-top').textContent = Math.round(e.target.top);
-    document.getElementById('bsi-sx').textContent = e.target.scaleX.toFixed(4);
-    document.getElementById('bsi-sy').textContent = e.target.scaleY.toFixed(4);
-    document.getElementById('bsi-w').textContent = Math.round(e.target.getScaledWidth()) + 'px';
-    document.getElementById('bsi-h').textContent = Math.round(e.target.getScaledHeight()) + 'px';
-  }
+  document.getElementById('bsi-left').textContent = Math.round(e.target.left);
+  document.getElementById('bsi-top').textContent = Math.round(e.target.top);
+  document.getElementById('bsi-sx').textContent = e.target.scaleX.toFixed(4);
+  document.getElementById('bsi-sy').textContent = e.target.scaleY.toFixed(4);
+  document.getElementById('bsi-w').textContent = Math.round(e.target.getScaledWidth()) + 'px';
+  document.getElementById('bsi-h').textContent = Math.round(e.target.getScaledHeight()) + 'px';
 }
-
 function updateVariantStateUIBack() {
-  const savedCount = backVariantStates.filter(s => s && s.saved).length;
-  document.getElementById('backSavedCount').textContent = savedCount;
+  document.getElementById('backSavedCount').textContent = backVariantStates.filter(s => s?.saved).length;
   document.getElementById('backVariantCount').textContent = backTshirtDataURLs.length;
   const listEl = document.getElementById('backVariantStateList');
   listEl.innerHTML = '';
@@ -1798,7 +1739,7 @@ function updateVariantStateUIBack() {
     row.style.cssText = 'padding:3px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;';
     const name = document.createElement('span');
     name.style.cssText = 'max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)';
-    name.textContent = `#${i} ${backTshirtNames[i] || 'variant'}`;
+    name.textContent = `#${i} ${backTshirtNames[i]||'variant'}`;
     const status = document.createElement('span');
     status.style.color = s?.saved ? 'var(--accent3)' : 'var(--muted)';
     status.textContent = s?.saved ? '✓ saved' : '○ default';
@@ -1816,9 +1757,7 @@ function addTshirtsBack(files) {
       backVariantStates.push(null);
       renderTshirtListBack();
       updateVariantStateUIBack();
-      if (backTshirtDataURLs.length === 1) {
-        setTshirtBackgroundBack(backTshirtDataURLs[0], 0);
-      }
+      if (backTshirtDataURLs.length === 1) setTshirtBackgroundBack(backTshirtDataURLs[0], 0);
     };
     r.readAsDataURL(file);
   });
@@ -1836,8 +1775,7 @@ function deleteTshirtBack(index) {
   if (backTshirtDataURLs.length > 0) {
     setTshirtBackgroundBack(backTshirtDataURLs[backActiveThumbIndex], backActiveThumbIndex);
   } else {
-    if (backTshirtLayer) { backCanvas.remove(backTshirtLayer); backTshirtLayer = null; }
-    backCanvas.renderAll();
+    if (backTshirtLayer) { backLM.removeObj(backTshirtLayer); backTshirtLayer = null; }
   }
 }
 
@@ -1868,39 +1806,19 @@ function renderTshirtListBack() {
     let cls = 'tshirt-thumb' + (i === backActiveThumbIndex ? ' active-back' : '');
     if (backVariantStates[i]?.saved) cls += ' saved-state';
     wrap.className = cls;
-
-    const img = document.createElement('img');
-    img.src = src; img.title = backTshirtNames[i];
+    const img = document.createElement('img'); img.src = src; img.title = backTshirtNames[i];
     img.onclick = () => switchVariantBack(i);
-
-    const name = document.createElement('div');
-    name.className = 'tname';
-    name.textContent = backTshirtNames[i];
-
+    const name = document.createElement('div'); name.className = 'tname'; name.textContent = backTshirtNames[i];
     wrap.ondblclick = (e) => {
       e.stopPropagation();
-      const newName = prompt('Rename variant:', backTshirtNames[i]);
-      if (newName !== null && newName.trim() !== '') {
-        backTshirtNames[i] = newName.trim();
-        renderTshirtListBack();
-        updateVariantStateUIBack();
-        if (i === backActiveThumbIndex) updateVariantInfoPanelBack();
-      }
+      const n = prompt('Rename variant:', backTshirtNames[i]);
+      if (n && n.trim()) { backTshirtNames[i] = n.trim(); renderTshirtListBack(); updateVariantStateUIBack(); if (i === backActiveThumbIndex) updateVariantInfoPanelBack(); }
     };
-
-    const btns = document.createElement('div');
-    btns.className = 'thumb-btns';
-
-    const rb = document.createElement('button');
-    rb.className = 'btn warn sm'; rb.textContent = '↺';
-    rb.title = 'Replace image';
+    const btns = document.createElement('div'); btns.className = 'thumb-btns';
+    const rb = document.createElement('button'); rb.className = 'btn warn sm'; rb.textContent = '↺';
     rb.onclick = e => { e.stopPropagation(); replaceTshirtBack(i); };
-
-    const db = document.createElement('button');
-    db.className = 'btn danger sm'; db.textContent = '✕';
-    db.title = 'Delete variant';
+    const db = document.createElement('button'); db.className = 'btn danger sm'; db.textContent = '✕';
     db.onclick = e => { e.stopPropagation(); deleteTshirtBack(i); };
-
     btns.appendChild(rb); btns.appendChild(db);
     wrap.appendChild(img); wrap.appendChild(name); wrap.appendChild(btns);
     list.appendChild(wrap);
@@ -1908,10 +1826,7 @@ function renderTshirtListBack() {
 }
 
 function switchVariantBack(newIndex) {
-  if (newIndex === backActiveThumbIndex && backTshirtLayer) {
-    captureVariantStateBack(backActiveThumbIndex);
-    return;
-  }
+  if (newIndex === backActiveThumbIndex && backTshirtLayer) { captureVariantStateBack(backActiveThumbIndex); return; }
   captureVariantStateBack(backActiveThumbIndex);
   backActiveThumbIndex = newIndex;
   renderTshirtListBack();
@@ -1923,13 +1838,19 @@ function loadDesignBack(file) {
   const r = new FileReader();
   r.onload = e => {
     backDesignOriginalSrc = e.target.result;
-    if (backDesignObj) backCanvas.remove(backDesignObj);
+    if (backDesignObj) { backLM.removeObj(backDesignObj); backDesignObj = null; }
     fabric.Image.fromURL(e.target.result, img => {
-      img.set({ left: 150, top: 180, scaleX: 0.4, scaleY: 0.4 });
+      img.set({ left: 150, top: 180, scaleX: 0.4, scaleY: 0.4,
+        selectable: true, evented: true, lockRotation: true, hasRotatingPoint: false,
+        cornerColor: '#43e8b0', cornerStrokeColor: '#059669', cornerSize: 12, transparentCorners: false,
+        name: 'designLayerBack'
+      });
       backDesignObj = img;
-      backCanvas.add(img);
+      backLM.add(img, '🎨 ' + file.name, 'design');
       backCanvas.setActiveObject(img);
       backCanvas.renderAll();
+      const l = backLM.getByObj(img);
+      if (l) backLM.select(l.id);
     });
     document.getElementById('backDesignName').textContent = '🎨 ' + file.name;
     document.getElementById('backDesignInfo').style.display = 'block';
@@ -1939,7 +1860,7 @@ function loadDesignBack(file) {
 }
 
 function removeDesignBack() {
-  if (backDesignObj) { backCanvas.remove(backDesignObj); backDesignObj = null; backCanvas.renderAll(); }
+  if (backDesignObj) { backLM.removeObj(backDesignObj); backDesignObj = null; }
   backDesignOriginalSrc = null;
   document.getElementById('backDesignInfo').style.display = 'none';
 }
@@ -1951,77 +1872,51 @@ function loadPreviewBack() {
 
 function setTshirtBackgroundBack(src, index) {
   backActiveThumbIndex = index;
-  if (backTshirtLayer) { backCanvas.remove(backTshirtLayer); backTshirtLayer = null; }
+  if (backTshirtLayer) { backLM.removeObj(backTshirtLayer); backTshirtLayer = null; }
 
   fabric.Image.fromURL(src, img => {
     const saved = backVariantStates[index];
     if (saved) {
       img.set({ left: saved.left, top: saved.top, scaleX: saved.scaleX, scaleY: saved.scaleY });
     } else {
-      img.scaleToWidth(380);
-      img.set({ left: 0, top: 0 });
+      img.scaleToWidth(380); img.set({ left: 0, top: 0 });
     }
     img.set({
-      selectable: true,
-      evented: true,
-      lockRotation: true,
-      hasRotatingPoint: false,
-      cornerColor: '#f59e0b',
-      cornerStrokeColor: '#b45309',
-      cornerSize: 12,
-      transparentCorners: false,
+      selectable: true, evented: true, lockRotation: true, hasRotatingPoint: false,
+      cornerColor: '#f59e0b', cornerStrokeColor: '#b45309', cornerSize: 12, transparentCorners: false,
       name: 'tshirtLayerBack'
     });
     backTshirtLayer = img;
-    backCanvas.add(img);
-    backCanvas.sendToBack(img);
-    if (backDesignObj) backCanvas.bringToFront(backDesignObj);
+    backLM.add(img, '👕 ' + (backTshirtNames[index] || 'T-shirt'), 'tshirt');
     backCanvas.renderAll();
     drawOverlayBack();
     updateVariantInfoPanelBack();
     updateVariantStateUIBack();
+    const l = backLM.getByObj(img);
+    if (l) backLM.select(l.id);
   });
 }
 
 async function generateBack() {
   if (!backTshirtDataURLs.length) { alert('Pehle back T-shirts upload karein!'); return; }
   captureVariantStateBack(backActiveThumbIndex);
-
   document.getElementById('backOutput').innerHTML = '';
   backGeneratedImages = [];
-
-  let designSrc = null;
-  let designPos = null;
+  let designSrc = null, designPos = null;
   if (backDesignObj && backDesignOriginalSrc) {
     designSrc = backDesignOriginalSrc;
-    designPos = {
-      left:   backDesignObj.left,
-      top:    backDesignObj.top,
-      width:  backDesignObj.getScaledWidth(),
-      height: backDesignObj.getScaledHeight()
-    };
+    designPos = { left: backDesignObj.left, top: backDesignObj.top,
+      width: backDesignObj.getScaledWidth(), height: backDesignObj.getScaledHeight() };
   }
-
   const total = backTshirtDataURLs.length;
   const fmt = backExportFormat;
-  showProgress(`⚡ Generating ${total} Back Mockup${total > 1 ? 's' : ''} (2000×2000 ${fmt.toUpperCase()})...`);
-
+  showProgress(`⚡ Generating ${total} Back Mockup${total>1?'s':''} (2000×2000 ${fmt.toUpperCase()})...`);
   for (let index = 0; index < total; index++) {
-    updateProgress(
-      Math.round((index / total) * 100),
-      `Rendering variant ${index + 1} of ${total}...`
-    );
-
+    updateProgress(Math.round((index/total)*100), `Rendering variant ${index+1} of ${total}...`);
     await new Promise(r => setTimeout(r, 20));
-
-    const tshirtSrc = backTshirtDataURLs[index];
-    const tState = backVariantStates[index];
-
-    const hiresCanvas = await renderHighResCanvas(tshirtSrc, tState, designSrc, designPos);
-    const dataURL = canvasToDataURL(hiresCanvas, fmt);
-    saveBackOutput(dataURL, index, fmt);
+    const hiresCanvas = await renderHighResCanvas(backTshirtDataURLs[index], backVariantStates[index], designSrc, designPos);
+    saveBackOutput(canvasToDataURL(hiresCanvas, fmt), index, fmt);
   }
-
   updateProgress(100, 'Done!');
   await new Promise(r => setTimeout(r, 400));
   hideProgress();
@@ -2031,86 +1926,43 @@ function saveBackOutput(dataURL, index, fmt) {
   backGeneratedImages.push(dataURL);
   const imgIndex = backGeneratedImages.length - 1;
   const ext = fmtExt(fmt);
-
-  const box = document.createElement('div');
-  box.className = 'output-box'; box.id = 'back-output-box-' + imgIndex;
-
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox'; checkbox.value = imgIndex;
-
-  const labelEl = document.createElement('label');
-  labelEl.appendChild(checkbox);
-  labelEl.appendChild(document.createTextNode(` Back V${index + 1} · ${fmt.toUpperCase()}`));
-
-  const img = document.createElement('img');
-  img.src = dataURL; img.width = 130;
-
+  const box = document.createElement('div'); box.className = 'output-box'; box.id = 'back-output-box-' + imgIndex;
+  const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.value = imgIndex;
+  const labelEl = document.createElement('label'); labelEl.appendChild(checkbox); labelEl.appendChild(document.createTextNode(` Back V${index+1} · ${fmt.toUpperCase()}`));
+  const img = document.createElement('img'); img.src = dataURL; img.width = 130;
   const resBadge = document.createElement('div');
   resBadge.style.cssText = 'font-family:var(--mono);font-size:9px;color:var(--accent3);background:rgba(67,232,176,0.08);border:1px solid rgba(67,232,176,0.2);padding:2px 6px;border-radius:4px;';
   resBadge.textContent = '2000 × 2000 px';
-
-  const btnRow = document.createElement('div');
-  btnRow.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;justify-content:center;';
-
-  const dlBtn = document.createElement('button');
-  dlBtn.className = 'btn sm'; dlBtn.textContent = '⬇';
-  dlBtn.title = `Download ${fmt.toUpperCase()}`;
-  dlBtn.onclick = () => downloadImage(dataURL, `back_v${index + 1}_2000px.${ext}`);
-
-  const delBtn = document.createElement('button');
-  delBtn.className = 'btn danger sm'; delBtn.textContent = '✕';
-  delBtn.title = 'Delete';
-  delBtn.onclick = () => {
-    document.getElementById('back-output-box-' + imgIndex).remove();
-    backGeneratedImages[imgIndex] = null;
-    updateBackGenCount();
-  };
-
+  const btnRow = document.createElement('div'); btnRow.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;justify-content:center;';
+  const dlBtn = document.createElement('button'); dlBtn.className = 'btn sm'; dlBtn.textContent = '⬇';
+  dlBtn.onclick = () => downloadImage(dataURL, `back_v${index+1}_2000px.${ext}`);
+  const delBtn = document.createElement('button'); delBtn.className = 'btn danger sm'; delBtn.textContent = '✕';
+  delBtn.onclick = () => { document.getElementById('back-output-box-'+imgIndex).remove(); backGeneratedImages[imgIndex] = null; updateBackGenCount(); };
   btnRow.appendChild(dlBtn); btnRow.appendChild(delBtn);
   box.appendChild(labelEl); box.appendChild(img); box.appendChild(resBadge); box.appendChild(btnRow);
   document.getElementById('backOutput').appendChild(box);
   updateBackGenCount();
 }
-
-function updateBackGenCount() {
-  document.getElementById('backGenCount').textContent = document.querySelectorAll('#backOutput .output-box').length;
-}
-
-function selectAllOutputsBack() {
-  document.querySelectorAll('#backOutput input[type=checkbox]').forEach(cb => cb.checked = true);
-}
-
+function updateBackGenCount() { document.getElementById('backGenCount').textContent = document.querySelectorAll('#backOutput .output-box').length; }
+function selectAllOutputsBack() { document.querySelectorAll('#backOutput input[type=checkbox]').forEach(cb => cb.checked = true); }
 function downloadSelectedBack() {
   const selected = document.querySelectorAll('#backOutput input:checked');
   if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
   const ext = fmtExt(backExportFormat);
-  selected.forEach((cb, i) => {
-    if (backGeneratedImages[cb.value]) downloadImage(backGeneratedImages[cb.value], `back_selected_${i+1}_2000px.${ext}`);
-  });
+  selected.forEach((cb, i) => { if (backGeneratedImages[cb.value]) downloadImage(backGeneratedImages[cb.value], `back_selected_${i+1}_2000px.${ext}`); });
 }
-
 function downloadZIPBack() {
   const selected = document.querySelectorAll('#backOutput input:checked');
   if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
   const ext = fmtExt(backExportFormat);
   const zip = new JSZip();
-  selected.forEach((cb, i) => {
-    if (backGeneratedImages[cb.value]) {
-      const base64 = backGeneratedImages[cb.value].split(',')[1];
-      zip.file(`back_${i+1}_2000px.${ext}`, base64, { base64: true });
-    }
-  });
-  zip.generateAsync({ type: 'blob' }).then(content => {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content); link.download = `back_mockups_2000px.zip`; link.click();
-  });
+  selected.forEach((cb, i) => { if (backGeneratedImages[cb.value]) zip.file(`back_${i+1}_2000px.${ext}`, backGeneratedImages[cb.value].split(',')[1], { base64: true }); });
+  zip.generateAsync({ type: 'blob' }).then(content => { const a = document.createElement('a'); a.href = URL.createObjectURL(content); a.download = `back_mockups_2000px.zip`; a.click(); });
 }
 
-
-/* ============================================================
-   =================== SHARED UTILITIES ======================
-   ============================================================ */
-
+/* =====================================================================
+   SHARED UTILITIES
+   ===================================================================== */
 function downloadImage(data, filename) {
   const a = document.createElement('a');
   a.href = data; a.download = filename;
@@ -2120,44 +1972,24 @@ function downloadImage(data, filename) {
 async function downloadCombinedZIP() {
   const frontAvail = frontGeneratedImages.filter(Boolean);
   const backAvail  = backGeneratedImages.filter(Boolean);
-
-  if (!frontAvail.length && !backAvail.length) {
-    alert('Pehle front ya back mockups generate karein!');
-    return;
-  }
-
+  if (!frontAvail.length && !backAvail.length) { alert('Pehle front ya back mockups generate karein!'); return; }
   showProgress('📦 Packing ZIP Archive...');
   const zip = new JSZip();
   const maxVariants = Math.max(frontGeneratedImages.length, backGeneratedImages.length);
-
   for (let i = 0; i < maxVariants; i++) {
-    const varNum = i + 1;
     const frontImg = frontGeneratedImages[i];
     const backImg  = backGeneratedImages[i];
-
-    if (frontImg) {
-      const fExt = frontImg.startsWith('data:image/jpeg') ? 'jpg' : 'png';
-      zip.file(`variant${varNum}_front_2000px.${fExt}`, frontImg.split(',')[1], { base64: true });
-    }
-    if (backImg) {
-      const bExt = backImg.startsWith('data:image/jpeg') ? 'jpg' : 'png';
-      zip.file(`variant${varNum}_back_2000px.${bExt}`, backImg.split(',')[1], { base64: true });
-    }
-
-    updateProgress(Math.round(((i + 1) / maxVariants) * 80), `Packing variant ${varNum}...`);
+    if (frontImg) zip.file(`variant${i+1}_front_2000px.${frontImg.startsWith('data:image/jpeg')?'jpg':'png'}`, frontImg.split(',')[1], { base64: true });
+    if (backImg)  zip.file(`variant${i+1}_back_2000px.${backImg.startsWith('data:image/jpeg')?'jpg':'png'}`,  backImg.split(',')[1],  { base64: true });
+    updateProgress(Math.round(((i+1)/maxVariants)*80), `Packing variant ${i+1}...`);
     await new Promise(r => setTimeout(r, 10));
   }
-
   updateProgress(90, 'Compressing...');
   const content = await zip.generateAsync({ type: 'blob' });
   updateProgress(100, 'Done!');
   await new Promise(r => setTimeout(r, 300));
   hideProgress();
-
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(content);
-  link.download = 'mockups_front_back_2000px.zip';
-  link.click();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(content); a.download = 'mockups_front_back_2000px.zip'; a.click();
 }
 
 /* Init overlays */
