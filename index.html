@@ -824,99 +824,146 @@ function hideProgress() {
 /* ============================================================
    ========== HIGH-RES RENDERING ENGINE ===================
    ============================================================
-   
-   Strategy:
-   - Preview canvas: 380×480 (for UI interaction)
-   - Export canvas:  2000×2000 (final output, 1:1 square)
-   - We compute exact scale factors to map from preview → 2000×2000
-   - Images are drawn from their ORIGINAL full-resolution sources,
-     scaled mathematically to fit the 2000×2000 space — no upscaling
-     of compressed preview pixels.
-   - For the T-shirt: scale state (left/top/scaleX/scaleY) are mapped
-     proportionally from the 380×480 preview to 2000×2000.
-   - For the design: same mapping.
+
+   Preview canvas : 380 × 480  (UI only — never read for export)
+   Export canvas  : 2000 × 2000 (completely independent draw)
+
+   Scale mapping
+   ─────────────
+   scaleX = EXPORT_SIZE / PREVIEW_W  =  2000 / 380  ≈ 5.263
+   scaleY = EXPORT_SIZE / PREVIEW_H  =  2000 / 480  ≈ 4.167
+
+   Every coordinate from the preview is multiplied by the
+   correct axis-specific ratio:
+
+     exportX  = previewLeft   × scaleX
+     exportY  = previewTop    × scaleY
+     exportW  = previewWidth  × scaleX   (or natW × fabricScaleX × scaleX)
+     exportH  = previewHeight × scaleY   (or natH × fabricScaleY × scaleY)
+
+   All drawing uses the ORIGINAL uploaded image data (full-res
+   data URLs), never the Fabric preview bitmaps.
    ============================================================ */
 
+// Pixel-exact scale ratios — X and Y are intentionally different
+// because preview is 380×480 (portrait) but export is 2000×2000 (square).
+const SCALE_X = EXPORT_SIZE / PREVIEW_W;   // 2000 / 380 ≈ 5.263
+const SCALE_Y = EXPORT_SIZE / PREVIEW_H;   // 2000 / 480 ≈ 4.167
+
 /**
- * Draw a high-resolution mockup onto a 2000×2000 canvas.
- * @param {string} tshirtSrc     - Original full-res t-shirt data URL
- * @param {object|null} tState   - Saved variant state {left,top,scaleX,scaleY} in preview coords
- * @param {string|null} designSrc - Original full-res design data URL
- * @param {object|null} designPos - Design position {left,top,width,height} in preview coords
+ * Render a print-ready 2000×2000 mockup from original image sources.
+ *
+ * @param {string}      tshirtSrc  – Full-res t-shirt data URL (from FileReader)
+ * @param {object|null} tState     – Fabric variant state {left,top,scaleX,scaleY}
+ *                                   in 380×480 preview coordinates
+ * @param {string|null} designSrc  – Full-res design data URL (from FileReader)
+ * @param {object|null} designPos  – Design bounding box {left,top,width,height}
+ *                                   in 380×480 preview coordinates
+ *                                   (width/height = getScaledWidth/Height from Fabric)
  * @returns {Promise<HTMLCanvasElement>}
  */
 function renderHighResCanvas(tshirtSrc, tState, designSrc, designPos) {
-  return new Promise((resolve) => {
-    const co = document.createElement('canvas');
-    co.width = EXPORT_SIZE;
+  return new Promise((resolve, reject) => {
+
+    // ── 1. Create the 2000×2000 export canvas ──────────────────────────────
+    const co  = document.createElement('canvas');
+    co.width  = EXPORT_SIZE;
     co.height = EXPORT_SIZE;
     const ctx = co.getContext('2d');
 
-    // Enable high-quality image smoothing
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    // White background
+    // Pure white background (same as preview)
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, EXPORT_SIZE, EXPORT_SIZE);
 
+    // ── 2. Load & draw the T-shirt from its original full-res source ───────
     const tshirtImg = new Image();
-    tshirtImg.onload = () => {
-      // ---- Draw T-shirt ----
-      // scaleX/scaleY in Fabric are relative to the ORIGINAL image dimensions
-      // left/top are in preview px coordinates (380×480)
-      // We map these to the 2000×2000 canvas
 
-      // Horizontal scale from 380 preview → 2000 export
-      const hScale = EXPORT_SIZE / PREVIEW_W;
-      // Vertical scale: preview is 480px tall, export is 2000px — centered vertically
-      const vOffset = (EXPORT_SIZE - PREVIEW_H * hScale) / 2; // vertical centering offset
+    tshirtImg.onerror = () => reject(new Error('T-shirt image failed to load'));
+
+    tshirtImg.onload = () => {
+      const natW = tshirtImg.naturalWidth;
+      const natH = tshirtImg.naturalHeight;
 
       if (tState) {
-        // Natural image dimensions
-        const natW = tshirtImg.naturalWidth;
-        const natH = tshirtImg.naturalHeight;
-
-        // In preview: the image is drawn at (left, top) with size (natW * scaleX, natH * scaleY)
-        // Map to export coords:
-        const destX = tState.left * hScale;
-        const destY = tState.top * hScale + vOffset;
-        const destW = natW * tState.scaleX * hScale;
-        const destH = natH * tState.scaleY * hScale;
+        /*
+         * Fabric stores position as (left, top) in preview px,
+         * and scale as multipliers on the natural image size.
+         *
+         * In the preview the object occupies:
+         *   x = left,               y = top
+         *   w = natW × scaleX,      h = natH × scaleY
+         *
+         * Map each axis independently to the 2000×2000 export:
+         *   exportX = left   × SCALE_X
+         *   exportY = top    × SCALE_Y
+         *   exportW = (natW × scaleX) × SCALE_X
+         *   exportH = (natH × scaleY) × SCALE_Y
+         */
+        const destX = tState.left   * SCALE_X;
+        const destY = tState.top    * SCALE_Y;
+        const destW = natW * tState.scaleX * SCALE_X;
+        const destH = natH * tState.scaleY * SCALE_Y;
 
         ctx.drawImage(tshirtImg, destX, destY, destW, destH);
       } else {
-        // Default: fill horizontally, vertically centered
-        const fitW = EXPORT_SIZE;
-        const fitH = PREVIEW_H * hScale;
-        ctx.drawImage(tshirtImg, 0, vOffset, fitW, fitH);
+        /*
+         * No saved state: default preview behaviour is scaleToWidth(380),
+         * top-left at (0, 0). Replicate that on the export canvas:
+         *   preview renders as 380 × (natH × 380/natW)
+         *   export  renders as 2000 × (natH × 2000/natW)
+         * which is exactly natW/H drawn at full EXPORT_SIZE width.
+         */
+        const defaultH = (natH / natW) * EXPORT_SIZE;
+        ctx.drawImage(tshirtImg, 0, 0, EXPORT_SIZE, defaultH);
       }
 
+      // ── 3. Optionally draw the design on top ─────────────────────────────
       if (!designSrc || !designPos) {
         resolve(co);
         return;
       }
 
-      // ---- Draw Design ----
       const designImg = new Image();
+
+      designImg.onerror = () => {
+        // Design failed — still resolve with the t-shirt alone
+        console.warn('Design image failed to load; exporting t-shirt only.');
+        resolve(co);
+      };
+
       designImg.onload = () => {
-        // designPos contains {left, top, width, height} in preview coords
-        // width/height here are the SCALED dimensions on screen (not natural dims)
-        const hScale = EXPORT_SIZE / PREVIEW_W;
-        const vOffset = (EXPORT_SIZE - PREVIEW_H * hScale) / 2;
-
-        const destX = designPos.left * hScale;
-        const destY = designPos.top * hScale + vOffset;
-        const destW = designPos.width * hScale;
-        const destH = designPos.height * hScale;
-
+        /*
+         * designPos.width  = fabricObj.getScaledWidth()   (preview px)
+         * designPos.height = fabricObj.getScaledHeight()  (preview px)
+         *
+         * The design's natural resolution is preserved; we tell the canvas
+         * to draw it at the export-scaled size so it is never upscaled from
+         * a tiny preview bitmap.
+         *
+         * Map each axis independently:
+         *   exportX = designPos.left   × SCALE_X
+         *   exportY = designPos.top    × SCALE_Y
+         *   exportW = designPos.width  × SCALE_X
+         *   exportH = designPos.height × SCALE_Y
+         */
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
+
+        const destX = designPos.left   * SCALE_X;
+        const destY = designPos.top    * SCALE_Y;
+        const destW = designPos.width  * SCALE_X;
+        const destH = designPos.height * SCALE_Y;
+
         ctx.drawImage(designImg, destX, destY, destW, destH);
         resolve(co);
       };
+
       designImg.src = designSrc;
     };
+
     tshirtImg.src = tshirtSrc;
   });
 }
