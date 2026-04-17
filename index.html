@@ -34,7 +34,6 @@ body {
   min-height: 100vh;
 }
 
-/* ---- Header ---- */
 header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -71,8 +70,8 @@ header .version {
 /* ---- Layout ---- */
 .app {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 280px 1fr 1fr;
+  grid-template-rows: 1fr auto;
   gap: 0;
   min-height: calc(100vh - 56px);
 }
@@ -82,10 +81,10 @@ header .version {
   grid-row: 1 / 3;
   background: var(--surface);
   border-right: 1px solid var(--border);
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   overflow-y: auto;
 }
 
@@ -101,15 +100,29 @@ header .version {
   border-bottom: 1px solid var(--border);
 }
 
+/* Side header labels */
+.side-header {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+.side-header.front { background: rgba(108,99,255,0.15); color: var(--accent); border: 1px solid rgba(108,99,255,0.3); }
+.side-header.back  { background: rgba(255,101,132,0.15); color: var(--accent2); border: 1px solid rgba(255,101,132,0.3); }
+
 /* ---- Upload zones ---- */
 .upload-zone {
   border: 1.5px dashed var(--border);
   border-radius: 10px;
-  padding: 14px;
+  padding: 12px;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--muted);
 }
 .upload-zone:hover {
@@ -117,7 +130,11 @@ header .version {
   background: rgba(108,99,255,0.06);
   color: var(--text);
 }
-.upload-zone .icon { font-size: 20px; margin-bottom: 4px; }
+.upload-zone.back-zone:hover {
+  border-color: var(--accent2);
+  background: rgba(255,101,132,0.06);
+}
+.upload-zone .icon { font-size: 18px; margin-bottom: 3px; }
 
 /* ---- Buttons ---- */
 .btn {
@@ -140,6 +157,7 @@ header .version {
 .btn.danger { background: var(--danger); }
 .btn.warn { background: var(--warn); color: #000; }
 .btn.success { background: var(--success); }
+.btn.back-btn { background: var(--accent2); }
 .btn.ghost {
   background: transparent;
   border: 1px solid var(--border);
@@ -150,17 +168,17 @@ header .version {
 .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 
 /* ---- T-shirt thumbnails ---- */
-#tshirtList {
+.tshirt-list-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 6px;
 }
 .tshirt-thumb {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-  padding: 7px 4px;
+  gap: 4px;
+  padding: 6px 3px;
   border-radius: 10px;
   background: var(--surface2);
   border: 2px solid transparent;
@@ -170,6 +188,7 @@ header .version {
 }
 .tshirt-thumb:hover { border-color: var(--accent); }
 .tshirt-thumb.active { border-color: var(--accent); background: rgba(108,99,255,0.12); }
+.tshirt-thumb.active-back { border-color: var(--accent2); background: rgba(255,101,132,0.12); }
 .tshirt-thumb.saved-state::after {
   content: '✓';
   position: absolute;
@@ -179,11 +198,11 @@ header .version {
   color: var(--accent3);
   font-weight: 700;
 }
-.tshirt-thumb img { width: 52px; height: 52px; object-fit: cover; border-radius: 6px; }
+.tshirt-thumb img { width: 46px; height: 46px; object-fit: cover; border-radius: 6px; }
 .tshirt-thumb .tname {
   font-size: 9px;
   color: var(--muted);
-  max-width: 70px;
+  max-width: 66px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -197,24 +216,41 @@ header .version {
 }
 .tshirt-thumb:hover .thumb-btns { display: flex; }
 
-/* ---- Main area ---- */
-.main {
-  padding: 20px 24px;
+/* ---- Main panels ---- */
+.main-panel {
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   overflow-y: auto;
+  border-right: 1px solid var(--border);
 }
+.main-panel:last-child { border-right: none; }
+
+.panel-header {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel-header.front { background: rgba(108,99,255,0.12); color: var(--accent); border: 1px solid rgba(108,99,255,0.25); }
+.panel-header.back  { background: rgba(255,101,132,0.12); color: var(--accent2); border: 1px solid rgba(255,101,132,0.25); }
 
 /* ---- Zone controls ---- */
 .zone-controls {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 .zone-controls label {
@@ -231,7 +267,7 @@ header .version {
   border-radius: 6px;
   padding: 4px 7px;
   font-size: 12px;
-  width: 60px;
+  width: 55px;
   font-family: var(--mono);
   transition: border-color 0.2s;
 }
@@ -246,28 +282,24 @@ header .version {
 }
 
 /* ---- Canvas wrapper ---- */
-.canvas-section {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-#canvasWrapper {
+#canvasWrapperFront,
+#canvasWrapperBack {
   position: relative;
   display: inline-block;
-  width: 400px;
-  height: 500px;
+  width: 380px;
+  height: 480px;
   border-radius: 12px;
   overflow: hidden;
   flex-shrink: 0;
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-  /* WHITE background for preview canvas */
   background: #ffffff;
 }
-#canvasWrapper canvas {
+#canvasWrapperFront canvas,
+#canvasWrapperBack canvas {
   border-radius: 0;
 }
-#overlayCanvas {
+#overlayCanvasFront,
+#overlayCanvasBack {
   position: absolute;
   top: 0; left: 0;
   pointer-events: none;
@@ -275,29 +307,29 @@ header .version {
   border: none !important;
 }
 
-/* ---- Variant state panel ---- */
+/* ---- Variant state panel (below canvases) ---- */
 .variant-info {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 16px;
-  min-width: 200px;
-  flex: 1;
+  padding: 14px;
+  width: 100%;
 }
 .variant-info h4 {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--accent);
-  margin: 0 0 12px 0;
+  margin: 0 0 10px 0;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
+.variant-info h4.back-title { color: var(--accent2); }
 .state-row {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
   color: var(--muted);
-  padding: 4px 0;
+  padding: 3px 0;
   border-bottom: 1px solid var(--border);
   font-family: var(--mono);
 }
@@ -309,7 +341,7 @@ header .version {
   font-size: 10px;
   padding: 3px 8px;
   border-radius: 20px;
-  margin-top: 8px;
+  margin-top: 6px;
   font-family: var(--mono);
 }
 .state-badge.saved { background: rgba(67,232,176,0.1); color: var(--accent3); border: 1px solid rgba(67,232,176,0.3); }
@@ -319,17 +351,17 @@ header .version {
 .output-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 10px;
+  gap: 10px;
+  margin-top: 8px;
 }
 .output-box {
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 10px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   align-items: center;
   transition: border-color 0.2s;
 }
@@ -337,7 +369,6 @@ header .version {
 .output-box img { border-radius: 7px; }
 .output-box label { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); cursor: pointer; }
 
-/* ---- Checkbox ---- */
 input[type=checkbox] {
   accent-color: var(--accent);
   width: 14px; height: 14px;
@@ -356,7 +387,6 @@ input[type=checkbox] {
 }
 .bottom-bar .spacer { flex: 1; }
 
-/* ---- Design tag ---- */
 .design-tag {
   display: inline-flex;
   align-items: center;
@@ -381,7 +411,6 @@ input[type=checkbox] {
 
 .hidden-input { display: none; }
 
-/* scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -392,7 +421,7 @@ input[type=checkbox] {
 <header>
   <span class="logo-icon">👕</span>
   <h1>Auto Mockup Generator</h1>
-  <span class="version">v2.0</span>
+  <span class="version">v3.0 — Front &amp; Back</span>
 </header>
 
 <div class="app">
@@ -400,367 +429,469 @@ input[type=checkbox] {
   <!-- ===== SIDEBAR ===== -->
   <aside class="sidebar">
 
+    <!-- FRONT UPLOADS -->
     <div>
-      <div class="panel-label">01 — T-shirt Variants</div>
-      <div class="upload-zone" onclick="document.getElementById('tshirts').click()">
+      <div class="side-header front">🔵 Front Side</div>
+
+      <div class="panel-label">T-shirt Variants (Front)</div>
+      <div class="upload-zone" onclick="document.getElementById('frontTshirts').click()">
         <div class="icon">🗂️</div>
-        <div>Click to upload T-shirts</div>
-        <div style="font-size:11px;margin-top:3px;">Multiple files supported</div>
+        <div>Upload Front T-shirts</div>
+        <div style="font-size:10px;margin-top:2px;">Multiple files</div>
       </div>
-      <input class="hidden-input" type="file" id="tshirts" multiple accept="image/*" onchange="addTshirts(this.files)">
-      <div id="tshirtList" style="margin-top:12px;"></div>
-      <div id="countTag" style="font-size:11px;color:var(--muted);margin-top:6px;font-family:var(--mono);">0 variants loaded</div>
-    </div>
+      <input class="hidden-input" type="file" id="frontTshirts" multiple accept="image/*" onchange="addTshirtsFront(this.files)">
+      <div id="frontTshirtList" class="tshirt-list-grid" style="margin-top:10px;"></div>
+      <div id="frontCountTag" style="font-size:11px;color:var(--muted);margin-top:5px;font-family:var(--mono);">0 variants</div>
 
-    <div>
-      <div class="panel-label">02 — Design Overlay</div>
-      <div class="upload-zone" onclick="document.getElementById('design').click()">
+      <div class="panel-label" style="margin-top:12px;">Design (Front)</div>
+      <div class="upload-zone" onclick="document.getElementById('frontDesign').click()">
         <div class="icon">🎨</div>
-        <div>Click to upload design</div>
-        <div style="font-size:11px;margin-top:3px;">PNG recommended (transparent bg)</div>
+        <div>Upload Front Design</div>
+        <div style="font-size:10px;margin-top:2px;">PNG recommended</div>
       </div>
-      <input class="hidden-input" type="file" id="design" accept="image/*" onchange="loadDesign(this.files[0])">
-      <div id="designInfo" style="margin-top:8px;display:none;">
-        <span class="design-tag" id="designName"></span>
-        <button class="btn danger sm" style="margin-top:6px;" onclick="removeDesign()">🗑 Remove Design</button>
+      <input class="hidden-input" type="file" id="frontDesign" accept="image/*" onchange="loadDesignFront(this.files[0])">
+      <div id="frontDesignInfo" style="margin-top:6px;display:none;">
+        <span class="design-tag" id="frontDesignName"></span>
+        <button class="btn danger sm" style="margin-top:5px;" onclick="removeDesignFront()">🗑 Remove</button>
+      </div>
+
+      <div class="panel-label" style="margin-top:12px;">Actions (Front)</div>
+      <div class="btn-row" style="flex-direction:column;">
+        <button class="btn" onclick="loadPreviewFront()" style="width:100%;justify-content:center;">▶ Preview Front</button>
+        <button class="btn success" onclick="generateFront()" style="width:100%;justify-content:center;">⚡ Generate Front</button>
       </div>
     </div>
 
+    <hr style="border-color:var(--border);margin:4px 0;">
+
+    <!-- BACK UPLOADS -->
     <div>
-      <div class="panel-label">03 — Actions</div>
+      <div class="side-header back">🔴 Back Side</div>
+
+      <div class="panel-label">T-shirt Variants (Back)</div>
+      <div class="upload-zone back-zone" onclick="document.getElementById('backTshirts').click()">
+        <div class="icon">🗂️</div>
+        <div>Upload Back T-shirts</div>
+        <div style="font-size:10px;margin-top:2px;">Multiple files</div>
+      </div>
+      <input class="hidden-input" type="file" id="backTshirts" multiple accept="image/*" onchange="addTshirtsBack(this.files)">
+      <div id="backTshirtList" class="tshirt-list-grid" style="margin-top:10px;"></div>
+      <div id="backCountTag" style="font-size:11px;color:var(--muted);margin-top:5px;font-family:var(--mono);">0 variants</div>
+
+      <div class="panel-label" style="margin-top:12px;">Design (Back)</div>
+      <div class="upload-zone back-zone" onclick="document.getElementById('backDesign').click()">
+        <div class="icon">🎨</div>
+        <div>Upload Back Design</div>
+        <div style="font-size:10px;margin-top:2px;">PNG recommended</div>
+      </div>
+      <input class="hidden-input" type="file" id="backDesign" accept="image/*" onchange="loadDesignBack(this.files[0])">
+      <div id="backDesignInfo" style="margin-top:6px;display:none;">
+        <span class="design-tag" id="backDesignName"></span>
+        <button class="btn danger sm" style="margin-top:5px;" onclick="removeDesignBack()">🗑 Remove</button>
+      </div>
+
+      <div class="panel-label" style="margin-top:12px;">Actions (Back)</div>
       <div class="btn-row" style="flex-direction:column;">
-        <button class="btn" onclick="loadPreview()" style="width:100%;justify-content:center;">▶ Preview + Drag</button>
-        <button class="btn success" onclick="generate()" style="width:100%;justify-content:center;">⚡ Generate All Mockups</button>
+        <button class="btn back-btn" onclick="loadPreviewBack()" style="width:100%;justify-content:center;">▶ Preview Back</button>
+        <button class="btn success" onclick="generateBack()" style="width:100%;justify-content:center;">⚡ Generate Back</button>
+      </div>
+    </div>
+
+    <hr style="border-color:var(--border);margin:4px 0;">
+
+    <!-- ZIP DOWNLOAD -->
+    <div>
+      <div class="panel-label">Combined Output</div>
+      <div class="btn-row" style="flex-direction:column;">
+        <button class="btn ghost" onclick="downloadCombinedZIP()" style="width:100%;justify-content:center;">📦 Download ZIP (Front + Back)</button>
       </div>
     </div>
 
   </aside>
 
-  <!-- ===== MAIN ===== -->
-  <main class="main">
+  <!-- ===== FRONT PANEL ===== -->
+  <main class="main-panel" id="frontPanel">
+    <div class="panel-header front">🔵 Front Mockup</div>
 
-    <!-- Zone Controls -->
+    <!-- Zone Controls Front -->
     <div class="zone-controls">
-      <label>🟦 Print Zone</label>
-      <label>X:</label><input type="number" id="zoneX" value="110" class="zone-input" oninput="updateZoneFromInputs()">
-      <label>Y:</label><input type="number" id="zoneY" value="120" class="zone-input" oninput="updateZoneFromInputs()">
-      <label>W:</label><input type="number" id="zoneW" value="180" class="zone-input" oninput="updateZoneFromInputs()">
-      <label>H:</label><input type="number" id="zoneH" value="180" class="zone-input" oninput="updateZoneFromInputs()">
-      <button class="btn sm success" onclick="fitDesignToZone()">⊡ Fit Design</button>
-      <button class="btn sm ghost" onclick="saveCurrentVariantState()" title="Save current T-shirt position for this variant">💾 Save Variant</button>
+      <label>🟦 Zone</label>
+      <label>X:</label><input type="number" id="frontZoneX" value="110" class="zone-input" oninput="updateZoneFrontFromInputs()">
+      <label>Y:</label><input type="number" id="frontZoneY" value="120" class="zone-input" oninput="updateZoneFrontFromInputs()">
+      <label>W:</label><input type="number" id="frontZoneW" value="160" class="zone-input" oninput="updateZoneFrontFromInputs()">
+      <label>H:</label><input type="number" id="frontZoneH" value="160" class="zone-input" oninput="updateZoneFrontFromInputs()">
+      <button class="btn sm success" onclick="fitDesignToZoneFront()">⊡ Fit</button>
+      <button class="btn sm ghost" onclick="saveCurrentVariantStateFront()">💾 Save</button>
     </div>
 
-    <div style="display:flex;gap:12px;flex-wrap:wrap;">
-      <div class="hint">💡 Drag the blue box to reposition the print zone</div>
-      <div class="hint">🟡 Yellow handles = move/resize T-shirt · Blue box = print zone</div>
-      <div class="hint" id="variantSaveHint" style="color:var(--accent3);display:none;">✓ State auto-saved when switching variants</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <div class="hint">💡 Drag blue box to reposition · Yellow handles = T-shirt</div>
     </div>
 
-    <!-- Canvas + Variant Info -->
-    <div class="canvas-section">
-      <div id="canvasWrapper">
-        <canvas id="previewCanvas" width="400" height="500"></canvas>
-        <canvas id="overlayCanvas" width="400" height="500"></canvas>
-      </div>
+    <!-- Canvas Front -->
+    <div id="canvasWrapperFront">
+      <canvas id="previewCanvasFront" width="380" height="480"></canvas>
+      <canvas id="overlayCanvasFront" width="380" height="480"></canvas>
+    </div>
 
-      <!-- Per-variant state info panel -->
-      <div class="variant-info">
-        <h4>📌 Active Variant State</h4>
-        <div class="state-row"><span>Index</span><span id="si-index">—</span></div>
-        <div class="state-row"><span>Name</span><span id="si-name" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</span></div>
-        <div class="state-row"><span>Left</span><span id="si-left">—</span></div>
-        <div class="state-row"><span>Top</span><span id="si-top">—</span></div>
-        <div class="state-row"><span>ScaleX</span><span id="si-sx">—</span></div>
-        <div class="state-row"><span>ScaleY</span><span id="si-sy">—</span></div>
-        <div class="state-row"><span>Width</span><span id="si-w">—</span></div>
-        <div class="state-row"><span>Height</span><span id="si-h">—</span></div>
-        <div id="stateBadge" class="state-badge unsaved" style="display:none;">⚠ Unsaved</div>
-
-        <div style="margin-top:12px;">
-          <div class="section-title" style="margin-bottom:6px;">All Variants</div>
-          <div id="variantStateList" style="font-size:10px;color:var(--muted);font-family:var(--mono);max-height:150px;overflow-y:auto;"></div>
-        </div>
+    <!-- Variant State Panel - BELOW canvas -->
+    <div class="variant-info">
+      <h4>📌 Front Variant State</h4>
+      <div class="state-row"><span>Index</span><span id="fsi-index">—</span></div>
+      <div class="state-row"><span>Name</span><span id="fsi-name" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</span></div>
+      <div class="state-row"><span>Left</span><span id="fsi-left">—</span></div>
+      <div class="state-row"><span>Top</span><span id="fsi-top">—</span></div>
+      <div class="state-row"><span>ScaleX</span><span id="fsi-sx">—</span></div>
+      <div class="state-row"><span>ScaleY</span><span id="fsi-sy">—</span></div>
+      <div class="state-row"><span>Width</span><span id="fsi-w">—</span></div>
+      <div class="state-row"><span>Height</span><span id="fsi-h">—</span></div>
+      <div id="frontStateBadge" class="state-badge unsaved" style="display:none;">⚠ Unsaved</div>
+      <div style="margin-top:10px;">
+        <div class="section-title" style="margin-bottom:5px;">All Front Variants</div>
+        <div id="frontVariantStateList" style="font-size:10px;color:var(--muted);font-family:var(--mono);max-height:120px;overflow-y:auto;"></div>
       </div>
     </div>
 
-    <!-- Output Section -->
+    <!-- Output Front -->
     <div>
-      <div class="panel-label" style="margin-top:8px;">Output</div>
+      <div class="panel-label" style="margin-top:6px;">Front Output</div>
       <div class="btn-row">
-        <button class="btn ghost sm" onclick="downloadSelected()">⬇ Download Selected</button>
-        <button class="btn ghost sm" onclick="downloadZIP()">📦 ZIP Download</button>
-        <button class="btn ghost sm" onclick="selectAllOutputs()">☑ Select All</button>
+        <button class="btn ghost sm" onclick="downloadSelectedFront()">⬇ Download Selected</button>
+        <button class="btn ghost sm" onclick="downloadZIPFront()">📦 ZIP Front</button>
+        <button class="btn ghost sm" onclick="selectAllOutputsFront()">☑ Select All</button>
       </div>
-      <div class="output-grid" id="output"></div>
+      <div class="output-grid" id="frontOutput"></div>
     </div>
-
   </main>
 
+  <!-- ===== BACK PANEL ===== -->
+  <main class="main-panel" id="backPanel">
+    <div class="panel-header back">🔴 Back Mockup</div>
+
+    <!-- Zone Controls Back -->
+    <div class="zone-controls">
+      <label>🟥 Zone</label>
+      <label>X:</label><input type="number" id="backZoneX" value="110" class="zone-input" oninput="updateZoneBackFromInputs()">
+      <label>Y:</label><input type="number" id="backZoneY" value="120" class="zone-input" oninput="updateZoneBackFromInputs()">
+      <label>W:</label><input type="number" id="backZoneW" value="160" class="zone-input" oninput="updateZoneBackFromInputs()">
+      <label>H:</label><input type="number" id="backZoneH" value="160" class="zone-input" oninput="updateZoneBackFromInputs()">
+      <button class="btn sm success" onclick="fitDesignToZoneBack()">⊡ Fit</button>
+      <button class="btn sm ghost" onclick="saveCurrentVariantStateBack()">💾 Save</button>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <div class="hint">💡 Drag red box to reposition · Yellow handles = T-shirt</div>
+    </div>
+
+    <!-- Canvas Back -->
+    <div id="canvasWrapperBack">
+      <canvas id="previewCanvasBack" width="380" height="480"></canvas>
+      <canvas id="overlayCanvasBack" width="380" height="480"></canvas>
+    </div>
+
+    <!-- Variant State Panel - BELOW canvas -->
+    <div class="variant-info">
+      <h4 class="back-title">📌 Back Variant State</h4>
+      <div class="state-row"><span>Index</span><span id="bsi-index">—</span></div>
+      <div class="state-row"><span>Name</span><span id="bsi-name" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</span></div>
+      <div class="state-row"><span>Left</span><span id="bsi-left">—</span></div>
+      <div class="state-row"><span>Top</span><span id="bsi-top">—</span></div>
+      <div class="state-row"><span>ScaleX</span><span id="bsi-sx">—</span></div>
+      <div class="state-row"><span>ScaleY</span><span id="bsi-sy">—</span></div>
+      <div class="state-row"><span>Width</span><span id="bsi-w">—</span></div>
+      <div class="state-row"><span>Height</span><span id="bsi-h">—</span></div>
+      <div id="backStateBadge" class="state-badge unsaved" style="display:none;">⚠ Unsaved</div>
+      <div style="margin-top:10px;">
+        <div class="section-title" style="margin-bottom:5px;">All Back Variants</div>
+        <div id="backVariantStateList" style="font-size:10px;color:var(--muted);font-family:var(--mono);max-height:120px;overflow-y:auto;"></div>
+      </div>
+    </div>
+
+    <!-- Output Back -->
+    <div>
+      <div class="panel-label" style="margin-top:6px;">Back Output</div>
+      <div class="btn-row">
+        <button class="btn ghost sm" onclick="downloadSelectedBack()">⬇ Download Selected</button>
+        <button class="btn ghost sm" onclick="downloadZIPBack()">📦 ZIP Back</button>
+        <button class="btn ghost sm" onclick="selectAllOutputsBack()">☑ Select All</button>
+      </div>
+      <div class="output-grid" id="backOutput"></div>
+    </div>
+  </main>
+
+  <!-- ===== BOTTOM BAR ===== -->
+  <div class="bottom-bar">
+    <span style="font-size:11px;color:var(--muted);font-family:var(--mono);">
+      Front Variants: <span id="frontVariantCount">0</span> &nbsp;|&nbsp;
+      Back Variants: <span id="backVariantCount">0</span> &nbsp;|&nbsp;
+      Front Saved: <span id="frontSavedCount">0</span> &nbsp;|&nbsp;
+      Back Saved: <span id="backSavedCount">0</span> &nbsp;|&nbsp;
+      Front Gen: <span id="frontGenCount">0</span> &nbsp;|&nbsp;
+      Back Gen: <span id="backGenCount">0</span>
+    </span>
+    <div class="spacer"></div>
+    <span style="font-size:10px;color:var(--muted);font-family:var(--mono);">Auto Mockup Generator v3.0</span>
+  </div>
+
 </div>
 
-<!-- Bottom info bar -->
-<div class="bottom-bar">
-  <span style="font-size:11px;color:var(--muted);font-family:var(--mono);">
-    Variants: <span id="variantCount">0</span> &nbsp;|&nbsp;
-    Saved States: <span id="savedCount">0</span> &nbsp;|&nbsp;
-    Generated: <span id="genCount">0</span>
-  </span>
-  <div class="spacer"></div>
-  <span style="font-size:10px;color:var(--muted);font-family:var(--mono);">Auto Mockup Generator v2.0</span>
-</div>
-
-<input class="hidden-input" type="file" id="replaceInput" accept="image/*">
+<input class="hidden-input" type="file" id="frontReplaceInput" accept="image/*">
+<input class="hidden-input" type="file" id="backReplaceInput" accept="image/*">
 
 <script>
-const fabricCanvas = new fabric.Canvas('previewCanvas', { backgroundColor: '#ffffff' });
-const overlayCanvas = document.getElementById('overlayCanvas');
-const octx = overlayCanvas.getContext('2d');
+/* ============================================================
+   =================== FRONT SYSTEM ==========================
+   ============================================================ */
 
-let designObj = null;
-let tshirtLayer = null;
-let tshirtDataURLs = [];
-let tshirtNames = [];
-let generatedImages = [];
-let activeThumbIndex = 0;
+const frontCanvas = new fabric.Canvas('previewCanvasFront', { backgroundColor: '#ffffff' });
+const frontOverlayCanvas = document.getElementById('overlayCanvasFront');
+const frontOctx = frontOverlayCanvas.getContext('2d');
 
-let variantStates = [];
+let frontDesignObj = null;
+let frontTshirtLayer = null;
+let frontTshirtDataURLs = [];
+let frontTshirtNames = [];
+let frontGeneratedImages = [];
+let frontActiveThumbIndex = 0;
+let frontVariantStates = [];
+let frontZone = { x: 110, y: 120, w: 160, h: 160 };
+let frontDragState = null;
+const FRONT_HANDLE = 10;
 
-let zone = { x: 110, y: 120, w: 180, h: 180 };
-
-const HANDLE = 10;
-let dragState = null;
-
-function drawOverlay() {
-  octx.clearRect(0, 0, 400, 500);
-  const { x, y, w, h } = zone;
-  octx.fillStyle = 'rgba(108,99,255,0.10)';
-  octx.fillRect(x, y, w, h);
-  octx.setLineDash([6, 4]);
-  octx.strokeStyle = '#6c63ff';
-  octx.lineWidth = 2;
-  octx.strokeRect(x, y, w, h);
-  octx.setLineDash([]);
-  const corners = getCorners();
-  octx.fillStyle = '#6c63ff';
+function drawOverlayFront() {
+  frontOctx.clearRect(0, 0, 380, 480);
+  const { x, y, w, h } = frontZone;
+  frontOctx.fillStyle = 'rgba(108,99,255,0.10)';
+  frontOctx.fillRect(x, y, w, h);
+  frontOctx.setLineDash([6, 4]);
+  frontOctx.strokeStyle = '#6c63ff';
+  frontOctx.lineWidth = 2;
+  frontOctx.strokeRect(x, y, w, h);
+  frontOctx.setLineDash([]);
+  const corners = getFrontCorners();
+  frontOctx.fillStyle = '#6c63ff';
   corners.forEach(c => {
-    octx.fillRect(c.x - HANDLE/2, c.y - HANDLE/2, HANDLE, HANDLE);
+    frontOctx.fillRect(c.x - FRONT_HANDLE/2, c.y - FRONT_HANDLE/2, FRONT_HANDLE, FRONT_HANDLE);
   });
-  octx.fillStyle = '#6c63ff';
-  octx.font = 'bold 11px Space Mono, monospace';
-  octx.fillText('Print Zone', x + 4, y - 5);
+  frontOctx.fillStyle = '#6c63ff';
+  frontOctx.font = 'bold 11px Space Mono, monospace';
+  frontOctx.fillText('Print Zone (Front)', x + 4, y - 5);
 }
 
-function getCorners() {
-  const { x, y, w, h } = zone;
+function getFrontCorners() {
+  const { x, y, w, h } = frontZone;
   return [
-    { x: x,   y: y,   cursor: 'nw-resize', id: 'nw' },
-    { x: x+w, y: y,   cursor: 'ne-resize', id: 'ne' },
-    { x: x,   y: y+h, cursor: 'sw-resize', id: 'sw' },
+    { x, y, cursor: 'nw-resize', id: 'nw' },
+    { x: x+w, y, cursor: 'ne-resize', id: 'ne' },
+    { x, y: y+h, cursor: 'sw-resize', id: 'sw' },
     { x: x+w, y: y+h, cursor: 'se-resize', id: 'se' },
   ];
 }
 
-function hitCorner(mx, my) {
-  return getCorners().find(c =>
-    mx >= c.x - HANDLE && mx <= c.x + HANDLE &&
-    my >= c.y - HANDLE && my <= c.y + HANDLE
+function hitFrontCorner(mx, my) {
+  return getFrontCorners().find(c =>
+    mx >= c.x - FRONT_HANDLE && mx <= c.x + FRONT_HANDLE &&
+    my >= c.y - FRONT_HANDLE && my <= c.y + FRONT_HANDLE
   );
 }
 
-function hitZoneBody(mx, my) {
-  return mx >= zone.x && mx <= zone.x + zone.w &&
-         my >= zone.y && my <= zone.y + zone.h;
+function hitFrontZoneBody(mx, my) {
+  return mx >= frontZone.x && mx <= frontZone.x + frontZone.w &&
+         my >= frontZone.y && my <= frontZone.y + frontZone.h;
 }
 
-function syncInputsFromZone() {
-  document.getElementById('zoneX').value = Math.round(zone.x);
-  document.getElementById('zoneY').value = Math.round(zone.y);
-  document.getElementById('zoneW').value = Math.round(zone.w);
-  document.getElementById('zoneH').value = Math.round(zone.h);
+function syncInputsFromZoneFront() {
+  document.getElementById('frontZoneX').value = Math.round(frontZone.x);
+  document.getElementById('frontZoneY').value = Math.round(frontZone.y);
+  document.getElementById('frontZoneW').value = Math.round(frontZone.w);
+  document.getElementById('frontZoneH').value = Math.round(frontZone.h);
 }
 
-const hitDiv = document.createElement('div');
-hitDiv.style.cssText = 'position:absolute;top:0;left:0;width:400px;height:500px;z-index:20;cursor:default;';
-document.getElementById('canvasWrapper').appendChild(hitDiv);
+const frontHitDiv = document.createElement('div');
+frontHitDiv.style.cssText = 'position:absolute;top:0;left:0;width:380px;height:480px;z-index:20;cursor:default;pointer-events:none;';
+document.getElementById('canvasWrapperFront').appendChild(frontHitDiv);
 
-hitDiv.addEventListener('mousemove', function(e) {
-  const rect = hitDiv.getBoundingClientRect();
+frontHitDiv.addEventListener('mousemove', function(e) {
+  const rect = frontHitDiv.getBoundingClientRect();
   const mx = e.clientX - rect.left;
   const my = e.clientY - rect.top;
-  if (dragState) { handleDrag(mx, my); return; }
-  const corner = hitCorner(mx, my);
+  if (frontDragState) { handleFrontDrag(mx, my); return; }
+  const corner = hitFrontCorner(mx, my);
   if (corner) {
-    hitDiv.style.cursor = corner.cursor;
-    hitDiv.style.pointerEvents = 'auto';
-  } else if (hitZoneBody(mx, my)) {
-    hitDiv.style.cursor = 'move';
-    hitDiv.style.pointerEvents = 'auto';
+    frontHitDiv.style.cursor = corner.cursor;
+    frontHitDiv.style.pointerEvents = 'auto';
+  } else if (hitFrontZoneBody(mx, my)) {
+    frontHitDiv.style.cursor = 'move';
+    frontHitDiv.style.pointerEvents = 'auto';
   } else {
-    hitDiv.style.cursor = 'default';
-    hitDiv.style.pointerEvents = 'none';
+    frontHitDiv.style.cursor = 'default';
+    frontHitDiv.style.pointerEvents = 'none';
   }
 });
 
-hitDiv.addEventListener('mousedown', function(e) {
-  const rect = hitDiv.getBoundingClientRect();
+frontHitDiv.addEventListener('mousedown', function(e) {
+  const rect = frontHitDiv.getBoundingClientRect();
   const mx = e.clientX - rect.left;
   const my = e.clientY - rect.top;
-  const corner = hitCorner(mx, my);
+  const corner = hitFrontCorner(mx, my);
   if (corner) {
-    dragState = { mode: 'resize', corner: corner.id, startMx: mx, startMy: my, startZone: { ...zone } };
+    frontDragState = { mode: 'resize', corner: corner.id, startMx: mx, startMy: my, startZone: { ...frontZone } };
     e.preventDefault(); return;
   }
-  if (hitZoneBody(mx, my)) {
-    dragState = { mode: 'move', startMx: mx, startMy: my, startZone: { ...zone } };
+  if (hitFrontZoneBody(mx, my)) {
+    frontDragState = { mode: 'move', startMx: mx, startMy: my, startZone: { ...frontZone } };
     e.preventDefault();
   }
 });
 
 window.addEventListener('mousemove', function(e) {
-  if (!dragState) return;
-  const rect = hitDiv.getBoundingClientRect();
-  handleDrag(e.clientX - rect.left, e.clientY - rect.top);
+  if (!frontDragState) return;
+  const rect = frontHitDiv.getBoundingClientRect();
+  handleFrontDrag(e.clientX - rect.left, e.clientY - rect.top);
 });
 
 window.addEventListener('mouseup', function() {
-  if (dragState) { dragState = null; hitDiv.style.pointerEvents = 'none'; }
+  if (frontDragState) {
+    frontDragState = null;
+    frontHitDiv.style.pointerEvents = 'none';
+    alert('✅ Auto Saved!');
+  }
 });
 
-function handleDrag(mx, my) {
-  const dx = mx - dragState.startMx;
-  const dy = my - dragState.startMy;
-  const sz = dragState.startZone;
-  if (dragState.mode === 'move') {
-    zone.x = Math.max(0, Math.min(400 - zone.w, sz.x + dx));
-    zone.y = Math.max(0, Math.min(500 - zone.h, sz.y + dy));
+function handleFrontDrag(mx, my) {
+  const dx = mx - frontDragState.startMx;
+  const dy = my - frontDragState.startMy;
+  const sz = frontDragState.startZone;
+  if (frontDragState.mode === 'move') {
+    frontZone.x = Math.max(0, Math.min(380 - frontZone.w, sz.x + dx));
+    frontZone.y = Math.max(0, Math.min(480 - frontZone.h, sz.y + dy));
   } else {
-    const id = dragState.corner;
+    const id = frontDragState.corner;
     let nx = sz.x, ny = sz.y, nw = sz.w, nh = sz.h;
     if (id === 'nw') { nx = sz.x+dx; ny = sz.y+dy; nw = sz.w-dx; nh = sz.h-dy; }
     if (id === 'ne') { ny = sz.y+dy; nw = sz.w+dx; nh = sz.h-dy; }
     if (id === 'sw') { nx = sz.x+dx; nw = sz.w-dx; nh = sz.h+dy; }
     if (id === 'se') { nw = sz.w+dx; nh = sz.h+dy; }
-    if (nw >= 20) { zone.x = nx; zone.w = nw; }
-    if (nh >= 20) { zone.y = ny; zone.h = nh; }
+    if (nw >= 20) { frontZone.x = nx; frontZone.w = nw; }
+    if (nh >= 20) { frontZone.y = ny; frontZone.h = nh; }
   }
-  syncInputsFromZone();
-  drawOverlay();
+  syncInputsFromZoneFront();
+  drawOverlayFront();
 }
 
-function updateZoneFromInputs() {
-  zone.x = parseInt(document.getElementById('zoneX').value) || 0;
-  zone.y = parseInt(document.getElementById('zoneY').value) || 0;
-  zone.w = parseInt(document.getElementById('zoneW').value) || 20;
-  zone.h = parseInt(document.getElementById('zoneH').value) || 20;
-  drawOverlay();
+function updateZoneFrontFromInputs() {
+  frontZone.x = parseInt(document.getElementById('frontZoneX').value) || 0;
+  frontZone.y = parseInt(document.getElementById('frontZoneY').value) || 0;
+  frontZone.w = parseInt(document.getElementById('frontZoneW').value) || 20;
+  frontZone.h = parseInt(document.getElementById('frontZoneH').value) || 20;
+  drawOverlayFront();
+  alert('✅ Auto Saved!');
 }
 
-function fitDesignToZone() {
-  if (!designObj) { alert('Pehle design upload karein!'); return; }
-  const dw = designObj.width;
-  const dh = designObj.height;
-  const scale = Math.min(zone.w / dw, zone.h / dh);
-  designObj.set({
-    left: zone.x + (zone.w - dw * scale) / 2,
-    top:  zone.y + (zone.h - dh * scale) / 2,
+function fitDesignToZoneFront() {
+  if (!frontDesignObj) { alert('Pehle front design upload karein!'); return; }
+  const dw = frontDesignObj.width;
+  const dh = frontDesignObj.height;
+  const scale = Math.min(frontZone.w / dw, frontZone.h / dh);
+  frontDesignObj.set({
+    left: frontZone.x + (frontZone.w - dw * scale) / 2,
+    top:  frontZone.y + (frontZone.h - dh * scale) / 2,
     scaleX: scale, scaleY: scale
   });
-  fabricCanvas.renderAll();
+  frontCanvas.renderAll();
 }
 
-function captureVariantState(index) {
-  if (!tshirtLayer || index < 0 || index >= tshirtDataURLs.length) return;
-  variantStates[index] = {
-    left:   tshirtLayer.left,
-    top:    tshirtLayer.top,
-    scaleX: tshirtLayer.scaleX,
-    scaleY: tshirtLayer.scaleY,
+function captureVariantStateFront(index) {
+  if (!frontTshirtLayer || index < 0 || index >= frontTshirtDataURLs.length) return;
+  frontVariantStates[index] = {
+    left:   frontTshirtLayer.left,
+    top:    frontTshirtLayer.top,
+    scaleX: frontTshirtLayer.scaleX,
+    scaleY: frontTshirtLayer.scaleY,
     saved:  true
   };
-  updateVariantStateUI();
+  updateVariantStateUIFront();
 }
 
-function applyVariantState(index) {
-  const state = variantStates[index];
-  if (!state || !tshirtLayer) return false;
-  tshirtLayer.set({
+function applyVariantStateFront(index) {
+  const state = frontVariantStates[index];
+  if (!state || !frontTshirtLayer) return false;
+  frontTshirtLayer.set({
     left:   state.left,
     top:    state.top,
     scaleX: state.scaleX,
     scaleY: state.scaleY
   });
-  tshirtLayer.setCoords();
-  fabricCanvas.renderAll();
+  frontTshirtLayer.setCoords();
+  frontCanvas.renderAll();
   return true;
 }
 
-function saveCurrentVariantState() {
-  captureVariantState(activeThumbIndex);
-  const badge = document.getElementById('stateBadge');
+function saveCurrentVariantStateFront() {
+  captureVariantStateFront(frontActiveThumbIndex);
+  const badge = document.getElementById('frontStateBadge');
   badge.className = 'state-badge saved';
   badge.textContent = '✓ State Saved';
   badge.style.display = 'inline-flex';
-  updateVariantInfoPanel();
-  renderTshirtList();
+  updateVariantInfoPanelFront();
+  renderTshirtListFront();
 }
 
-function updateVariantInfoPanel() {
-  if (!tshirtLayer || tshirtDataURLs.length === 0) return;
-  document.getElementById('si-index').textContent = activeThumbIndex;
-  document.getElementById('si-name').textContent = tshirtNames[activeThumbIndex] || '—';
-  document.getElementById('si-left').textContent = Math.round(tshirtLayer.left);
-  document.getElementById('si-top').textContent = Math.round(tshirtLayer.top);
-  document.getElementById('si-sx').textContent = tshirtLayer.scaleX.toFixed(4);
-  document.getElementById('si-sy').textContent = tshirtLayer.scaleY.toFixed(4);
-  document.getElementById('si-w').textContent = Math.round(tshirtLayer.getScaledWidth()) + 'px';
-  document.getElementById('si-h').textContent = Math.round(tshirtLayer.getScaledHeight()) + 'px';
-
-  const hasSaved = variantStates[activeThumbIndex]?.saved;
-  const badge = document.getElementById('stateBadge');
+function updateVariantInfoPanelFront() {
+  if (!frontTshirtLayer || frontTshirtDataURLs.length === 0) return;
+  document.getElementById('fsi-index').textContent = frontActiveThumbIndex;
+  document.getElementById('fsi-name').textContent = frontTshirtNames[frontActiveThumbIndex] || '—';
+  document.getElementById('fsi-left').textContent = Math.round(frontTshirtLayer.left);
+  document.getElementById('fsi-top').textContent = Math.round(frontTshirtLayer.top);
+  document.getElementById('fsi-sx').textContent = frontTshirtLayer.scaleX.toFixed(4);
+  document.getElementById('fsi-sy').textContent = frontTshirtLayer.scaleY.toFixed(4);
+  document.getElementById('fsi-w').textContent = Math.round(frontTshirtLayer.getScaledWidth()) + 'px';
+  document.getElementById('fsi-h').textContent = Math.round(frontTshirtLayer.getScaledHeight()) + 'px';
+  const hasSaved = frontVariantStates[frontActiveThumbIndex]?.saved;
+  const badge = document.getElementById('frontStateBadge');
   badge.style.display = 'inline-flex';
-  if (hasSaved) {
-    badge.className = 'state-badge saved';
-    badge.textContent = '✓ State Saved';
-  } else {
-    badge.className = 'state-badge unsaved';
-    badge.textContent = '⚠ Not Saved Yet';
-  }
+  if (hasSaved) { badge.className = 'state-badge saved'; badge.textContent = '✓ State Saved'; }
+  else { badge.className = 'state-badge unsaved'; badge.textContent = '⚠ Not Saved Yet'; }
 }
 
-fabricCanvas.on('object:modified', function(e) {
-  if (e.target && e.target.name === 'tshirtLayer') {
-    captureVariantState(activeThumbIndex);
-    updateVariantInfoPanel();
+frontCanvas.on('object:modified', function(e) {
+  if (e.target && e.target.name === 'tshirtLayerFront') {
+    captureVariantStateFront(frontActiveThumbIndex);
+    updateVariantInfoPanelFront();
+    alert('✅ Auto Saved!');
   }
 });
-fabricCanvas.on('object:moving', updateLiveInfo);
-fabricCanvas.on('object:scaling', updateLiveInfo);
+frontCanvas.on('object:moving', function(e) {
+  if (e.target && e.target.name === 'tshirtLayerFront') updateLiveInfoFront(e);
+});
+frontCanvas.on('object:scaling', function(e) {
+  if (e.target && e.target.name === 'tshirtLayerFront') updateLiveInfoFront(e);
+});
 
-function updateLiveInfo(e) {
-  if (e.target && e.target.name === 'tshirtLayer') {
-    document.getElementById('si-left').textContent = Math.round(e.target.left);
-    document.getElementById('si-top').textContent = Math.round(e.target.top);
-    document.getElementById('si-sx').textContent = e.target.scaleX.toFixed(4);
-    document.getElementById('si-sy').textContent = e.target.scaleY.toFixed(4);
-    document.getElementById('si-w').textContent = Math.round(e.target.getScaledWidth()) + 'px';
-    document.getElementById('si-h').textContent = Math.round(e.target.getScaledHeight()) + 'px';
+function updateLiveInfoFront(e) {
+  if (e.target && e.target.name === 'tshirtLayerFront') {
+    document.getElementById('fsi-left').textContent = Math.round(e.target.left);
+    document.getElementById('fsi-top').textContent = Math.round(e.target.top);
+    document.getElementById('fsi-sx').textContent = e.target.scaleX.toFixed(4);
+    document.getElementById('fsi-sy').textContent = e.target.scaleY.toFixed(4);
+    document.getElementById('fsi-w').textContent = Math.round(e.target.getScaledWidth()) + 'px';
+    document.getElementById('fsi-h').textContent = Math.round(e.target.getScaledHeight()) + 'px';
   }
 }
 
-function updateVariantStateUI() {
-  const savedCount = variantStates.filter(s => s && s.saved).length;
-  document.getElementById('savedCount').textContent = savedCount;
-  document.getElementById('variantCount').textContent = tshirtDataURLs.length;
-
-  const listEl = document.getElementById('variantStateList');
+function updateVariantStateUIFront() {
+  const savedCount = frontVariantStates.filter(s => s && s.saved).length;
+  document.getElementById('frontSavedCount').textContent = savedCount;
+  document.getElementById('frontVariantCount').textContent = frontTshirtDataURLs.length;
+  const listEl = document.getElementById('frontVariantStateList');
   listEl.innerHTML = '';
-  tshirtDataURLs.forEach((_, i) => {
-    const s = variantStates[i];
+  frontTshirtDataURLs.forEach((_, i) => {
+    const s = frontVariantStates[i];
     const row = document.createElement('div');
     row.style.cssText = 'padding:3px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;';
     const name = document.createElement('span');
     name.style.cssText = 'max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)';
-    name.textContent = `#${i} ${tshirtNames[i] || 'variant'}`;
+    name.textContent = `#${i} ${frontTshirtNames[i] || 'variant'}`;
     const status = document.createElement('span');
     status.style.color = s?.saved ? 'var(--accent3)' : 'var(--muted)';
     status.textContent = s?.saved ? '✓ saved' : '○ default';
@@ -769,51 +900,51 @@ function updateVariantStateUI() {
   });
 }
 
-function addTshirts(files) {
+function addTshirtsFront(files) {
   Array.from(files).forEach(file => {
     const r = new FileReader();
     r.onload = e => {
-      tshirtDataURLs.push(e.target.result);
-      tshirtNames.push(file.name);
-      variantStates.push(null);
-      renderTshirtList();
-      updateVariantStateUI();
-      if (tshirtDataURLs.length === 1) {
-        setTshirtBackground(tshirtDataURLs[0], 0);
+      frontTshirtDataURLs.push(e.target.result);
+      frontTshirtNames.push(file.name);
+      frontVariantStates.push(null);
+      renderTshirtListFront();
+      updateVariantStateUIFront();
+      if (frontTshirtDataURLs.length === 1) {
+        setTshirtBackgroundFront(frontTshirtDataURLs[0], 0);
       }
     };
     r.readAsDataURL(file);
   });
-  document.getElementById('tshirts').value = '';
+  document.getElementById('frontTshirts').value = '';
 }
 
-function deleteTshirt(index) {
-  captureVariantState(activeThumbIndex);
-  tshirtDataURLs.splice(index, 1);
-  tshirtNames.splice(index, 1);
-  variantStates.splice(index, 1);
-  if (activeThumbIndex >= tshirtDataURLs.length) activeThumbIndex = Math.max(0, tshirtDataURLs.length - 1);
-  renderTshirtList();
-  updateVariantStateUI();
-  if (tshirtDataURLs.length > 0) {
-    setTshirtBackground(tshirtDataURLs[activeThumbIndex], activeThumbIndex);
+function deleteTshirtFront(index) {
+  captureVariantStateFront(frontActiveThumbIndex);
+  frontTshirtDataURLs.splice(index, 1);
+  frontTshirtNames.splice(index, 1);
+  frontVariantStates.splice(index, 1);
+  if (frontActiveThumbIndex >= frontTshirtDataURLs.length) frontActiveThumbIndex = Math.max(0, frontTshirtDataURLs.length - 1);
+  renderTshirtListFront();
+  updateVariantStateUIFront();
+  if (frontTshirtDataURLs.length > 0) {
+    setTshirtBackgroundFront(frontTshirtDataURLs[frontActiveThumbIndex], frontActiveThumbIndex);
   } else {
-    if (tshirtLayer) { fabricCanvas.remove(tshirtLayer); tshirtLayer = null; }
-    fabricCanvas.renderAll();
+    if (frontTshirtLayer) { frontCanvas.remove(frontTshirtLayer); frontTshirtLayer = null; }
+    frontCanvas.renderAll();
   }
 }
 
-function replaceTshirt(index) {
-  const input = document.getElementById('replaceInput');
+function replaceTshirtFront(index) {
+  const input = document.getElementById('frontReplaceInput');
   input.onchange = function() {
     if (!input.files[0]) return;
     const r = new FileReader();
     r.onload = e => {
-      tshirtDataURLs[index] = e.target.result;
-      tshirtNames[index] = input.files[0].name;
-      if (!variantStates[index]?.saved) variantStates[index] = null;
-      renderTshirtList();
-      setTshirtBackground(tshirtDataURLs[index], index);
+      frontTshirtDataURLs[index] = e.target.result;
+      frontTshirtNames[index] = input.files[0].name;
+      if (!frontVariantStates[index]?.saved) frontVariantStates[index] = null;
+      renderTshirtListFront();
+      setTshirtBackgroundFront(frontTshirtDataURLs[index], index);
       input.value = '';
     };
     r.readAsDataURL(input.files[0]);
@@ -821,22 +952,35 @@ function replaceTshirt(index) {
   input.click();
 }
 
-function renderTshirtList() {
-  const list = document.getElementById('tshirtList');
+function renderTshirtListFront() {
+  const list = document.getElementById('frontTshirtList');
   list.innerHTML = '';
-  document.getElementById('countTag').textContent = tshirtDataURLs.length + ' variant' + (tshirtDataURLs.length !== 1 ? 's' : '') + ' loaded';
-  tshirtDataURLs.forEach((src, i) => {
+  document.getElementById('frontCountTag').textContent = frontTshirtDataURLs.length + ' variant' + (frontTshirtDataURLs.length !== 1 ? 's' : '');
+  frontTshirtDataURLs.forEach((src, i) => {
     const wrap = document.createElement('div');
-    let cls = 'tshirt-thumb' + (i === activeThumbIndex ? ' active' : '');
-    if (variantStates[i]?.saved) cls += ' saved-state';
+    let cls = 'tshirt-thumb' + (i === frontActiveThumbIndex ? ' active' : '');
+    if (frontVariantStates[i]?.saved) cls += ' saved-state';
     wrap.className = cls;
+
     const img = document.createElement('img');
-    img.src = src; img.title = tshirtNames[i];
-    img.onclick = () => switchVariant(i);
+    img.src = src; img.title = frontTshirtNames[i];
+    img.onclick = () => switchVariantFront(i);
 
     const name = document.createElement('div');
     name.className = 'tname';
-    name.textContent = tshirtNames[i];
+    name.textContent = frontTshirtNames[i];
+
+    // Double-click to rename
+    wrap.ondblclick = (e) => {
+      e.stopPropagation();
+      const newName = prompt('Rename variant:', frontTshirtNames[i]);
+      if (newName !== null && newName.trim() !== '') {
+        frontTshirtNames[i] = newName.trim();
+        renderTshirtListFront();
+        updateVariantStateUIFront();
+        if (i === frontActiveThumbIndex) updateVariantInfoPanelFront();
+      }
+    };
 
     const btns = document.createElement('div');
     btns.className = 'thumb-btns';
@@ -844,12 +988,12 @@ function renderTshirtList() {
     const rb = document.createElement('button');
     rb.className = 'btn warn sm'; rb.textContent = '↺';
     rb.title = 'Replace image';
-    rb.onclick = e => { e.stopPropagation(); replaceTshirt(i); };
+    rb.onclick = e => { e.stopPropagation(); replaceTshirtFront(i); };
 
     const db = document.createElement('button');
     db.className = 'btn danger sm'; db.textContent = '✕';
     db.title = 'Delete variant';
-    db.onclick = e => { e.stopPropagation(); deleteTshirt(i); };
+    db.onclick = e => { e.stopPropagation(); deleteTshirtFront(i); };
 
     btns.appendChild(rb); btns.appendChild(db);
     wrap.appendChild(img); wrap.appendChild(name); wrap.appendChild(btns);
@@ -857,62 +1001,60 @@ function renderTshirtList() {
   });
 }
 
-function switchVariant(newIndex) {
-  if (newIndex === activeThumbIndex && tshirtLayer) return;
-  captureVariantState(activeThumbIndex);
-  activeThumbIndex = newIndex;
-  renderTshirtList();
-  setTshirtBackground(tshirtDataURLs[newIndex], newIndex);
+function switchVariantFront(newIndex) {
+  if (newIndex === frontActiveThumbIndex && frontTshirtLayer) {
+    captureVariantStateFront(frontActiveThumbIndex);
+    alert('✅ Auto Saved!');
+    return;
+  }
+  captureVariantStateFront(frontActiveThumbIndex);
+  alert('✅ Auto Saved!');
+  frontActiveThumbIndex = newIndex;
+  renderTshirtListFront();
+  setTshirtBackgroundFront(frontTshirtDataURLs[newIndex], newIndex);
 }
 
-function loadDesign(file) {
+function loadDesignFront(file) {
   if (!file) return;
   const r = new FileReader();
   r.onload = e => {
-    if (designObj) fabricCanvas.remove(designObj);
+    if (frontDesignObj) frontCanvas.remove(frontDesignObj);
     fabric.Image.fromURL(e.target.result, img => {
-      img.set({ left: 150, top: 200, scaleX: 0.4, scaleY: 0.4 });
-      designObj = img;
-      fabricCanvas.add(img);
-      fabricCanvas.setActiveObject(img);
-      fabricCanvas.renderAll();
+      img.set({ left: 150, top: 180, scaleX: 0.4, scaleY: 0.4 });
+      frontDesignObj = img;
+      frontCanvas.add(img);
+      frontCanvas.setActiveObject(img);
+      frontCanvas.renderAll();
     });
-    document.getElementById('designName').textContent = '🎨 ' + file.name;
-    document.getElementById('designInfo').style.display = 'block';
+    document.getElementById('frontDesignName').textContent = '🎨 ' + file.name;
+    document.getElementById('frontDesignInfo').style.display = 'block';
   };
   r.readAsDataURL(file);
-  document.getElementById('design').value = '';
+  document.getElementById('frontDesign').value = '';
 }
 
-function removeDesign() {
-  if (designObj) { fabricCanvas.remove(designObj); designObj = null; fabricCanvas.renderAll(); }
-  document.getElementById('designInfo').style.display = 'none';
+function removeDesignFront() {
+  if (frontDesignObj) { frontCanvas.remove(frontDesignObj); frontDesignObj = null; frontCanvas.renderAll(); }
+  document.getElementById('frontDesignInfo').style.display = 'none';
 }
 
-function loadPreview() {
-  if (!tshirtDataURLs.length) { alert('Pehle T-shirts upload karein!'); return; }
-  setTshirtBackground(tshirtDataURLs[activeThumbIndex], activeThumbIndex);
+function loadPreviewFront() {
+  if (!frontTshirtDataURLs.length) { alert('Pehle front T-shirts upload karein!'); return; }
+  setTshirtBackgroundFront(frontTshirtDataURLs[frontActiveThumbIndex], frontActiveThumbIndex);
 }
 
-function setTshirtBackground(src, index) {
-  activeThumbIndex = index;
-  if (tshirtLayer) { fabricCanvas.remove(tshirtLayer); tshirtLayer = null; }
+function setTshirtBackgroundFront(src, index) {
+  frontActiveThumbIndex = index;
+  if (frontTshirtLayer) { frontCanvas.remove(frontTshirtLayer); frontTshirtLayer = null; }
 
   fabric.Image.fromURL(src, img => {
-    const saved = variantStates[index];
-
+    const saved = frontVariantStates[index];
     if (saved) {
-      img.set({
-        left:   saved.left,
-        top:    saved.top,
-        scaleX: saved.scaleX,
-        scaleY: saved.scaleY,
-      });
+      img.set({ left: saved.left, top: saved.top, scaleX: saved.scaleX, scaleY: saved.scaleY });
     } else {
-      img.scaleToWidth(400);
+      img.scaleToWidth(380);
       img.set({ left: 0, top: 0 });
     }
-
     img.set({
       selectable: true,
       evented: true,
@@ -922,117 +1064,702 @@ function setTshirtBackground(src, index) {
       cornerStrokeColor: '#b45309',
       cornerSize: 12,
       transparentCorners: false,
-      name: 'tshirtLayer'
+      name: 'tshirtLayerFront'
     });
-
-    tshirtLayer = img;
-    fabricCanvas.add(img);
-    fabricCanvas.sendToBack(img);
-    if (designObj) fabricCanvas.bringToFront(designObj);
-    fabricCanvas.renderAll();
-    drawOverlay();
-
-    document.getElementById('variantSaveHint').style.display = 'flex';
-
-    updateVariantInfoPanel();
-    updateVariantStateUI();
+    frontTshirtLayer = img;
+    frontCanvas.add(img);
+    frontCanvas.sendToBack(img);
+    if (frontDesignObj) frontCanvas.bringToFront(frontDesignObj);
+    frontCanvas.renderAll();
+    drawOverlayFront();
+    updateVariantInfoPanelFront();
+    updateVariantStateUIFront();
   });
 }
 
-function generate() {
-  if (!tshirtDataURLs.length) { alert('Pehle T-shirts upload karein!'); return; }
+function generateFront() {
+  if (!frontTshirtDataURLs.length) { alert('Pehle front T-shirts upload karein!'); return; }
+  captureVariantStateFront(frontActiveThumbIndex);
 
-  captureVariantState(activeThumbIndex);
+  document.getElementById('frontOutput').innerHTML = '';
+  frontGeneratedImages = [];
 
-  document.getElementById('output').innerHTML = '';
-  generatedImages = [];
-
-  let designURL = null, pos = null;
-  if (designObj) {
-    pos = { left: designObj.left, top: designObj.top, width: designObj.getScaledWidth(), height: designObj.getScaledHeight() };
-    designURL = designObj.toDataURL({ format: 'png', quality: 1 });
+  let frontDesignURL = null, frontPos = null;
+  if (frontDesignObj) {
+    frontPos = {
+      left: frontDesignObj.left,
+      top: frontDesignObj.top,
+      width: frontDesignObj.getScaledWidth(),
+      height: frontDesignObj.getScaledHeight()
+    };
+    frontDesignURL = frontDesignObj.toDataURL({ format: 'png', quality: 1 });
   }
 
-  tshirtDataURLs.forEach((src, index) => {
+  frontTshirtDataURLs.forEach((src, index) => {
     const tshirtImg = new Image();
     tshirtImg.crossOrigin = 'anonymous';
     tshirtImg.src = src;
     tshirtImg.onload = () => {
       const co = document.createElement('canvas');
-      co.width = 400; co.height = 500;
+      co.width = 380; co.height = 480;
       const ctx = co.getContext('2d');
-
-      // White background for generated output too
       ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, 400, 500);
-
-      const state = variantStates[index];
+      ctx.fillRect(0, 0, 380, 480);
+      const state = frontVariantStates[index];
       if (state) {
         const sw = tshirtImg.naturalWidth * state.scaleX;
         const sh = tshirtImg.naturalHeight * state.scaleY;
         ctx.drawImage(tshirtImg, state.left, state.top, sw, sh);
       } else {
-        ctx.drawImage(tshirtImg, 0, 0, 400, 500);
+        ctx.drawImage(tshirtImg, 0, 0, 380, 480);
       }
-
-      if (designObj && pos) {
+      if (frontDesignObj && frontPos) {
         const d = new Image();
-        d.src = designURL;
+        d.src = frontDesignURL;
         d.onload = () => {
-          ctx.drawImage(d, pos.left, pos.top, pos.width, pos.height);
-          saveOutput(co, index);
+          ctx.drawImage(d, frontPos.left, frontPos.top, frontPos.width, frontPos.height);
+          saveFrontOutput(co, index);
         };
       } else {
-        saveOutput(co, index);
+        saveFrontOutput(co, index);
       }
     };
   });
 }
 
-function saveOutput(canvasOut, index) {
+function saveFrontOutput(canvasOut, index) {
   const dataURL = canvasOut.toDataURL('image/png', 1.0);
-  generatedImages.push(dataURL);
-  const imgIndex = generatedImages.length - 1;
+  frontGeneratedImages.push(dataURL);
+  const imgIndex = frontGeneratedImages.length - 1;
 
   const box = document.createElement('div');
-  box.className = 'output-box'; box.id = 'output-box-' + imgIndex;
+  box.className = 'output-box'; box.id = 'front-output-box-' + imgIndex;
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox'; checkbox.value = imgIndex;
 
   const labelEl = document.createElement('label');
   labelEl.appendChild(checkbox);
-  labelEl.appendChild(document.createTextNode(' Variant ' + (index + 1)));
+  labelEl.appendChild(document.createTextNode(' Front V' + (index + 1)));
 
   const img = document.createElement('img');
-  img.src = dataURL; img.width = 150;
+  img.src = dataURL; img.width = 130;
 
   const btnRow = document.createElement('div');
   btnRow.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;justify-content:center;';
 
   const dlBtn = document.createElement('button');
   dlBtn.className = 'btn sm'; dlBtn.textContent = '⬇';
-  dlBtn.title = 'Download'; dlBtn.onclick = () => downloadImage(dataURL, 'mockup_v' + (index+1) + '.png');
+  dlBtn.title = 'Download';
+  dlBtn.onclick = () => downloadImage(dataURL, 'front_v' + (index+1) + '.png');
 
   const delBtn = document.createElement('button');
   delBtn.className = 'btn danger sm'; delBtn.textContent = '✕';
   delBtn.title = 'Delete';
-  delBtn.onclick = () => { document.getElementById('output-box-' + imgIndex).remove(); generatedImages[imgIndex] = null; updateGenCount(); };
+  delBtn.onclick = () => {
+    document.getElementById('front-output-box-' + imgIndex).remove();
+    frontGeneratedImages[imgIndex] = null;
+    updateFrontGenCount();
+  };
 
   btnRow.appendChild(dlBtn); btnRow.appendChild(delBtn);
   box.appendChild(labelEl); box.appendChild(img); box.appendChild(btnRow);
-  document.getElementById('output').appendChild(box);
-
-  updateGenCount();
+  document.getElementById('frontOutput').appendChild(box);
+  updateFrontGenCount();
 }
 
-function updateGenCount() {
-  document.getElementById('genCount').textContent = document.querySelectorAll('.output-box').length;
+function updateFrontGenCount() {
+  document.getElementById('frontGenCount').textContent = document.querySelectorAll('#frontOutput .output-box').length;
 }
 
-function selectAllOutputs() {
-  document.querySelectorAll('#output input[type=checkbox]').forEach(cb => cb.checked = true);
+function selectAllOutputsFront() {
+  document.querySelectorAll('#frontOutput input[type=checkbox]').forEach(cb => cb.checked = true);
 }
+
+function downloadSelectedFront() {
+  const selected = document.querySelectorAll('#frontOutput input:checked');
+  if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
+  selected.forEach((cb, i) => {
+    if (frontGeneratedImages[cb.value]) downloadImage(frontGeneratedImages[cb.value], 'front_selected_' + (i+1) + '.png');
+  });
+}
+
+function downloadZIPFront() {
+  const selected = document.querySelectorAll('#frontOutput input:checked');
+  if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
+  const zip = new JSZip();
+  selected.forEach((cb, i) => {
+    if (frontGeneratedImages[cb.value]) zip.file('front_' + (i+1) + '.png', frontGeneratedImages[cb.value].split(',')[1], { base64: true });
+  });
+  zip.generateAsync({ type: 'blob' }).then(content => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(content); link.download = 'front_mockups.zip'; link.click();
+  });
+}
+
+
+/* ============================================================
+   =================== BACK SYSTEM ===========================
+   ============================================================ */
+
+const backCanvas = new fabric.Canvas('previewCanvasBack', { backgroundColor: '#ffffff' });
+const backOverlayCanvas = document.getElementById('overlayCanvasBack');
+const backOctx = backOverlayCanvas.getContext('2d');
+
+let backDesignObj = null;
+let backTshirtLayer = null;
+let backTshirtDataURLs = [];
+let backTshirtNames = [];
+let backGeneratedImages = [];
+let backActiveThumbIndex = 0;
+let backVariantStates = [];
+let backZone = { x: 110, y: 120, w: 160, h: 160 };
+let backDragState = null;
+const BACK_HANDLE = 10;
+
+function drawOverlayBack() {
+  backOctx.clearRect(0, 0, 380, 480);
+  const { x, y, w, h } = backZone;
+  backOctx.fillStyle = 'rgba(255,101,132,0.10)';
+  backOctx.fillRect(x, y, w, h);
+  backOctx.setLineDash([6, 4]);
+  backOctx.strokeStyle = '#ff6584';
+  backOctx.lineWidth = 2;
+  backOctx.strokeRect(x, y, w, h);
+  backOctx.setLineDash([]);
+  const corners = getBackCorners();
+  backOctx.fillStyle = '#ff6584';
+  corners.forEach(c => {
+    backOctx.fillRect(c.x - BACK_HANDLE/2, c.y - BACK_HANDLE/2, BACK_HANDLE, BACK_HANDLE);
+  });
+  backOctx.fillStyle = '#ff6584';
+  backOctx.font = 'bold 11px Space Mono, monospace';
+  backOctx.fillText('Print Zone (Back)', x + 4, y - 5);
+}
+
+function getBackCorners() {
+  const { x, y, w, h } = backZone;
+  return [
+    { x, y, cursor: 'nw-resize', id: 'nw' },
+    { x: x+w, y, cursor: 'ne-resize', id: 'ne' },
+    { x, y: y+h, cursor: 'sw-resize', id: 'sw' },
+    { x: x+w, y: y+h, cursor: 'se-resize', id: 'se' },
+  ];
+}
+
+function hitBackCorner(mx, my) {
+  return getBackCorners().find(c =>
+    mx >= c.x - BACK_HANDLE && mx <= c.x + BACK_HANDLE &&
+    my >= c.y - BACK_HANDLE && my <= c.y + BACK_HANDLE
+  );
+}
+
+function hitBackZoneBody(mx, my) {
+  return mx >= backZone.x && mx <= backZone.x + backZone.w &&
+         my >= backZone.y && my <= backZone.y + backZone.h;
+}
+
+function syncInputsFromZoneBack() {
+  document.getElementById('backZoneX').value = Math.round(backZone.x);
+  document.getElementById('backZoneY').value = Math.round(backZone.y);
+  document.getElementById('backZoneW').value = Math.round(backZone.w);
+  document.getElementById('backZoneH').value = Math.round(backZone.h);
+}
+
+const backHitDiv = document.createElement('div');
+backHitDiv.style.cssText = 'position:absolute;top:0;left:0;width:380px;height:480px;z-index:20;cursor:default;pointer-events:none;';
+document.getElementById('canvasWrapperBack').appendChild(backHitDiv);
+
+backHitDiv.addEventListener('mousemove', function(e) {
+  const rect = backHitDiv.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  if (backDragState) { handleBackDrag(mx, my); return; }
+  const corner = hitBackCorner(mx, my);
+  if (corner) {
+    backHitDiv.style.cursor = corner.cursor;
+    backHitDiv.style.pointerEvents = 'auto';
+  } else if (hitBackZoneBody(mx, my)) {
+    backHitDiv.style.cursor = 'move';
+    backHitDiv.style.pointerEvents = 'auto';
+  } else {
+    backHitDiv.style.cursor = 'default';
+    backHitDiv.style.pointerEvents = 'none';
+  }
+});
+
+backHitDiv.addEventListener('mousedown', function(e) {
+  const rect = backHitDiv.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const corner = hitBackCorner(mx, my);
+  if (corner) {
+    backDragState = { mode: 'resize', corner: corner.id, startMx: mx, startMy: my, startZone: { ...backZone } };
+    e.preventDefault(); return;
+  }
+  if (hitBackZoneBody(mx, my)) {
+    backDragState = { mode: 'move', startMx: mx, startMy: my, startZone: { ...backZone } };
+    e.preventDefault();
+  }
+});
+
+window.addEventListener('mousemove', function(e) {
+  if (!backDragState) return;
+  const rect = backHitDiv.getBoundingClientRect();
+  handleBackDrag(e.clientX - rect.left, e.clientY - rect.top);
+});
+
+window.addEventListener('mouseup', function() {
+  if (backDragState) {
+    backDragState = null;
+    backHitDiv.style.pointerEvents = 'none';
+    alert('✅ Auto Saved!');
+  }
+});
+
+function handleBackDrag(mx, my) {
+  const dx = mx - backDragState.startMx;
+  const dy = my - backDragState.startMy;
+  const sz = backDragState.startZone;
+  if (backDragState.mode === 'move') {
+    backZone.x = Math.max(0, Math.min(380 - backZone.w, sz.x + dx));
+    backZone.y = Math.max(0, Math.min(480 - backZone.h, sz.y + dy));
+  } else {
+    const id = backDragState.corner;
+    let nx = sz.x, ny = sz.y, nw = sz.w, nh = sz.h;
+    if (id === 'nw') { nx = sz.x+dx; ny = sz.y+dy; nw = sz.w-dx; nh = sz.h-dy; }
+    if (id === 'ne') { ny = sz.y+dy; nw = sz.w+dx; nh = sz.h-dy; }
+    if (id === 'sw') { nx = sz.x+dx; nw = sz.w-dx; nh = sz.h+dy; }
+    if (id === 'se') { nw = sz.w+dx; nh = sz.h+dy; }
+    if (nw >= 20) { backZone.x = nx; backZone.w = nw; }
+    if (nh >= 20) { backZone.y = ny; backZone.h = nh; }
+  }
+  syncInputsFromZoneBack();
+  drawOverlayBack();
+}
+
+function updateZoneBackFromInputs() {
+  backZone.x = parseInt(document.getElementById('backZoneX').value) || 0;
+  backZone.y = parseInt(document.getElementById('backZoneY').value) || 0;
+  backZone.w = parseInt(document.getElementById('backZoneW').value) || 20;
+  backZone.h = parseInt(document.getElementById('backZoneH').value) || 20;
+  drawOverlayBack();
+  alert('✅ Auto Saved!');
+}
+
+function fitDesignToZoneBack() {
+  if (!backDesignObj) { alert('Pehle back design upload karein!'); return; }
+  const dw = backDesignObj.width;
+  const dh = backDesignObj.height;
+  const scale = Math.min(backZone.w / dw, backZone.h / dh);
+  backDesignObj.set({
+    left: backZone.x + (backZone.w - dw * scale) / 2,
+    top:  backZone.y + (backZone.h - dh * scale) / 2,
+    scaleX: scale, scaleY: scale
+  });
+  backCanvas.renderAll();
+}
+
+function captureVariantStateBack(index) {
+  if (!backTshirtLayer || index < 0 || index >= backTshirtDataURLs.length) return;
+  backVariantStates[index] = {
+    left:   backTshirtLayer.left,
+    top:    backTshirtLayer.top,
+    scaleX: backTshirtLayer.scaleX,
+    scaleY: backTshirtLayer.scaleY,
+    saved:  true
+  };
+  updateVariantStateUIBack();
+}
+
+function applyVariantStateBack(index) {
+  const state = backVariantStates[index];
+  if (!state || !backTshirtLayer) return false;
+  backTshirtLayer.set({
+    left:   state.left,
+    top:    state.top,
+    scaleX: state.scaleX,
+    scaleY: state.scaleY
+  });
+  backTshirtLayer.setCoords();
+  backCanvas.renderAll();
+  return true;
+}
+
+function saveCurrentVariantStateBack() {
+  captureVariantStateBack(backActiveThumbIndex);
+  const badge = document.getElementById('backStateBadge');
+  badge.className = 'state-badge saved';
+  badge.textContent = '✓ State Saved';
+  badge.style.display = 'inline-flex';
+  updateVariantInfoPanelBack();
+  renderTshirtListBack();
+}
+
+function updateVariantInfoPanelBack() {
+  if (!backTshirtLayer || backTshirtDataURLs.length === 0) return;
+  document.getElementById('bsi-index').textContent = backActiveThumbIndex;
+  document.getElementById('bsi-name').textContent = backTshirtNames[backActiveThumbIndex] || '—';
+  document.getElementById('bsi-left').textContent = Math.round(backTshirtLayer.left);
+  document.getElementById('bsi-top').textContent = Math.round(backTshirtLayer.top);
+  document.getElementById('bsi-sx').textContent = backTshirtLayer.scaleX.toFixed(4);
+  document.getElementById('bsi-sy').textContent = backTshirtLayer.scaleY.toFixed(4);
+  document.getElementById('bsi-w').textContent = Math.round(backTshirtLayer.getScaledWidth()) + 'px';
+  document.getElementById('bsi-h').textContent = Math.round(backTshirtLayer.getScaledHeight()) + 'px';
+  const hasSaved = backVariantStates[backActiveThumbIndex]?.saved;
+  const badge = document.getElementById('backStateBadge');
+  badge.style.display = 'inline-flex';
+  if (hasSaved) { badge.className = 'state-badge saved'; badge.textContent = '✓ State Saved'; }
+  else { badge.className = 'state-badge unsaved'; badge.textContent = '⚠ Not Saved Yet'; }
+}
+
+backCanvas.on('object:modified', function(e) {
+  if (e.target && e.target.name === 'tshirtLayerBack') {
+    captureVariantStateBack(backActiveThumbIndex);
+    updateVariantInfoPanelBack();
+    alert('✅ Auto Saved!');
+  }
+});
+backCanvas.on('object:moving', function(e) {
+  if (e.target && e.target.name === 'tshirtLayerBack') updateLiveInfoBack(e);
+});
+backCanvas.on('object:scaling', function(e) {
+  if (e.target && e.target.name === 'tshirtLayerBack') updateLiveInfoBack(e);
+});
+
+function updateLiveInfoBack(e) {
+  if (e.target && e.target.name === 'tshirtLayerBack') {
+    document.getElementById('bsi-left').textContent = Math.round(e.target.left);
+    document.getElementById('bsi-top').textContent = Math.round(e.target.top);
+    document.getElementById('bsi-sx').textContent = e.target.scaleX.toFixed(4);
+    document.getElementById('bsi-sy').textContent = e.target.scaleY.toFixed(4);
+    document.getElementById('bsi-w').textContent = Math.round(e.target.getScaledWidth()) + 'px';
+    document.getElementById('bsi-h').textContent = Math.round(e.target.getScaledHeight()) + 'px';
+  }
+}
+
+function updateVariantStateUIBack() {
+  const savedCount = backVariantStates.filter(s => s && s.saved).length;
+  document.getElementById('backSavedCount').textContent = savedCount;
+  document.getElementById('backVariantCount').textContent = backTshirtDataURLs.length;
+  const listEl = document.getElementById('backVariantStateList');
+  listEl.innerHTML = '';
+  backTshirtDataURLs.forEach((_, i) => {
+    const s = backVariantStates[i];
+    const row = document.createElement('div');
+    row.style.cssText = 'padding:3px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;';
+    const name = document.createElement('span');
+    name.style.cssText = 'max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)';
+    name.textContent = `#${i} ${backTshirtNames[i] || 'variant'}`;
+    const status = document.createElement('span');
+    status.style.color = s?.saved ? 'var(--accent3)' : 'var(--muted)';
+    status.textContent = s?.saved ? '✓ saved' : '○ default';
+    row.appendChild(name); row.appendChild(status);
+    listEl.appendChild(row);
+  });
+}
+
+function addTshirtsBack(files) {
+  Array.from(files).forEach(file => {
+    const r = new FileReader();
+    r.onload = e => {
+      backTshirtDataURLs.push(e.target.result);
+      backTshirtNames.push(file.name);
+      backVariantStates.push(null);
+      renderTshirtListBack();
+      updateVariantStateUIBack();
+      if (backTshirtDataURLs.length === 1) {
+        setTshirtBackgroundBack(backTshirtDataURLs[0], 0);
+      }
+    };
+    r.readAsDataURL(file);
+  });
+  document.getElementById('backTshirts').value = '';
+}
+
+function deleteTshirtBack(index) {
+  captureVariantStateBack(backActiveThumbIndex);
+  backTshirtDataURLs.splice(index, 1);
+  backTshirtNames.splice(index, 1);
+  backVariantStates.splice(index, 1);
+  if (backActiveThumbIndex >= backTshirtDataURLs.length) backActiveThumbIndex = Math.max(0, backTshirtDataURLs.length - 1);
+  renderTshirtListBack();
+  updateVariantStateUIBack();
+  if (backTshirtDataURLs.length > 0) {
+    setTshirtBackgroundBack(backTshirtDataURLs[backActiveThumbIndex], backActiveThumbIndex);
+  } else {
+    if (backTshirtLayer) { backCanvas.remove(backTshirtLayer); backTshirtLayer = null; }
+    backCanvas.renderAll();
+  }
+}
+
+function replaceTshirtBack(index) {
+  const input = document.getElementById('backReplaceInput');
+  input.onchange = function() {
+    if (!input.files[0]) return;
+    const r = new FileReader();
+    r.onload = e => {
+      backTshirtDataURLs[index] = e.target.result;
+      backTshirtNames[index] = input.files[0].name;
+      if (!backVariantStates[index]?.saved) backVariantStates[index] = null;
+      renderTshirtListBack();
+      setTshirtBackgroundBack(backTshirtDataURLs[index], index);
+      input.value = '';
+    };
+    r.readAsDataURL(input.files[0]);
+  };
+  input.click();
+}
+
+function renderTshirtListBack() {
+  const list = document.getElementById('backTshirtList');
+  list.innerHTML = '';
+  document.getElementById('backCountTag').textContent = backTshirtDataURLs.length + ' variant' + (backTshirtDataURLs.length !== 1 ? 's' : '');
+  backTshirtDataURLs.forEach((src, i) => {
+    const wrap = document.createElement('div');
+    let cls = 'tshirt-thumb' + (i === backActiveThumbIndex ? ' active-back' : '');
+    if (backVariantStates[i]?.saved) cls += ' saved-state';
+    wrap.className = cls;
+
+    const img = document.createElement('img');
+    img.src = src; img.title = backTshirtNames[i];
+    img.onclick = () => switchVariantBack(i);
+
+    const name = document.createElement('div');
+    name.className = 'tname';
+    name.textContent = backTshirtNames[i];
+
+    // Double-click to rename
+    wrap.ondblclick = (e) => {
+      e.stopPropagation();
+      const newName = prompt('Rename variant:', backTshirtNames[i]);
+      if (newName !== null && newName.trim() !== '') {
+        backTshirtNames[i] = newName.trim();
+        renderTshirtListBack();
+        updateVariantStateUIBack();
+        if (i === backActiveThumbIndex) updateVariantInfoPanelBack();
+      }
+    };
+
+    const btns = document.createElement('div');
+    btns.className = 'thumb-btns';
+
+    const rb = document.createElement('button');
+    rb.className = 'btn warn sm'; rb.textContent = '↺';
+    rb.title = 'Replace image';
+    rb.onclick = e => { e.stopPropagation(); replaceTshirtBack(i); };
+
+    const db = document.createElement('button');
+    db.className = 'btn danger sm'; db.textContent = '✕';
+    db.title = 'Delete variant';
+    db.onclick = e => { e.stopPropagation(); deleteTshirtBack(i); };
+
+    btns.appendChild(rb); btns.appendChild(db);
+    wrap.appendChild(img); wrap.appendChild(name); wrap.appendChild(btns);
+    list.appendChild(wrap);
+  });
+}
+
+function switchVariantBack(newIndex) {
+  if (newIndex === backActiveThumbIndex && backTshirtLayer) {
+    captureVariantStateBack(backActiveThumbIndex);
+    alert('✅ Auto Saved!');
+    return;
+  }
+  captureVariantStateBack(backActiveThumbIndex);
+  alert('✅ Auto Saved!');
+  backActiveThumbIndex = newIndex;
+  renderTshirtListBack();
+  setTshirtBackgroundBack(backTshirtDataURLs[newIndex], newIndex);
+}
+
+function loadDesignBack(file) {
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    if (backDesignObj) backCanvas.remove(backDesignObj);
+    fabric.Image.fromURL(e.target.result, img => {
+      img.set({ left: 150, top: 180, scaleX: 0.4, scaleY: 0.4 });
+      backDesignObj = img;
+      backCanvas.add(img);
+      backCanvas.setActiveObject(img);
+      backCanvas.renderAll();
+    });
+    document.getElementById('backDesignName').textContent = '🎨 ' + file.name;
+    document.getElementById('backDesignInfo').style.display = 'block';
+  };
+  r.readAsDataURL(file);
+  document.getElementById('backDesign').value = '';
+}
+
+function removeDesignBack() {
+  if (backDesignObj) { backCanvas.remove(backDesignObj); backDesignObj = null; backCanvas.renderAll(); }
+  document.getElementById('backDesignInfo').style.display = 'none';
+}
+
+function loadPreviewBack() {
+  if (!backTshirtDataURLs.length) { alert('Pehle back T-shirts upload karein!'); return; }
+  setTshirtBackgroundBack(backTshirtDataURLs[backActiveThumbIndex], backActiveThumbIndex);
+}
+
+function setTshirtBackgroundBack(src, index) {
+  backActiveThumbIndex = index;
+  if (backTshirtLayer) { backCanvas.remove(backTshirtLayer); backTshirtLayer = null; }
+
+  fabric.Image.fromURL(src, img => {
+    const saved = backVariantStates[index];
+    if (saved) {
+      img.set({ left: saved.left, top: saved.top, scaleX: saved.scaleX, scaleY: saved.scaleY });
+    } else {
+      img.scaleToWidth(380);
+      img.set({ left: 0, top: 0 });
+    }
+    img.set({
+      selectable: true,
+      evented: true,
+      lockRotation: true,
+      hasRotatingPoint: false,
+      cornerColor: '#f59e0b',
+      cornerStrokeColor: '#b45309',
+      cornerSize: 12,
+      transparentCorners: false,
+      name: 'tshirtLayerBack'
+    });
+    backTshirtLayer = img;
+    backCanvas.add(img);
+    backCanvas.sendToBack(img);
+    if (backDesignObj) backCanvas.bringToFront(backDesignObj);
+    backCanvas.renderAll();
+    drawOverlayBack();
+    updateVariantInfoPanelBack();
+    updateVariantStateUIBack();
+  });
+}
+
+function generateBack() {
+  if (!backTshirtDataURLs.length) { alert('Pehle back T-shirts upload karein!'); return; }
+  captureVariantStateBack(backActiveThumbIndex);
+
+  document.getElementById('backOutput').innerHTML = '';
+  backGeneratedImages = [];
+
+  let backDesignURL = null, backPos = null;
+  if (backDesignObj) {
+    backPos = {
+      left: backDesignObj.left,
+      top: backDesignObj.top,
+      width: backDesignObj.getScaledWidth(),
+      height: backDesignObj.getScaledHeight()
+    };
+    backDesignURL = backDesignObj.toDataURL({ format: 'png', quality: 1 });
+  }
+
+  backTshirtDataURLs.forEach((src, index) => {
+    const tshirtImg = new Image();
+    tshirtImg.crossOrigin = 'anonymous';
+    tshirtImg.src = src;
+    tshirtImg.onload = () => {
+      const co = document.createElement('canvas');
+      co.width = 380; co.height = 480;
+      const ctx = co.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 380, 480);
+      const state = backVariantStates[index];
+      if (state) {
+        const sw = tshirtImg.naturalWidth * state.scaleX;
+        const sh = tshirtImg.naturalHeight * state.scaleY;
+        ctx.drawImage(tshirtImg, state.left, state.top, sw, sh);
+      } else {
+        ctx.drawImage(tshirtImg, 0, 0, 380, 480);
+      }
+      if (backDesignObj && backPos) {
+        const d = new Image();
+        d.src = backDesignURL;
+        d.onload = () => {
+          ctx.drawImage(d, backPos.left, backPos.top, backPos.width, backPos.height);
+          saveBackOutput(co, index);
+        };
+      } else {
+        saveBackOutput(co, index);
+      }
+    };
+  });
+}
+
+function saveBackOutput(canvasOut, index) {
+  const dataURL = canvasOut.toDataURL('image/png', 1.0);
+  backGeneratedImages.push(dataURL);
+  const imgIndex = backGeneratedImages.length - 1;
+
+  const box = document.createElement('div');
+  box.className = 'output-box'; box.id = 'back-output-box-' + imgIndex;
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox'; checkbox.value = imgIndex;
+
+  const labelEl = document.createElement('label');
+  labelEl.appendChild(checkbox);
+  labelEl.appendChild(document.createTextNode(' Back V' + (index + 1)));
+
+  const img = document.createElement('img');
+  img.src = dataURL; img.width = 130;
+
+  const btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;justify-content:center;';
+
+  const dlBtn = document.createElement('button');
+  dlBtn.className = 'btn sm'; dlBtn.textContent = '⬇';
+  dlBtn.title = 'Download';
+  dlBtn.onclick = () => downloadImage(dataURL, 'back_v' + (index+1) + '.png');
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'btn danger sm'; delBtn.textContent = '✕';
+  delBtn.title = 'Delete';
+  delBtn.onclick = () => {
+    document.getElementById('back-output-box-' + imgIndex).remove();
+    backGeneratedImages[imgIndex] = null;
+    updateBackGenCount();
+  };
+
+  btnRow.appendChild(dlBtn); btnRow.appendChild(delBtn);
+  box.appendChild(labelEl); box.appendChild(img); box.appendChild(btnRow);
+  document.getElementById('backOutput').appendChild(box);
+  updateBackGenCount();
+}
+
+function updateBackGenCount() {
+  document.getElementById('backGenCount').textContent = document.querySelectorAll('#backOutput .output-box').length;
+}
+
+function selectAllOutputsBack() {
+  document.querySelectorAll('#backOutput input[type=checkbox]').forEach(cb => cb.checked = true);
+}
+
+function downloadSelectedBack() {
+  const selected = document.querySelectorAll('#backOutput input:checked');
+  if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
+  selected.forEach((cb, i) => {
+    if (backGeneratedImages[cb.value]) downloadImage(backGeneratedImages[cb.value], 'back_selected_' + (i+1) + '.png');
+  });
+}
+
+function downloadZIPBack() {
+  const selected = document.querySelectorAll('#backOutput input:checked');
+  if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
+  const zip = new JSZip();
+  selected.forEach((cb, i) => {
+    if (backGeneratedImages[cb.value]) zip.file('back_' + (i+1) + '.png', backGeneratedImages[cb.value].split(',')[1], { base64: true });
+  });
+  zip.generateAsync({ type: 'blob' }).then(content => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(content); link.download = 'back_mockups.zip'; link.click();
+  });
+}
+
+
+/* ============================================================
+   =================== SHARED UTILITIES ======================
+   ============================================================ */
 
 function downloadImage(data, filename) {
   const a = document.createElement('a');
@@ -1040,26 +1767,43 @@ function downloadImage(data, filename) {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
-function downloadSelected() {
-  const selected = document.querySelectorAll('#output input:checked');
-  if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
-  selected.forEach((cb, i) => { if (generatedImages[cb.value]) downloadImage(generatedImages[cb.value], 'selected_' + (i+1) + '.png'); });
-}
+function downloadCombinedZIP() {
+  const frontSelected = [...frontGeneratedImages].filter(Boolean);
+  const backSelected = [...backGeneratedImages].filter(Boolean);
 
-function downloadZIP() {
-  const selected = document.querySelectorAll('#output input:checked');
-  if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
+  if (!frontSelected.length && !backSelected.length) {
+    alert('Pehle front ya back mockups generate karein!');
+    return;
+  }
+
   const zip = new JSZip();
-  selected.forEach((cb, i) => {
-    if (generatedImages[cb.value]) zip.file('mockup_' + (i+1) + '.png', generatedImages[cb.value].split(',')[1], { base64: true });
-  });
+
+  // Determine max variants count from either side
+  const maxVariants = Math.max(frontGeneratedImages.length, backGeneratedImages.length);
+
+  for (let i = 0; i < maxVariants; i++) {
+    const frontImg = frontGeneratedImages[i];
+    const backImg = backGeneratedImages[i];
+    const varNum = i + 1;
+    if (frontImg) {
+      zip.file('variant' + varNum + '_front.png', frontImg.split(',')[1], { base64: true });
+    }
+    if (backImg) {
+      zip.file('variant' + varNum + '_back.png', backImg.split(',')[1], { base64: true });
+    }
+  }
+
   zip.generateAsync({ type: 'blob' }).then(content => {
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(content); link.download = 'mockups.zip'; link.click();
+    link.href = URL.createObjectURL(content);
+    link.download = 'mockups_front_back.zip';
+    link.click();
   });
 }
 
-drawOverlay();
+/* Init overlays */
+drawOverlayFront();
+drawOverlayBack();
 </script>
 </body>
 </html>
