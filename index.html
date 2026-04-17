@@ -375,6 +375,115 @@ input[type=checkbox] {
   cursor: pointer;
 }
 
+/* ---- Format Selector ---- */
+.format-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  flex-wrap: wrap;
+}
+.format-selector label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.format-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.05em;
+}
+.format-btn:hover { border-color: var(--accent); color: var(--accent); }
+.format-btn.active-format {
+  border-color: var(--accent3);
+  background: rgba(67,232,176,0.1);
+  color: var(--accent3);
+}
+.format-btn.active-format-jpg {
+  border-color: var(--warn);
+  background: rgba(245,158,11,0.1);
+  color: var(--warn);
+}
+.res-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent3);
+  background: rgba(67,232,176,0.08);
+  border: 1px solid rgba(67,232,176,0.2);
+  padding: 3px 8px;
+  border-radius: 5px;
+  margin-left: auto;
+}
+
+/* ---- Progress overlay ---- */
+.progress-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,15,19,0.85);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  backdrop-filter: blur(4px);
+}
+.progress-overlay.active { display: flex; }
+.progress-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  min-width: 280px;
+}
+.progress-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.progress-bar-track {
+  width: 240px;
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+.progress-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
 /* ---- Bottom bar ---- */
 .bottom-bar {
   grid-column: 1 / -1;
@@ -418,10 +527,19 @@ input[type=checkbox] {
 </head>
 <body>
 
+<!-- Progress Overlay -->
+<div class="progress-overlay" id="progressOverlay">
+  <div class="progress-box">
+    <div class="progress-title" id="progressTitle">⚡ Generating High-Res Mockups...</div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progressBar"></div></div>
+    <div class="progress-label" id="progressLabel">Preparing canvas...</div>
+  </div>
+</div>
+
 <header>
   <span class="logo-icon">👕</span>
   <h1>Auto Mockup Generator</h1>
-  <span class="version">v3.0 — Front &amp; Back</span>
+  <span class="version">v4.0 — HD Export · Front &amp; Back</span>
 </header>
 
 <div class="app">
@@ -552,6 +670,14 @@ input[type=checkbox] {
       </div>
     </div>
 
+    <!-- Format Selector Front -->
+    <div class="format-selector">
+      <label>📐 Export Format</label>
+      <button class="format-btn active-format" id="frontFmtPNG" onclick="setFrontFormat('png')">🖼 PNG</button>
+      <button class="format-btn" id="frontFmtJPG" onclick="setFrontFormat('jpg')">📷 JPG</button>
+      <span class="res-tag">2000 × 2000 px</span>
+    </div>
+
     <!-- Output Front -->
     <div>
       <div class="panel-label" style="margin-top:6px;">Front Output</div>
@@ -607,6 +733,14 @@ input[type=checkbox] {
       </div>
     </div>
 
+    <!-- Format Selector Back -->
+    <div class="format-selector">
+      <label>📐 Export Format</label>
+      <button class="format-btn active-format" id="backFmtPNG" onclick="setBackFormat('png')">🖼 PNG</button>
+      <button class="format-btn" id="backFmtJPG" onclick="setBackFormat('jpg')">📷 JPG</button>
+      <span class="res-tag">2000 × 2000 px</span>
+    </div>
+
     <!-- Output Back -->
     <div>
       <div class="panel-label" style="margin-top:6px;">Back Output</div>
@@ -630,7 +764,7 @@ input[type=checkbox] {
       Back Gen: <span id="backGenCount">0</span>
     </span>
     <div class="spacer"></div>
-    <span style="font-size:10px;color:var(--muted);font-family:var(--mono);">Auto Mockup Generator v3.0</span>
+    <span style="font-size:10px;color:var(--muted);font-family:var(--mono);">Auto Mockup Generator v4.0 · 2000×2000 HD Export</span>
   </div>
 
 </div>
@@ -640,6 +774,172 @@ input[type=checkbox] {
 
 <script>
 /* ============================================================
+   ========== HIGH-RES EXPORT CONSTANTS ====================
+   ============================================================ */
+
+// Preview canvas dimensions
+const PREVIEW_W = 380;
+const PREVIEW_H = 480;
+
+// Final export dimensions (1:1 square, 2000×2000)
+const EXPORT_SIZE = 2000;
+
+// Scale ratio from preview → export
+const EXPORT_SCALE = EXPORT_SIZE / PREVIEW_W; // ~5.26x from 380px preview
+
+// Fabric.js multiplier for high-res export (3x on the Fabric canvas)
+const FABRIC_MULTIPLIER = 3;
+
+// Format state
+let frontExportFormat = 'png';
+let backExportFormat = 'png';
+
+/* ---- Format Selector Helpers ---- */
+function setFrontFormat(fmt) {
+  frontExportFormat = fmt;
+  document.getElementById('frontFmtPNG').className = 'format-btn' + (fmt === 'png' ? ' active-format' : '');
+  document.getElementById('frontFmtJPG').className = 'format-btn' + (fmt === 'jpg' ? ' active-format-jpg' : '');
+}
+function setBackFormat(fmt) {
+  backExportFormat = fmt;
+  document.getElementById('backFmtPNG').className = 'format-btn' + (fmt === 'png' ? ' active-format' : '');
+  document.getElementById('backFmtJPG').className = 'format-btn' + (fmt === 'jpg' ? ' active-format-jpg' : '');
+}
+
+/* ---- Progress Overlay ---- */
+function showProgress(title) {
+  document.getElementById('progressTitle').textContent = title;
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('progressLabel').textContent = 'Initialising...';
+  document.getElementById('progressOverlay').classList.add('active');
+}
+function updateProgress(pct, label) {
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = label;
+}
+function hideProgress() {
+  document.getElementById('progressOverlay').classList.remove('active');
+}
+
+/* ============================================================
+   ========== HIGH-RES RENDERING ENGINE ===================
+   ============================================================
+   
+   Strategy:
+   - Preview canvas: 380×480 (for UI interaction)
+   - Export canvas:  2000×2000 (final output, 1:1 square)
+   - We compute exact scale factors to map from preview → 2000×2000
+   - Images are drawn from their ORIGINAL full-resolution sources,
+     scaled mathematically to fit the 2000×2000 space — no upscaling
+     of compressed preview pixels.
+   - For the T-shirt: scale state (left/top/scaleX/scaleY) are mapped
+     proportionally from the 380×480 preview to 2000×2000.
+   - For the design: same mapping.
+   ============================================================ */
+
+/**
+ * Draw a high-resolution mockup onto a 2000×2000 canvas.
+ * @param {string} tshirtSrc     - Original full-res t-shirt data URL
+ * @param {object|null} tState   - Saved variant state {left,top,scaleX,scaleY} in preview coords
+ * @param {string|null} designSrc - Original full-res design data URL
+ * @param {object|null} designPos - Design position {left,top,width,height} in preview coords
+ * @returns {Promise<HTMLCanvasElement>}
+ */
+function renderHighResCanvas(tshirtSrc, tState, designSrc, designPos) {
+  return new Promise((resolve) => {
+    const co = document.createElement('canvas');
+    co.width = EXPORT_SIZE;
+    co.height = EXPORT_SIZE;
+    const ctx = co.getContext('2d');
+
+    // Enable high-quality image smoothing
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    // White background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, EXPORT_SIZE, EXPORT_SIZE);
+
+    const tshirtImg = new Image();
+    tshirtImg.onload = () => {
+      // ---- Draw T-shirt ----
+      // scaleX/scaleY in Fabric are relative to the ORIGINAL image dimensions
+      // left/top are in preview px coordinates (380×480)
+      // We map these to the 2000×2000 canvas
+
+      // Horizontal scale from 380 preview → 2000 export
+      const hScale = EXPORT_SIZE / PREVIEW_W;
+      // Vertical scale: preview is 480px tall, export is 2000px — centered vertically
+      const vOffset = (EXPORT_SIZE - PREVIEW_H * hScale) / 2; // vertical centering offset
+
+      if (tState) {
+        // Natural image dimensions
+        const natW = tshirtImg.naturalWidth;
+        const natH = tshirtImg.naturalHeight;
+
+        // In preview: the image is drawn at (left, top) with size (natW * scaleX, natH * scaleY)
+        // Map to export coords:
+        const destX = tState.left * hScale;
+        const destY = tState.top * hScale + vOffset;
+        const destW = natW * tState.scaleX * hScale;
+        const destH = natH * tState.scaleY * hScale;
+
+        ctx.drawImage(tshirtImg, destX, destY, destW, destH);
+      } else {
+        // Default: fill horizontally, vertically centered
+        const fitW = EXPORT_SIZE;
+        const fitH = PREVIEW_H * hScale;
+        ctx.drawImage(tshirtImg, 0, vOffset, fitW, fitH);
+      }
+
+      if (!designSrc || !designPos) {
+        resolve(co);
+        return;
+      }
+
+      // ---- Draw Design ----
+      const designImg = new Image();
+      designImg.onload = () => {
+        // designPos contains {left, top, width, height} in preview coords
+        // width/height here are the SCALED dimensions on screen (not natural dims)
+        const hScale = EXPORT_SIZE / PREVIEW_W;
+        const vOffset = (EXPORT_SIZE - PREVIEW_H * hScale) / 2;
+
+        const destX = designPos.left * hScale;
+        const destY = designPos.top * hScale + vOffset;
+        const destW = designPos.width * hScale;
+        const destH = designPos.height * hScale;
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(designImg, destX, destY, destW, destH);
+        resolve(co);
+      };
+      designImg.src = designSrc;
+    };
+    tshirtImg.src = tshirtSrc;
+  });
+}
+
+/**
+ * Convert a canvas to a data URL in the chosen format at max quality.
+ */
+function canvasToDataURL(canvas, format) {
+  if (format === 'jpg' || format === 'jpeg') {
+    return canvas.toDataURL('image/jpeg', 1.0);
+  }
+  return canvas.toDataURL('image/png');
+}
+
+/**
+ * Get file extension string.
+ */
+function fmtExt(fmt) {
+  return fmt === 'jpg' ? 'jpg' : 'png';
+}
+
+
+/* ============================================================
    =================== FRONT SYSTEM ==========================
    ============================================================ */
 
@@ -648,6 +948,7 @@ const frontOverlayCanvas = document.getElementById('overlayCanvasFront');
 const frontOctx = frontOverlayCanvas.getContext('2d');
 
 let frontDesignObj = null;
+let frontDesignOriginalSrc = null; // Store original full-res design src
 let frontTshirtLayer = null;
 let frontTshirtDataURLs = [];
 let frontTshirtNames = [];
@@ -967,7 +1268,6 @@ function renderTshirtListFront() {
     name.className = 'tname';
     name.textContent = frontTshirtNames[i];
 
-    // Double-click to rename
     wrap.ondblclick = (e) => {
       e.stopPropagation();
       const newName = prompt('Rename variant:', frontTshirtNames[i]);
@@ -1013,6 +1313,7 @@ function loadDesignFront(file) {
   if (!file) return;
   const r = new FileReader();
   r.onload = e => {
+    frontDesignOriginalSrc = e.target.result; // Store original full-res src
     if (frontDesignObj) frontCanvas.remove(frontDesignObj);
     fabric.Image.fromURL(e.target.result, img => {
       img.set({ left: 150, top: 180, scaleX: 0.4, scaleY: 0.4 });
@@ -1030,6 +1331,7 @@ function loadDesignFront(file) {
 
 function removeDesignFront() {
   if (frontDesignObj) { frontCanvas.remove(frontDesignObj); frontDesignObj = null; frontCanvas.renderAll(); }
+  frontDesignOriginalSrc = null;
   document.getElementById('frontDesignInfo').style.display = 'none';
 }
 
@@ -1072,60 +1374,56 @@ function setTshirtBackgroundFront(src, index) {
   });
 }
 
-function generateFront() {
+async function generateFront() {
   if (!frontTshirtDataURLs.length) { alert('Pehle front T-shirts upload karein!'); return; }
   captureVariantStateFront(frontActiveThumbIndex);
 
   document.getElementById('frontOutput').innerHTML = '';
   frontGeneratedImages = [];
 
-  let frontDesignURL = null, frontPos = null;
-  if (frontDesignObj) {
-    frontPos = {
-      left: frontDesignObj.left,
-      top: frontDesignObj.top,
-      width: frontDesignObj.getScaledWidth(),
+  // Capture design position from Fabric canvas (in preview coords)
+  let designSrc = null;
+  let designPos = null;
+  if (frontDesignObj && frontDesignOriginalSrc) {
+    designSrc = frontDesignOriginalSrc; // Full-res source, NOT toDataURL (no quality loss)
+    designPos = {
+      left:   frontDesignObj.left,
+      top:    frontDesignObj.top,
+      width:  frontDesignObj.getScaledWidth(),
       height: frontDesignObj.getScaledHeight()
     };
-    frontDesignURL = frontDesignObj.toDataURL({ format: 'png', quality: 1 });
   }
 
-  frontTshirtDataURLs.forEach((src, index) => {
-    const tshirtImg = new Image();
-    tshirtImg.crossOrigin = 'anonymous';
-    tshirtImg.src = src;
-    tshirtImg.onload = () => {
-      const co = document.createElement('canvas');
-      co.width = 380; co.height = 480;
-      const ctx = co.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, 380, 480);
-      const state = frontVariantStates[index];
-      if (state) {
-        const sw = tshirtImg.naturalWidth * state.scaleX;
-        const sh = tshirtImg.naturalHeight * state.scaleY;
-        ctx.drawImage(tshirtImg, state.left, state.top, sw, sh);
-      } else {
-        ctx.drawImage(tshirtImg, 0, 0, 380, 480);
-      }
-      if (frontDesignObj && frontPos) {
-        const d = new Image();
-        d.src = frontDesignURL;
-        d.onload = () => {
-          ctx.drawImage(d, frontPos.left, frontPos.top, frontPos.width, frontPos.height);
-          saveFrontOutput(co, index);
-        };
-      } else {
-        saveFrontOutput(co, index);
-      }
-    };
-  });
+  const total = frontTshirtDataURLs.length;
+  const fmt = frontExportFormat;
+  showProgress(`⚡ Generating ${total} Front Mockup${total > 1 ? 's' : ''} (2000×2000 ${fmt.toUpperCase()})...`);
+
+  for (let index = 0; index < total; index++) {
+    updateProgress(
+      Math.round((index / total) * 100),
+      `Rendering variant ${index + 1} of ${total}...`
+    );
+
+    // Small async yield to let browser breathe between renders
+    await new Promise(r => setTimeout(r, 20));
+
+    const tshirtSrc = frontTshirtDataURLs[index];
+    const tState = frontVariantStates[index];
+
+    const hiresCanvas = await renderHighResCanvas(tshirtSrc, tState, designSrc, designPos);
+    const dataURL = canvasToDataURL(hiresCanvas, fmt);
+    saveFrontOutput(dataURL, index, fmt);
+  }
+
+  updateProgress(100, 'Done!');
+  await new Promise(r => setTimeout(r, 400));
+  hideProgress();
 }
 
-function saveFrontOutput(canvasOut, index) {
-  const dataURL = canvasOut.toDataURL('image/png', 1.0);
+function saveFrontOutput(dataURL, index, fmt) {
   frontGeneratedImages.push(dataURL);
   const imgIndex = frontGeneratedImages.length - 1;
+  const ext = fmtExt(fmt);
 
   const box = document.createElement('div');
   box.className = 'output-box'; box.id = 'front-output-box-' + imgIndex;
@@ -1135,18 +1433,23 @@ function saveFrontOutput(canvasOut, index) {
 
   const labelEl = document.createElement('label');
   labelEl.appendChild(checkbox);
-  labelEl.appendChild(document.createTextNode(' Front V' + (index + 1)));
+  labelEl.appendChild(document.createTextNode(` Front V${index + 1} · ${fmt.toUpperCase()}`));
 
   const img = document.createElement('img');
   img.src = dataURL; img.width = 130;
+
+  // Resolution badge
+  const resBadge = document.createElement('div');
+  resBadge.style.cssText = 'font-family:var(--mono);font-size:9px;color:var(--accent3);background:rgba(67,232,176,0.08);border:1px solid rgba(67,232,176,0.2);padding:2px 6px;border-radius:4px;';
+  resBadge.textContent = '2000 × 2000 px';
 
   const btnRow = document.createElement('div');
   btnRow.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;justify-content:center;';
 
   const dlBtn = document.createElement('button');
   dlBtn.className = 'btn sm'; dlBtn.textContent = '⬇';
-  dlBtn.title = 'Download';
-  dlBtn.onclick = () => downloadImage(dataURL, 'front_v' + (index+1) + '.png');
+  dlBtn.title = `Download ${fmt.toUpperCase()}`;
+  dlBtn.onclick = () => downloadImage(dataURL, `front_v${index + 1}_2000px.${ext}`);
 
   const delBtn = document.createElement('button');
   delBtn.className = 'btn danger sm'; delBtn.textContent = '✕';
@@ -1158,7 +1461,7 @@ function saveFrontOutput(canvasOut, index) {
   };
 
   btnRow.appendChild(dlBtn); btnRow.appendChild(delBtn);
-  box.appendChild(labelEl); box.appendChild(img); box.appendChild(btnRow);
+  box.appendChild(labelEl); box.appendChild(img); box.appendChild(resBadge); box.appendChild(btnRow);
   document.getElementById('frontOutput').appendChild(box);
   updateFrontGenCount();
 }
@@ -1174,21 +1477,26 @@ function selectAllOutputsFront() {
 function downloadSelectedFront() {
   const selected = document.querySelectorAll('#frontOutput input:checked');
   if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
+  const ext = fmtExt(frontExportFormat);
   selected.forEach((cb, i) => {
-    if (frontGeneratedImages[cb.value]) downloadImage(frontGeneratedImages[cb.value], 'front_selected_' + (i+1) + '.png');
+    if (frontGeneratedImages[cb.value]) downloadImage(frontGeneratedImages[cb.value], `front_selected_${i+1}_2000px.${ext}`);
   });
 }
 
 function downloadZIPFront() {
   const selected = document.querySelectorAll('#frontOutput input:checked');
   if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
+  const ext = fmtExt(frontExportFormat);
   const zip = new JSZip();
   selected.forEach((cb, i) => {
-    if (frontGeneratedImages[cb.value]) zip.file('front_' + (i+1) + '.png', frontGeneratedImages[cb.value].split(',')[1], { base64: true });
+    if (frontGeneratedImages[cb.value]) {
+      const base64 = frontGeneratedImages[cb.value].split(',')[1];
+      zip.file(`front_${i+1}_2000px.${ext}`, base64, { base64: true });
+    }
   });
   zip.generateAsync({ type: 'blob' }).then(content => {
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(content); link.download = 'front_mockups.zip'; link.click();
+    link.href = URL.createObjectURL(content); link.download = `front_mockups_2000px.zip`; link.click();
   });
 }
 
@@ -1202,6 +1510,7 @@ const backOverlayCanvas = document.getElementById('overlayCanvasBack');
 const backOctx = backOverlayCanvas.getContext('2d');
 
 let backDesignObj = null;
+let backDesignOriginalSrc = null;
 let backTshirtLayer = null;
 let backTshirtDataURLs = [];
 let backTshirtNames = [];
@@ -1521,7 +1830,6 @@ function renderTshirtListBack() {
     name.className = 'tname';
     name.textContent = backTshirtNames[i];
 
-    // Double-click to rename
     wrap.ondblclick = (e) => {
       e.stopPropagation();
       const newName = prompt('Rename variant:', backTshirtNames[i]);
@@ -1567,6 +1875,7 @@ function loadDesignBack(file) {
   if (!file) return;
   const r = new FileReader();
   r.onload = e => {
+    backDesignOriginalSrc = e.target.result;
     if (backDesignObj) backCanvas.remove(backDesignObj);
     fabric.Image.fromURL(e.target.result, img => {
       img.set({ left: 150, top: 180, scaleX: 0.4, scaleY: 0.4 });
@@ -1584,6 +1893,7 @@ function loadDesignBack(file) {
 
 function removeDesignBack() {
   if (backDesignObj) { backCanvas.remove(backDesignObj); backDesignObj = null; backCanvas.renderAll(); }
+  backDesignOriginalSrc = null;
   document.getElementById('backDesignInfo').style.display = 'none';
 }
 
@@ -1626,60 +1936,54 @@ function setTshirtBackgroundBack(src, index) {
   });
 }
 
-function generateBack() {
+async function generateBack() {
   if (!backTshirtDataURLs.length) { alert('Pehle back T-shirts upload karein!'); return; }
   captureVariantStateBack(backActiveThumbIndex);
 
   document.getElementById('backOutput').innerHTML = '';
   backGeneratedImages = [];
 
-  let backDesignURL = null, backPos = null;
-  if (backDesignObj) {
-    backPos = {
-      left: backDesignObj.left,
-      top: backDesignObj.top,
-      width: backDesignObj.getScaledWidth(),
+  let designSrc = null;
+  let designPos = null;
+  if (backDesignObj && backDesignOriginalSrc) {
+    designSrc = backDesignOriginalSrc;
+    designPos = {
+      left:   backDesignObj.left,
+      top:    backDesignObj.top,
+      width:  backDesignObj.getScaledWidth(),
       height: backDesignObj.getScaledHeight()
     };
-    backDesignURL = backDesignObj.toDataURL({ format: 'png', quality: 1 });
   }
 
-  backTshirtDataURLs.forEach((src, index) => {
-    const tshirtImg = new Image();
-    tshirtImg.crossOrigin = 'anonymous';
-    tshirtImg.src = src;
-    tshirtImg.onload = () => {
-      const co = document.createElement('canvas');
-      co.width = 380; co.height = 480;
-      const ctx = co.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, 380, 480);
-      const state = backVariantStates[index];
-      if (state) {
-        const sw = tshirtImg.naturalWidth * state.scaleX;
-        const sh = tshirtImg.naturalHeight * state.scaleY;
-        ctx.drawImage(tshirtImg, state.left, state.top, sw, sh);
-      } else {
-        ctx.drawImage(tshirtImg, 0, 0, 380, 480);
-      }
-      if (backDesignObj && backPos) {
-        const d = new Image();
-        d.src = backDesignURL;
-        d.onload = () => {
-          ctx.drawImage(d, backPos.left, backPos.top, backPos.width, backPos.height);
-          saveBackOutput(co, index);
-        };
-      } else {
-        saveBackOutput(co, index);
-      }
-    };
-  });
+  const total = backTshirtDataURLs.length;
+  const fmt = backExportFormat;
+  showProgress(`⚡ Generating ${total} Back Mockup${total > 1 ? 's' : ''} (2000×2000 ${fmt.toUpperCase()})...`);
+
+  for (let index = 0; index < total; index++) {
+    updateProgress(
+      Math.round((index / total) * 100),
+      `Rendering variant ${index + 1} of ${total}...`
+    );
+
+    await new Promise(r => setTimeout(r, 20));
+
+    const tshirtSrc = backTshirtDataURLs[index];
+    const tState = backVariantStates[index];
+
+    const hiresCanvas = await renderHighResCanvas(tshirtSrc, tState, designSrc, designPos);
+    const dataURL = canvasToDataURL(hiresCanvas, fmt);
+    saveBackOutput(dataURL, index, fmt);
+  }
+
+  updateProgress(100, 'Done!');
+  await new Promise(r => setTimeout(r, 400));
+  hideProgress();
 }
 
-function saveBackOutput(canvasOut, index) {
-  const dataURL = canvasOut.toDataURL('image/png', 1.0);
+function saveBackOutput(dataURL, index, fmt) {
   backGeneratedImages.push(dataURL);
   const imgIndex = backGeneratedImages.length - 1;
+  const ext = fmtExt(fmt);
 
   const box = document.createElement('div');
   box.className = 'output-box'; box.id = 'back-output-box-' + imgIndex;
@@ -1689,18 +1993,22 @@ function saveBackOutput(canvasOut, index) {
 
   const labelEl = document.createElement('label');
   labelEl.appendChild(checkbox);
-  labelEl.appendChild(document.createTextNode(' Back V' + (index + 1)));
+  labelEl.appendChild(document.createTextNode(` Back V${index + 1} · ${fmt.toUpperCase()}`));
 
   const img = document.createElement('img');
   img.src = dataURL; img.width = 130;
+
+  const resBadge = document.createElement('div');
+  resBadge.style.cssText = 'font-family:var(--mono);font-size:9px;color:var(--accent3);background:rgba(67,232,176,0.08);border:1px solid rgba(67,232,176,0.2);padding:2px 6px;border-radius:4px;';
+  resBadge.textContent = '2000 × 2000 px';
 
   const btnRow = document.createElement('div');
   btnRow.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;justify-content:center;';
 
   const dlBtn = document.createElement('button');
   dlBtn.className = 'btn sm'; dlBtn.textContent = '⬇';
-  dlBtn.title = 'Download';
-  dlBtn.onclick = () => downloadImage(dataURL, 'back_v' + (index+1) + '.png');
+  dlBtn.title = `Download ${fmt.toUpperCase()}`;
+  dlBtn.onclick = () => downloadImage(dataURL, `back_v${index + 1}_2000px.${ext}`);
 
   const delBtn = document.createElement('button');
   delBtn.className = 'btn danger sm'; delBtn.textContent = '✕';
@@ -1712,7 +2020,7 @@ function saveBackOutput(canvasOut, index) {
   };
 
   btnRow.appendChild(dlBtn); btnRow.appendChild(delBtn);
-  box.appendChild(labelEl); box.appendChild(img); box.appendChild(btnRow);
+  box.appendChild(labelEl); box.appendChild(img); box.appendChild(resBadge); box.appendChild(btnRow);
   document.getElementById('backOutput').appendChild(box);
   updateBackGenCount();
 }
@@ -1728,21 +2036,26 @@ function selectAllOutputsBack() {
 function downloadSelectedBack() {
   const selected = document.querySelectorAll('#backOutput input:checked');
   if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
+  const ext = fmtExt(backExportFormat);
   selected.forEach((cb, i) => {
-    if (backGeneratedImages[cb.value]) downloadImage(backGeneratedImages[cb.value], 'back_selected_' + (i+1) + '.png');
+    if (backGeneratedImages[cb.value]) downloadImage(backGeneratedImages[cb.value], `back_selected_${i+1}_2000px.${ext}`);
   });
 }
 
 function downloadZIPBack() {
   const selected = document.querySelectorAll('#backOutput input:checked');
   if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
+  const ext = fmtExt(backExportFormat);
   const zip = new JSZip();
   selected.forEach((cb, i) => {
-    if (backGeneratedImages[cb.value]) zip.file('back_' + (i+1) + '.png', backGeneratedImages[cb.value].split(',')[1], { base64: true });
+    if (backGeneratedImages[cb.value]) {
+      const base64 = backGeneratedImages[cb.value].split(',')[1];
+      zip.file(`back_${i+1}_2000px.${ext}`, base64, { base64: true });
+    }
   });
   zip.generateAsync({ type: 'blob' }).then(content => {
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(content); link.download = 'back_mockups.zip'; link.click();
+    link.href = URL.createObjectURL(content); link.download = `back_mockups_2000px.zip`; link.click();
   });
 }
 
@@ -1757,38 +2070,47 @@ function downloadImage(data, filename) {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
-function downloadCombinedZIP() {
-  const frontSelected = [...frontGeneratedImages].filter(Boolean);
-  const backSelected = [...backGeneratedImages].filter(Boolean);
+async function downloadCombinedZIP() {
+  const frontAvail = frontGeneratedImages.filter(Boolean);
+  const backAvail  = backGeneratedImages.filter(Boolean);
 
-  if (!frontSelected.length && !backSelected.length) {
+  if (!frontAvail.length && !backAvail.length) {
     alert('Pehle front ya back mockups generate karein!');
     return;
   }
 
+  showProgress('📦 Packing ZIP Archive...');
   const zip = new JSZip();
-
-  // Determine max variants count from either side
   const maxVariants = Math.max(frontGeneratedImages.length, backGeneratedImages.length);
 
   for (let i = 0; i < maxVariants; i++) {
-    const frontImg = frontGeneratedImages[i];
-    const backImg = backGeneratedImages[i];
     const varNum = i + 1;
+    const frontImg = frontGeneratedImages[i];
+    const backImg  = backGeneratedImages[i];
+
     if (frontImg) {
-      zip.file('variant' + varNum + '_front.png', frontImg.split(',')[1], { base64: true });
+      const fExt = frontImg.startsWith('data:image/jpeg') ? 'jpg' : 'png';
+      zip.file(`variant${varNum}_front_2000px.${fExt}`, frontImg.split(',')[1], { base64: true });
     }
     if (backImg) {
-      zip.file('variant' + varNum + '_back.png', backImg.split(',')[1], { base64: true });
+      const bExt = backImg.startsWith('data:image/jpeg') ? 'jpg' : 'png';
+      zip.file(`variant${varNum}_back_2000px.${bExt}`, backImg.split(',')[1], { base64: true });
     }
+
+    updateProgress(Math.round(((i + 1) / maxVariants) * 80), `Packing variant ${varNum}...`);
+    await new Promise(r => setTimeout(r, 10));
   }
 
-  zip.generateAsync({ type: 'blob' }).then(content => {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = 'mockups_front_back.zip';
-    link.click();
-  });
+  updateProgress(90, 'Compressing...');
+  const content = await zip.generateAsync({ type: 'blob' });
+  updateProgress(100, 'Done!');
+  await new Promise(r => setTimeout(r, 300));
+  hideProgress();
+
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(content);
+  link.download = 'mockups_front_back_2000px.zip';
+  link.click();
 }
 
 /* Init overlays */
