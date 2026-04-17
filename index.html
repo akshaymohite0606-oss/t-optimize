@@ -3,187 +3,1063 @@
 <head>
 <meta charset="UTF-8">
 <title>Auto Mockup Tool</title>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --bg: #0f0f13;
+  --surface: #18181f;
+  --surface2: #1e1e28;
+  --border: #2a2a38;
+  --accent: #6c63ff;
+  --accent2: #ff6584;
+  --accent3: #43e8b0;
+  --text: #e8e8f0;
+  --muted: #7070a0;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --success: #10b981;
+  --mono: 'Space Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+}
+
 body {
-  background: #111;
-  color: white;
-  font-family: sans-serif;
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  min-height: 100vh;
 }
 
-.canvas-wrap {
+/* ---- Header ---- */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 56px;
   display: flex;
-  gap: 20px;
-  padding: 20px;
-}
-
-canvas {
-  background: white;
-  border-radius: 10px;
-}
-
-.tshirt-list {
-  display: flex;
+  align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
-  padding: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+header .logo-icon { font-size: 22px; }
+header h1 {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  margin: 0;
+  text-transform: uppercase;
+}
+header .version {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: auto;
 }
 
-.thumb {
-  background: #222;
-  padding: 5px;
+/* ---- Layout ---- */
+.app {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  grid-template-rows: auto 1fr auto;
+  gap: 0;
+  min-height: calc(100vh - 56px);
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+  grid-row: 1 / 3;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.panel-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ---- Upload zones ---- */
+.upload-zone {
+  border: 1.5px dashed var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  font-size: 13px;
+  color: var(--muted);
+}
+.upload-zone:hover {
+  border-color: var(--accent);
+  background: rgba(108,99,255,0.06);
+  color: var(--text);
+}
+.upload-zone .icon { font-size: 20px; margin-bottom: 4px; }
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 9px 16px;
   border-radius: 8px;
   cursor: pointer;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn.danger { background: var(--danger); }
+.btn.warn { background: var(--warn); color: #000; }
+.btn.success { background: var(--success); }
+.btn.ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn.ghost:hover { border-color: var(--accent); color: var(--accent); }
+.btn.sm { padding: 5px 10px; font-size: 11px; border-radius: 6px; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+
+/* ---- T-shirt thumbnails ---- */
+#tshirtList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.tshirt-thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 4px;
+  border-radius: 10px;
+  background: var(--surface2);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+.tshirt-thumb:hover { border-color: var(--accent); }
+.tshirt-thumb.active { border-color: var(--accent); background: rgba(108,99,255,0.12); }
+.tshirt-thumb.saved-state::after {
+  content: '✓';
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  font-size: 9px;
+  color: var(--accent3);
+  font-weight: 700;
+}
+.tshirt-thumb img { width: 52px; height: 52px; object-fit: cover; border-radius: 6px; }
+.tshirt-thumb .tname {
+  font-size: 9px;
+  color: var(--muted);
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   text-align: center;
 }
+.tshirt-thumb .thumb-btns {
+  display: none;
+  gap: 3px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.tshirt-thumb:hover .thumb-btns { display: flex; }
 
-.thumb img {
-  width: 60px;
+/* ---- Main area ---- */
+.main {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
 }
 
+/* ---- Zone controls ---- */
+.zone-controls {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.zone-controls label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.zone-input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 4px 7px;
+  font-size: 12px;
+  width: 60px;
+  font-family: var(--mono);
+  transition: border-color 0.2s;
+}
+.zone-input:focus { outline: none; border-color: var(--accent); }
+
+.hint {
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ---- Canvas wrapper ---- */
+.canvas-section {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+#canvasWrapper {
+  position: relative;
+  display: inline-block;
+  width: 400px;
+  height: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  /* WHITE background for preview canvas */
+  background: #ffffff;
+}
+#canvasWrapper canvas {
+  border-radius: 0;
+}
+#overlayCanvas {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 10;
+  border: none !important;
+}
+
+/* ---- Variant state panel ---- */
+.variant-info {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  min-width: 200px;
+  flex: 1;
+}
+.variant-info h4 {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.state-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+}
+.state-row span:last-child { color: var(--text); }
+.state-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  margin-top: 8px;
+  font-family: var(--mono);
+}
+.state-badge.saved { background: rgba(67,232,176,0.1); color: var(--accent3); border: 1px solid rgba(67,232,176,0.3); }
+.state-badge.unsaved { background: rgba(245,158,11,0.1); color: var(--warn); border: 1px solid rgba(245,158,11,0.3); }
+
+/* ---- Output ---- */
+.output-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+.output-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  transition: border-color 0.2s;
+}
+.output-box:hover { border-color: var(--accent); }
+.output-box img { border-radius: 7px; }
+.output-box label { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); cursor: pointer; }
+
+/* ---- Checkbox ---- */
+input[type=checkbox] {
+  accent-color: var(--accent);
+  width: 14px; height: 14px;
+  cursor: pointer;
+}
+
+/* ---- Bottom bar ---- */
+.bottom-bar {
+  grid-column: 1 / -1;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bottom-bar .spacer { flex: 1; }
+
+/* ---- Design tag ---- */
+.design-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+.section-title {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.hidden-input { display: none; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 </style>
 </head>
-
 <body>
 
-<h2 style="padding:10px;">🔥 Auto Mockup Tool (Front + Back)</h2>
+<header>
+  <span class="logo-icon">👕</span>
+  <h1>Auto Mockup Generator</h1>
+  <span class="version">v2.0</span>
+</header>
 
-<input type="file" multiple onchange="addTshirts(this.files)">
-<input type="file" onchange="loadDesign(this.files[0])">
-<input type="file" onchange="loadDesignBack(this.files[0])">
+<div class="app">
 
-<div class="tshirt-list" id="list"></div>
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
 
-<div class="canvas-wrap">
+    <div>
+      <div class="panel-label">01 — T-shirt Variants</div>
+      <div class="upload-zone" onclick="document.getElementById('tshirts').click()">
+        <div class="icon">🗂️</div>
+        <div>Click to upload T-shirts</div>
+        <div style="font-size:11px;margin-top:3px;">Multiple files supported</div>
+      </div>
+      <input class="hidden-input" type="file" id="tshirts" multiple accept="image/*" onchange="addTshirts(this.files)">
+      <div id="tshirtList" style="margin-top:12px;"></div>
+      <div id="countTag" style="font-size:11px;color:var(--muted);margin-top:6px;font-family:var(--mono);">0 variants loaded</div>
+    </div>
 
-  <!-- FRONT -->
-  <div>
-    <h3>Front</h3>
-    <canvas id="front" width="400" height="500"></canvas>
-  </div>
+    <div>
+      <div class="panel-label">02 — Design Overlay</div>
+      <div class="upload-zone" onclick="document.getElementById('design').click()">
+        <div class="icon">🎨</div>
+        <div>Click to upload design</div>
+        <div style="font-size:11px;margin-top:3px;">PNG recommended (transparent bg)</div>
+      </div>
+      <input class="hidden-input" type="file" id="design" accept="image/*" onchange="loadDesign(this.files[0])">
+      <div id="designInfo" style="margin-top:8px;display:none;">
+        <span class="design-tag" id="designName"></span>
+        <button class="btn danger sm" style="margin-top:6px;" onclick="removeDesign()">🗑 Remove Design</button>
+      </div>
+    </div>
 
-  <!-- BACK -->
-  <div>
-    <h3>Back</h3>
-    <canvas id="back" width="400" height="500"></canvas>
-  </div>
+    <div>
+      <div class="panel-label">03 — Actions</div>
+      <div class="btn-row" style="flex-direction:column;">
+        <button class="btn" onclick="loadPreview()" style="width:100%;justify-content:center;">▶ Preview + Drag</button>
+        <button class="btn success" onclick="generate()" style="width:100%;justify-content:center;">⚡ Generate All Mockups</button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+
+    <!-- Zone Controls -->
+    <div class="zone-controls">
+      <label>🟦 Print Zone</label>
+      <label>X:</label><input type="number" id="zoneX" value="110" class="zone-input" oninput="updateZoneFromInputs()">
+      <label>Y:</label><input type="number" id="zoneY" value="120" class="zone-input" oninput="updateZoneFromInputs()">
+      <label>W:</label><input type="number" id="zoneW" value="180" class="zone-input" oninput="updateZoneFromInputs()">
+      <label>H:</label><input type="number" id="zoneH" value="180" class="zone-input" oninput="updateZoneFromInputs()">
+      <button class="btn sm success" onclick="fitDesignToZone()">⊡ Fit Design</button>
+      <button class="btn sm ghost" onclick="saveCurrentVariantState()" title="Save current T-shirt position for this variant">💾 Save Variant</button>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <div class="hint">💡 Drag the blue box to reposition the print zone</div>
+      <div class="hint">🟡 Yellow handles = move/resize T-shirt · Blue box = print zone</div>
+      <div class="hint" id="variantSaveHint" style="color:var(--accent3);display:none;">✓ State auto-saved when switching variants</div>
+    </div>
+
+    <!-- Canvas + Variant Info -->
+    <div class="canvas-section">
+      <div id="canvasWrapper">
+        <canvas id="previewCanvas" width="400" height="500"></canvas>
+        <canvas id="overlayCanvas" width="400" height="500"></canvas>
+      </div>
+
+      <!-- Per-variant state info panel -->
+      <div class="variant-info">
+        <h4>📌 Active Variant State</h4>
+        <div class="state-row"><span>Index</span><span id="si-index">—</span></div>
+        <div class="state-row"><span>Name</span><span id="si-name" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</span></div>
+        <div class="state-row"><span>Left</span><span id="si-left">—</span></div>
+        <div class="state-row"><span>Top</span><span id="si-top">—</span></div>
+        <div class="state-row"><span>ScaleX</span><span id="si-sx">—</span></div>
+        <div class="state-row"><span>ScaleY</span><span id="si-sy">—</span></div>
+        <div class="state-row"><span>Width</span><span id="si-w">—</span></div>
+        <div class="state-row"><span>Height</span><span id="si-h">—</span></div>
+        <div id="stateBadge" class="state-badge unsaved" style="display:none;">⚠ Unsaved</div>
+
+        <div style="margin-top:12px;">
+          <div class="section-title" style="margin-bottom:6px;">All Variants</div>
+          <div id="variantStateList" style="font-size:10px;color:var(--muted);font-family:var(--mono);max-height:150px;overflow-y:auto;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Output Section -->
+    <div>
+      <div class="panel-label" style="margin-top:8px;">Output</div>
+      <div class="btn-row">
+        <button class="btn ghost sm" onclick="downloadSelected()">⬇ Download Selected</button>
+        <button class="btn ghost sm" onclick="downloadZIP()">📦 ZIP Download</button>
+        <button class="btn ghost sm" onclick="selectAllOutputs()">☑ Select All</button>
+      </div>
+      <div class="output-grid" id="output"></div>
+    </div>
+
+  </main>
 
 </div>
 
+<!-- Bottom info bar -->
+<div class="bottom-bar">
+  <span style="font-size:11px;color:var(--muted);font-family:var(--mono);">
+    Variants: <span id="variantCount">0</span> &nbsp;|&nbsp;
+    Saved States: <span id="savedCount">0</span> &nbsp;|&nbsp;
+    Generated: <span id="genCount">0</span>
+  </span>
+  <div class="spacer"></div>
+  <span style="font-size:10px;color:var(--muted);font-family:var(--mono);">Auto Mockup Generator v2.0</span>
+</div>
+
+<input class="hidden-input" type="file" id="replaceInput" accept="image/*">
+
 <script>
-const frontCanvas = new fabric.Canvas('front');
-const backCanvas = new fabric.Canvas('back');
+const fabricCanvas = new fabric.Canvas('previewCanvas', { backgroundColor: '#ffffff' });
+const overlayCanvas = document.getElementById('overlayCanvas');
+const octx = overlayCanvas.getContext('2d');
 
-let tshirts = [];
-let names = [];
-let active = 0;
+let designObj = null;
+let tshirtLayer = null;
+let tshirtDataURLs = [];
+let tshirtNames = [];
+let generatedImages = [];
+let activeThumbIndex = 0;
 
-let designFront = null;
-let designBack = null;
+let variantStates = [];
 
-let tshirtFront = null;
-let tshirtBack = null;
+let zone = { x: 110, y: 120, w: 180, h: 180 };
 
-function addTshirts(files){
-  Array.from(files).forEach(file=>{
+const HANDLE = 10;
+let dragState = null;
+
+function drawOverlay() {
+  octx.clearRect(0, 0, 400, 500);
+  const { x, y, w, h } = zone;
+  octx.fillStyle = 'rgba(108,99,255,0.10)';
+  octx.fillRect(x, y, w, h);
+  octx.setLineDash([6, 4]);
+  octx.strokeStyle = '#6c63ff';
+  octx.lineWidth = 2;
+  octx.strokeRect(x, y, w, h);
+  octx.setLineDash([]);
+  const corners = getCorners();
+  octx.fillStyle = '#6c63ff';
+  corners.forEach(c => {
+    octx.fillRect(c.x - HANDLE/2, c.y - HANDLE/2, HANDLE, HANDLE);
+  });
+  octx.fillStyle = '#6c63ff';
+  octx.font = 'bold 11px Space Mono, monospace';
+  octx.fillText('Print Zone', x + 4, y - 5);
+}
+
+function getCorners() {
+  const { x, y, w, h } = zone;
+  return [
+    { x: x,   y: y,   cursor: 'nw-resize', id: 'nw' },
+    { x: x+w, y: y,   cursor: 'ne-resize', id: 'ne' },
+    { x: x,   y: y+h, cursor: 'sw-resize', id: 'sw' },
+    { x: x+w, y: y+h, cursor: 'se-resize', id: 'se' },
+  ];
+}
+
+function hitCorner(mx, my) {
+  return getCorners().find(c =>
+    mx >= c.x - HANDLE && mx <= c.x + HANDLE &&
+    my >= c.y - HANDLE && my <= c.y + HANDLE
+  );
+}
+
+function hitZoneBody(mx, my) {
+  return mx >= zone.x && mx <= zone.x + zone.w &&
+         my >= zone.y && my <= zone.y + zone.h;
+}
+
+function syncInputsFromZone() {
+  document.getElementById('zoneX').value = Math.round(zone.x);
+  document.getElementById('zoneY').value = Math.round(zone.y);
+  document.getElementById('zoneW').value = Math.round(zone.w);
+  document.getElementById('zoneH').value = Math.round(zone.h);
+}
+
+const hitDiv = document.createElement('div');
+hitDiv.style.cssText = 'position:absolute;top:0;left:0;width:400px;height:500px;z-index:20;cursor:default;';
+document.getElementById('canvasWrapper').appendChild(hitDiv);
+
+hitDiv.addEventListener('mousemove', function(e) {
+  const rect = hitDiv.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  if (dragState) { handleDrag(mx, my); return; }
+  const corner = hitCorner(mx, my);
+  if (corner) {
+    hitDiv.style.cursor = corner.cursor;
+    hitDiv.style.pointerEvents = 'auto';
+  } else if (hitZoneBody(mx, my)) {
+    hitDiv.style.cursor = 'move';
+    hitDiv.style.pointerEvents = 'auto';
+  } else {
+    hitDiv.style.cursor = 'default';
+    hitDiv.style.pointerEvents = 'none';
+  }
+});
+
+hitDiv.addEventListener('mousedown', function(e) {
+  const rect = hitDiv.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const corner = hitCorner(mx, my);
+  if (corner) {
+    dragState = { mode: 'resize', corner: corner.id, startMx: mx, startMy: my, startZone: { ...zone } };
+    e.preventDefault(); return;
+  }
+  if (hitZoneBody(mx, my)) {
+    dragState = { mode: 'move', startMx: mx, startMy: my, startZone: { ...zone } };
+    e.preventDefault();
+  }
+});
+
+window.addEventListener('mousemove', function(e) {
+  if (!dragState) return;
+  const rect = hitDiv.getBoundingClientRect();
+  handleDrag(e.clientX - rect.left, e.clientY - rect.top);
+});
+
+window.addEventListener('mouseup', function() {
+  if (dragState) { dragState = null; hitDiv.style.pointerEvents = 'none'; }
+});
+
+function handleDrag(mx, my) {
+  const dx = mx - dragState.startMx;
+  const dy = my - dragState.startMy;
+  const sz = dragState.startZone;
+  if (dragState.mode === 'move') {
+    zone.x = Math.max(0, Math.min(400 - zone.w, sz.x + dx));
+    zone.y = Math.max(0, Math.min(500 - zone.h, sz.y + dy));
+  } else {
+    const id = dragState.corner;
+    let nx = sz.x, ny = sz.y, nw = sz.w, nh = sz.h;
+    if (id === 'nw') { nx = sz.x+dx; ny = sz.y+dy; nw = sz.w-dx; nh = sz.h-dy; }
+    if (id === 'ne') { ny = sz.y+dy; nw = sz.w+dx; nh = sz.h-dy; }
+    if (id === 'sw') { nx = sz.x+dx; nw = sz.w-dx; nh = sz.h+dy; }
+    if (id === 'se') { nw = sz.w+dx; nh = sz.h+dy; }
+    if (nw >= 20) { zone.x = nx; zone.w = nw; }
+    if (nh >= 20) { zone.y = ny; zone.h = nh; }
+  }
+  syncInputsFromZone();
+  drawOverlay();
+}
+
+function updateZoneFromInputs() {
+  zone.x = parseInt(document.getElementById('zoneX').value) || 0;
+  zone.y = parseInt(document.getElementById('zoneY').value) || 0;
+  zone.w = parseInt(document.getElementById('zoneW').value) || 20;
+  zone.h = parseInt(document.getElementById('zoneH').value) || 20;
+  drawOverlay();
+}
+
+function fitDesignToZone() {
+  if (!designObj) { alert('Pehle design upload karein!'); return; }
+  const dw = designObj.width;
+  const dh = designObj.height;
+  const scale = Math.min(zone.w / dw, zone.h / dh);
+  designObj.set({
+    left: zone.x + (zone.w - dw * scale) / 2,
+    top:  zone.y + (zone.h - dh * scale) / 2,
+    scaleX: scale, scaleY: scale
+  });
+  fabricCanvas.renderAll();
+}
+
+function captureVariantState(index) {
+  if (!tshirtLayer || index < 0 || index >= tshirtDataURLs.length) return;
+  variantStates[index] = {
+    left:   tshirtLayer.left,
+    top:    tshirtLayer.top,
+    scaleX: tshirtLayer.scaleX,
+    scaleY: tshirtLayer.scaleY,
+    saved:  true
+  };
+  updateVariantStateUI();
+}
+
+function applyVariantState(index) {
+  const state = variantStates[index];
+  if (!state || !tshirtLayer) return false;
+  tshirtLayer.set({
+    left:   state.left,
+    top:    state.top,
+    scaleX: state.scaleX,
+    scaleY: state.scaleY
+  });
+  tshirtLayer.setCoords();
+  fabricCanvas.renderAll();
+  return true;
+}
+
+function saveCurrentVariantState() {
+  captureVariantState(activeThumbIndex);
+  const badge = document.getElementById('stateBadge');
+  badge.className = 'state-badge saved';
+  badge.textContent = '✓ State Saved';
+  badge.style.display = 'inline-flex';
+  updateVariantInfoPanel();
+  renderTshirtList();
+}
+
+function updateVariantInfoPanel() {
+  if (!tshirtLayer || tshirtDataURLs.length === 0) return;
+  document.getElementById('si-index').textContent = activeThumbIndex;
+  document.getElementById('si-name').textContent = tshirtNames[activeThumbIndex] || '—';
+  document.getElementById('si-left').textContent = Math.round(tshirtLayer.left);
+  document.getElementById('si-top').textContent = Math.round(tshirtLayer.top);
+  document.getElementById('si-sx').textContent = tshirtLayer.scaleX.toFixed(4);
+  document.getElementById('si-sy').textContent = tshirtLayer.scaleY.toFixed(4);
+  document.getElementById('si-w').textContent = Math.round(tshirtLayer.getScaledWidth()) + 'px';
+  document.getElementById('si-h').textContent = Math.round(tshirtLayer.getScaledHeight()) + 'px';
+
+  const hasSaved = variantStates[activeThumbIndex]?.saved;
+  const badge = document.getElementById('stateBadge');
+  badge.style.display = 'inline-flex';
+  if (hasSaved) {
+    badge.className = 'state-badge saved';
+    badge.textContent = '✓ State Saved';
+  } else {
+    badge.className = 'state-badge unsaved';
+    badge.textContent = '⚠ Not Saved Yet';
+  }
+}
+
+fabricCanvas.on('object:modified', function(e) {
+  if (e.target && e.target.name === 'tshirtLayer') {
+    captureVariantState(activeThumbIndex);
+    updateVariantInfoPanel();
+  }
+});
+fabricCanvas.on('object:moving', updateLiveInfo);
+fabricCanvas.on('object:scaling', updateLiveInfo);
+
+function updateLiveInfo(e) {
+  if (e.target && e.target.name === 'tshirtLayer') {
+    document.getElementById('si-left').textContent = Math.round(e.target.left);
+    document.getElementById('si-top').textContent = Math.round(e.target.top);
+    document.getElementById('si-sx').textContent = e.target.scaleX.toFixed(4);
+    document.getElementById('si-sy').textContent = e.target.scaleY.toFixed(4);
+    document.getElementById('si-w').textContent = Math.round(e.target.getScaledWidth()) + 'px';
+    document.getElementById('si-h').textContent = Math.round(e.target.getScaledHeight()) + 'px';
+  }
+}
+
+function updateVariantStateUI() {
+  const savedCount = variantStates.filter(s => s && s.saved).length;
+  document.getElementById('savedCount').textContent = savedCount;
+  document.getElementById('variantCount').textContent = tshirtDataURLs.length;
+
+  const listEl = document.getElementById('variantStateList');
+  listEl.innerHTML = '';
+  tshirtDataURLs.forEach((_, i) => {
+    const s = variantStates[i];
+    const row = document.createElement('div');
+    row.style.cssText = 'padding:3px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;';
+    const name = document.createElement('span');
+    name.style.cssText = 'max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)';
+    name.textContent = `#${i} ${tshirtNames[i] || 'variant'}`;
+    const status = document.createElement('span');
+    status.style.color = s?.saved ? 'var(--accent3)' : 'var(--muted)';
+    status.textContent = s?.saved ? '✓ saved' : '○ default';
+    row.appendChild(name); row.appendChild(status);
+    listEl.appendChild(row);
+  });
+}
+
+function addTshirts(files) {
+  Array.from(files).forEach(file => {
     const r = new FileReader();
-    r.onload = e=>{
-      tshirts.push(e.target.result);
-      names.push(file.name);
-      renderList();
-      if(tshirts.length === 1){
-        loadTshirt(0);
+    r.onload = e => {
+      tshirtDataURLs.push(e.target.result);
+      tshirtNames.push(file.name);
+      variantStates.push(null);
+      renderTshirtList();
+      updateVariantStateUI();
+      if (tshirtDataURLs.length === 1) {
+        setTshirtBackground(tshirtDataURLs[0], 0);
       }
-    }
+    };
     r.readAsDataURL(file);
-  })
+  });
+  document.getElementById('tshirts').value = '';
 }
 
-function renderList(){
-  const list = document.getElementById("list");
-  list.innerHTML = "";
+function deleteTshirt(index) {
+  captureVariantState(activeThumbIndex);
+  tshirtDataURLs.splice(index, 1);
+  tshirtNames.splice(index, 1);
+  variantStates.splice(index, 1);
+  if (activeThumbIndex >= tshirtDataURLs.length) activeThumbIndex = Math.max(0, tshirtDataURLs.length - 1);
+  renderTshirtList();
+  updateVariantStateUI();
+  if (tshirtDataURLs.length > 0) {
+    setTshirtBackground(tshirtDataURLs[activeThumbIndex], activeThumbIndex);
+  } else {
+    if (tshirtLayer) { fabricCanvas.remove(tshirtLayer); tshirtLayer = null; }
+    fabricCanvas.renderAll();
+  }
+}
 
-  tshirts.forEach((src,i)=>{
-    const div = document.createElement("div");
-    div.className = "thumb";
+function replaceTshirt(index) {
+  const input = document.getElementById('replaceInput');
+  input.onchange = function() {
+    if (!input.files[0]) return;
+    const r = new FileReader();
+    r.onload = e => {
+      tshirtDataURLs[index] = e.target.result;
+      tshirtNames[index] = input.files[0].name;
+      if (!variantStates[index]?.saved) variantStates[index] = null;
+      renderTshirtList();
+      setTshirtBackground(tshirtDataURLs[index], index);
+      input.value = '';
+    };
+    r.readAsDataURL(input.files[0]);
+  };
+  input.click();
+}
 
-    const img = document.createElement("img");
-    img.src = src;
+function renderTshirtList() {
+  const list = document.getElementById('tshirtList');
+  list.innerHTML = '';
+  document.getElementById('countTag').textContent = tshirtDataURLs.length + ' variant' + (tshirtDataURLs.length !== 1 ? 's' : '') + ' loaded';
+  tshirtDataURLs.forEach((src, i) => {
+    const wrap = document.createElement('div');
+    let cls = 'tshirt-thumb' + (i === activeThumbIndex ? ' active' : '');
+    if (variantStates[i]?.saved) cls += ' saved-state';
+    wrap.className = cls;
+    const img = document.createElement('img');
+    img.src = src; img.title = tshirtNames[i];
+    img.onclick = () => switchVariant(i);
 
-    const name = document.createElement("div");
-    name.textContent = names[i];
+    const name = document.createElement('div');
+    name.className = 'tname';
+    name.textContent = tshirtNames[i];
 
-    // DOUBLE CLICK RENAME
-    name.ondblclick = ()=>{
-      const n = prompt("Rename:", names[i]);
-      if(n){
-        names[i] = n;
-        renderList();
-      }
+    const btns = document.createElement('div');
+    btns.className = 'thumb-btns';
+
+    const rb = document.createElement('button');
+    rb.className = 'btn warn sm'; rb.textContent = '↺';
+    rb.title = 'Replace image';
+    rb.onclick = e => { e.stopPropagation(); replaceTshirt(i); };
+
+    const db = document.createElement('button');
+    db.className = 'btn danger sm'; db.textContent = '✕';
+    db.title = 'Delete variant';
+    db.onclick = e => { e.stopPropagation(); deleteTshirt(i); };
+
+    btns.appendChild(rb); btns.appendChild(db);
+    wrap.appendChild(img); wrap.appendChild(name); wrap.appendChild(btns);
+    list.appendChild(wrap);
+  });
+}
+
+function switchVariant(newIndex) {
+  if (newIndex === activeThumbIndex && tshirtLayer) return;
+  captureVariantState(activeThumbIndex);
+  activeThumbIndex = newIndex;
+  renderTshirtList();
+  setTshirtBackground(tshirtDataURLs[newIndex], newIndex);
+}
+
+function loadDesign(file) {
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    if (designObj) fabricCanvas.remove(designObj);
+    fabric.Image.fromURL(e.target.result, img => {
+      img.set({ left: 150, top: 200, scaleX: 0.4, scaleY: 0.4 });
+      designObj = img;
+      fabricCanvas.add(img);
+      fabricCanvas.setActiveObject(img);
+      fabricCanvas.renderAll();
+    });
+    document.getElementById('designName').textContent = '🎨 ' + file.name;
+    document.getElementById('designInfo').style.display = 'block';
+  };
+  r.readAsDataURL(file);
+  document.getElementById('design').value = '';
+}
+
+function removeDesign() {
+  if (designObj) { fabricCanvas.remove(designObj); designObj = null; fabricCanvas.renderAll(); }
+  document.getElementById('designInfo').style.display = 'none';
+}
+
+function loadPreview() {
+  if (!tshirtDataURLs.length) { alert('Pehle T-shirts upload karein!'); return; }
+  setTshirtBackground(tshirtDataURLs[activeThumbIndex], activeThumbIndex);
+}
+
+function setTshirtBackground(src, index) {
+  activeThumbIndex = index;
+  if (tshirtLayer) { fabricCanvas.remove(tshirtLayer); tshirtLayer = null; }
+
+  fabric.Image.fromURL(src, img => {
+    const saved = variantStates[index];
+
+    if (saved) {
+      img.set({
+        left:   saved.left,
+        top:    saved.top,
+        scaleX: saved.scaleX,
+        scaleY: saved.scaleY,
+      });
+    } else {
+      img.scaleToWidth(400);
+      img.set({ left: 0, top: 0 });
     }
 
-    div.onclick = ()=>loadTshirt(i);
+    img.set({
+      selectable: true,
+      evented: true,
+      lockRotation: true,
+      hasRotatingPoint: false,
+      cornerColor: '#f59e0b',
+      cornerStrokeColor: '#b45309',
+      cornerSize: 12,
+      transparentCorners: false,
+      name: 'tshirtLayer'
+    });
 
-    div.appendChild(img);
-    div.appendChild(name);
+    tshirtLayer = img;
+    fabricCanvas.add(img);
+    fabricCanvas.sendToBack(img);
+    if (designObj) fabricCanvas.bringToFront(designObj);
+    fabricCanvas.renderAll();
+    drawOverlay();
 
-    list.appendChild(div);
-  })
+    document.getElementById('variantSaveHint').style.display = 'flex';
+
+    updateVariantInfoPanel();
+    updateVariantStateUI();
+  });
 }
 
-function loadTshirt(i){
-  active = i;
+function generate() {
+  if (!tshirtDataURLs.length) { alert('Pehle T-shirts upload karein!'); return; }
 
-  frontCanvas.clear();
-  backCanvas.clear();
+  captureVariantState(activeThumbIndex);
 
-  fabric.Image.fromURL(tshirts[i], img=>{
-    img.scaleToWidth(400);
-    tshirtFront = img;
-    frontCanvas.add(img);
-  })
+  document.getElementById('output').innerHTML = '';
+  generatedImages = [];
 
-  fabric.Image.fromURL(tshirts[i], img=>{
-    img.scaleToWidth(400);
-    tshirtBack = img;
-    backCanvas.add(img);
-  })
-
-  alert("✅ Auto Saved!");
-}
-
-function loadDesign(file){
-  const r = new FileReader();
-  r.onload = e=>{
-    if(designFront) frontCanvas.remove(designFront);
-
-    fabric.Image.fromURL(e.target.result, img=>{
-      img.scaleToWidth(150);
-      img.set({left:120, top:150});
-      designFront = img;
-      frontCanvas.add(img);
-    })
+  let designURL = null, pos = null;
+  if (designObj) {
+    pos = { left: designObj.left, top: designObj.top, width: designObj.getScaledWidth(), height: designObj.getScaledHeight() };
+    designURL = designObj.toDataURL({ format: 'png', quality: 1 });
   }
-  r.readAsDataURL(file);
+
+  tshirtDataURLs.forEach((src, index) => {
+    const tshirtImg = new Image();
+    tshirtImg.crossOrigin = 'anonymous';
+    tshirtImg.src = src;
+    tshirtImg.onload = () => {
+      const co = document.createElement('canvas');
+      co.width = 400; co.height = 500;
+      const ctx = co.getContext('2d');
+
+      // White background for generated output too
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 400, 500);
+
+      const state = variantStates[index];
+      if (state) {
+        const sw = tshirtImg.naturalWidth * state.scaleX;
+        const sh = tshirtImg.naturalHeight * state.scaleY;
+        ctx.drawImage(tshirtImg, state.left, state.top, sw, sh);
+      } else {
+        ctx.drawImage(tshirtImg, 0, 0, 400, 500);
+      }
+
+      if (designObj && pos) {
+        const d = new Image();
+        d.src = designURL;
+        d.onload = () => {
+          ctx.drawImage(d, pos.left, pos.top, pos.width, pos.height);
+          saveOutput(co, index);
+        };
+      } else {
+        saveOutput(co, index);
+      }
+    };
+  });
 }
 
-function loadDesignBack(file){
-  const r = new FileReader();
-  r.onload = e=>{
-    if(designBack) backCanvas.remove(designBack);
+function saveOutput(canvasOut, index) {
+  const dataURL = canvasOut.toDataURL('image/png', 1.0);
+  generatedImages.push(dataURL);
+  const imgIndex = generatedImages.length - 1;
 
-    fabric.Image.fromURL(e.target.result, img=>{
-      img.scaleToWidth(150);
-      img.set({left:120, top:150});
-      designBack = img;
-      backCanvas.add(img);
-    })
-  }
-  r.readAsDataURL(file);
+  const box = document.createElement('div');
+  box.className = 'output-box'; box.id = 'output-box-' + imgIndex;
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox'; checkbox.value = imgIndex;
+
+  const labelEl = document.createElement('label');
+  labelEl.appendChild(checkbox);
+  labelEl.appendChild(document.createTextNode(' Variant ' + (index + 1)));
+
+  const img = document.createElement('img');
+  img.src = dataURL; img.width = 150;
+
+  const btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;justify-content:center;';
+
+  const dlBtn = document.createElement('button');
+  dlBtn.className = 'btn sm'; dlBtn.textContent = '⬇';
+  dlBtn.title = 'Download'; dlBtn.onclick = () => downloadImage(dataURL, 'mockup_v' + (index+1) + '.png');
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'btn danger sm'; delBtn.textContent = '✕';
+  delBtn.title = 'Delete';
+  delBtn.onclick = () => { document.getElementById('output-box-' + imgIndex).remove(); generatedImages[imgIndex] = null; updateGenCount(); };
+
+  btnRow.appendChild(dlBtn); btnRow.appendChild(delBtn);
+  box.appendChild(labelEl); box.appendChild(img); box.appendChild(btnRow);
+  document.getElementById('output').appendChild(box);
+
+  updateGenCount();
 }
+
+function updateGenCount() {
+  document.getElementById('genCount').textContent = document.querySelectorAll('.output-box').length;
+}
+
+function selectAllOutputs() {
+  document.querySelectorAll('#output input[type=checkbox]').forEach(cb => cb.checked = true);
+}
+
+function downloadImage(data, filename) {
+  const a = document.createElement('a');
+  a.href = data; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function downloadSelected() {
+  const selected = document.querySelectorAll('#output input:checked');
+  if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
+  selected.forEach((cb, i) => { if (generatedImages[cb.value]) downloadImage(generatedImages[cb.value], 'selected_' + (i+1) + '.png'); });
+}
+
+function downloadZIP() {
+  const selected = document.querySelectorAll('#output input:checked');
+  if (!selected.length) { alert('Kam se kam ek select karein!'); return; }
+  const zip = new JSZip();
+  selected.forEach((cb, i) => {
+    if (generatedImages[cb.value]) zip.file('mockup_' + (i+1) + '.png', generatedImages[cb.value].split(',')[1], { base64: true });
+  });
+  zip.generateAsync({ type: 'blob' }).then(content => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(content); link.download = 'mockups.zip'; link.click();
+  });
+}
+
+drawOverlay();
 </script>
-
 </body>
 </html>
