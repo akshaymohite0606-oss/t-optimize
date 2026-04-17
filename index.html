@@ -362,6 +362,80 @@ input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; c
 
 /* Separator in layer toolbar */
 .ltb-sep { width: 1px; height: 18px; background: var(--border); margin: 0 2px; }
+
+/* Exit button */
+.btn-exit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1.5px solid rgba(239,68,68,0.5);
+  color: #ef4444;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  margin-left: 12px;
+}
+.btn-exit:hover {
+  background: rgba(239,68,68,0.12);
+  border-color: #ef4444;
+  color: #f87171;
+}
+
+/* Session-ended screen */
+#sessionEndedScreen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+}
+#sessionEndedScreen.active { display: flex; }
+.session-ended-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 48px 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+}
+.session-ended-icon { font-size: 48px; line-height: 1; }
+.session-ended-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--danger);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.session-ended-msg {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.session-ended-hint {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--border);
+  margin-top: 8px;
+  letter-spacing: 0.08em;
+}
 </style>
 </head>
 <body>
@@ -378,7 +452,18 @@ input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; c
   <span class="logo-icon">👕</span>
   <h1>Auto Mockup Generator</h1>
   <span class="version">v5.0 — Layer Manager · HD Export · Front &amp; Back</span>
+  <button class="btn-exit" onclick="exitTool()">⏻ Exit</button>
 </header>
+
+<!-- Session Ended Screen -->
+<div id="sessionEndedScreen">
+  <div class="session-ended-box">
+    <div class="session-ended-icon">🚪</div>
+    <div class="session-ended-title">Session Ended</div>
+    <div class="session-ended-msg">Session ended. Please refresh the page to start again.</div>
+    <div class="session-ended-hint">Press F5 or Ctrl+R to reload</div>
+  </div>
+</div>
 
 <div class="app">
 
@@ -1990,6 +2075,61 @@ async function downloadCombinedZIP() {
   await new Promise(r => setTimeout(r, 300));
   hideProgress();
   const a = document.createElement('a'); a.href = URL.createObjectURL(content); a.download = 'mockups_front_back_2000px.zip'; a.click();
+}
+
+/* =====================================================================
+   EXIT TOOL
+   ===================================================================== */
+function exitTool() {
+  // Show inline confirm inside the tool (no browser dialog)
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,15,19,0.92);z-index:999999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
+  overlay.innerHTML = `
+    <div style="background:#18181f;border:1px solid #2a2a38;border-radius:14px;padding:36px 44px;display:flex;flex-direction:column;align-items:center;gap:16px;max-width:360px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
+      <div style="font-size:36px;">⏻</div>
+      <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:#ef4444;letter-spacing:0.1em;text-transform:uppercase;">Exit Session?</div>
+      <div style="font-family:'DM Sans',sans-serif;font-size:13px;color:#7070a0;line-height:1.6;">All unsaved work will be lost.<br>You will need to refresh to restart.</div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button id="exitCancelBtn" style="background:transparent;border:1px solid #2a2a38;color:#e8e8f0;padding:8px 20px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;">Cancel</button>
+        <button id="exitConfirmBtn" style="background:#ef4444;border:none;color:white;padding:8px 20px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;">Yes, Exit</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  document.getElementById('exitCancelBtn').onclick = () => document.body.removeChild(overlay);
+
+  document.getElementById('exitConfirmBtn').onclick = () => {
+    document.body.removeChild(overlay);
+    _doExit();
+  };
+}
+
+function _doExit() {
+  // 1. Clear localStorage
+  try { localStorage.removeItem('mockupData'); } catch(e) {}
+
+  // 2. Dispose Fabric canvases
+  try { frontCanvas.dispose(); } catch(e) {}
+  try { backCanvas.dispose(); } catch(e) {}
+
+  // 3. Hide app shell
+  document.querySelector('header').style.display = 'none';
+  document.querySelector('.app').style.display = 'none';
+  document.getElementById('progressOverlay').style.display = 'none';
+
+  // 4. Disable all inputs & buttons
+  document.querySelectorAll('button, input, select, textarea').forEach(el => {
+    el.disabled = true;
+    el.style.pointerEvents = 'none';
+  });
+
+  // 5. Block all interaction at capture phase
+  document.addEventListener('click',   e => e.stopImmediatePropagation(), true);
+  document.addEventListener('keydown', e => e.stopImmediatePropagation(), true);
+
+  // 6. Show session-ended screen (force style directly, not just class)
+  const screen = document.getElementById('sessionEndedScreen');
+  screen.style.cssText = 'display:flex !important; position:fixed; inset:0; background:#0f0f13; z-index:999998; align-items:center; justify-content:center; flex-direction:column; gap:20px;';
 }
 
 /* Init overlays */
