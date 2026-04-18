@@ -324,8 +324,18 @@ header .version { font-family: var(--mono); font-size: 10px; color: var(--muted)
 .output-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
 .output-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 5px; align-items: center; transition: border-color 0.2s; }
 .output-box:hover { border-color: var(--accent); }
-.output-box img { border-radius: 7px; }
 .output-box label { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); cursor: pointer; }
+
+/* UPDATED: output thumbnail hover feedback */
+.output-box img {
+  border-radius: 7px;
+  transition: opacity 0.15s, box-shadow 0.15s;
+}
+.output-box img:hover {
+  opacity: 0.85;
+  box-shadow: 0 0 0 2px var(--accent3);
+  cursor: pointer;
+}
 
 input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
 
@@ -451,7 +461,7 @@ input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; c
 <header>
   <span class="logo-icon">👕</span>
   <h1>Auto Mockup Generator</h1>
-  <span class="version">v5.0 — Layer Manager · HD Export · Front &amp; Back</span>
+  <span class="version">v5.1 — Layer Manager · HD Export · Front &amp; Back</span>
   <button class="btn-exit" onclick="exitTool()">⏻ Exit</button>
 </header>
 
@@ -544,6 +554,7 @@ input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; c
   </aside>
 
   <!-- ===== FRONT PANEL ===== -->
+  <!-- UPDATED: Variant State moved to BELOW output section -->
   <main class="main-panel" id="frontPanel">
     <div class="panel-header front">🔵 Front Mockup</div>
 
@@ -592,7 +603,25 @@ input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; c
       </div>
     </div>
 
-    <!-- Variant State Panel -->
+    <div class="format-selector">
+      <label>📐 Export Format</label>
+      <button class="format-btn active-format" id="frontFmtPNG" onclick="setFrontFormat('png')">🖼 PNG</button>
+      <button class="format-btn" id="frontFmtJPG" onclick="setFrontFormat('jpg')">📷 JPG</button>
+      <span class="res-tag">2000 × 2000 px</span>
+    </div>
+
+    <!-- UPDATED: Output section comes BEFORE variant state -->
+    <div>
+      <div class="panel-label" style="margin-top:6px;">Front Output</div>
+      <div class="btn-row">
+        <button class="btn ghost sm" onclick="downloadSelectedFront()">⬇ Download Selected</button>
+        <button class="btn ghost sm" onclick="downloadZIPFront()">📦 ZIP Front</button>
+        <button class="btn ghost sm" onclick="selectAllOutputsFront()">☑ Select All</button>
+      </div>
+      <div class="output-grid" id="frontOutput"></div>
+    </div>
+
+    <!-- UPDATED: Variant State Panel moved BELOW output -->
     <div class="variant-info">
       <h4>📌 Front Variant State</h4>
       <div class="state-row"><span>Index</span><span id="fsi-index">—</span></div>
@@ -609,26 +638,10 @@ input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; c
         <div id="frontVariantStateList" style="font-size:10px;color:var(--muted);font-family:var(--mono);max-height:120px;overflow-y:auto;"></div>
       </div>
     </div>
-
-    <div class="format-selector">
-      <label>📐 Export Format</label>
-      <button class="format-btn active-format" id="frontFmtPNG" onclick="setFrontFormat('png')">🖼 PNG</button>
-      <button class="format-btn" id="frontFmtJPG" onclick="setFrontFormat('jpg')">📷 JPG</button>
-      <span class="res-tag">2000 × 2000 px</span>
-    </div>
-
-    <div>
-      <div class="panel-label" style="margin-top:6px;">Front Output</div>
-      <div class="btn-row">
-        <button class="btn ghost sm" onclick="downloadSelectedFront()">⬇ Download Selected</button>
-        <button class="btn ghost sm" onclick="downloadZIPFront()">📦 ZIP Front</button>
-        <button class="btn ghost sm" onclick="selectAllOutputsFront()">☑ Select All</button>
-      </div>
-      <div class="output-grid" id="frontOutput"></div>
-    </div>
   </main>
 
   <!-- ===== BACK PANEL ===== -->
+  <!-- UPDATED: Variant State moved to BELOW output section -->
   <main class="main-panel" id="backPanel">
     <div class="panel-header back">🔴 Back Mockup</div>
 
@@ -677,7 +690,25 @@ input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; c
       </div>
     </div>
 
-    <!-- Variant State Panel -->
+    <div class="format-selector">
+      <label>📐 Export Format</label>
+      <button class="format-btn active-format" id="backFmtPNG" onclick="setBackFormat('png')">🖼 PNG</button>
+      <button class="format-btn" id="backFmtJPG" onclick="setBackFormat('jpg')">📷 JPG</button>
+      <span class="res-tag">2000 × 2000 px</span>
+    </div>
+
+    <!-- UPDATED: Output section comes BEFORE variant state -->
+    <div>
+      <div class="panel-label" style="margin-top:6px;">Back Output</div>
+      <div class="btn-row">
+        <button class="btn ghost sm" onclick="downloadSelectedBack()">⬇ Download Selected</button>
+        <button class="btn ghost sm" onclick="downloadZIPBack()">📦 ZIP Back</button>
+        <button class="btn ghost sm" onclick="selectAllOutputsBack()">☑ Select All</button>
+      </div>
+      <div class="output-grid" id="backOutput"></div>
+    </div>
+
+    <!-- UPDATED: Variant State Panel moved BELOW output -->
     <div class="variant-info">
       <h4 class="back-title">📌 Back Variant State</h4>
       <div class="state-row"><span>Index</span><span id="bsi-index">—</span></div>
@@ -694,23 +725,6 @@ input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; c
         <div id="backVariantStateList" style="font-size:10px;color:var(--muted);font-family:var(--mono);max-height:120px;overflow-y:auto;"></div>
       </div>
     </div>
-
-    <div class="format-selector">
-      <label>📐 Export Format</label>
-      <button class="format-btn active-format" id="backFmtPNG" onclick="setBackFormat('png')">🖼 PNG</button>
-      <button class="format-btn" id="backFmtJPG" onclick="setBackFormat('jpg')">📷 JPG</button>
-      <span class="res-tag">2000 × 2000 px</span>
-    </div>
-
-    <div>
-      <div class="panel-label" style="margin-top:6px;">Back Output</div>
-      <div class="btn-row">
-        <button class="btn ghost sm" onclick="downloadSelectedBack()">⬇ Download Selected</button>
-        <button class="btn ghost sm" onclick="downloadZIPBack()">📦 ZIP Back</button>
-        <button class="btn ghost sm" onclick="selectAllOutputsBack()">☑ Select All</button>
-      </div>
-      <div class="output-grid" id="backOutput"></div>
-    </div>
   </main>
 
   <div class="bottom-bar">
@@ -723,7 +737,7 @@ input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; c
       Back Gen: <span id="backGenCount">0</span>
     </span>
     <div class="spacer"></div>
-    <span style="font-size:10px;color:var(--muted);font-family:var(--mono);">Auto Mockup Generator v5.0 · Layer Manager · 2000×2000 HD Export</span>
+    <span style="font-size:10px;color:var(--muted);font-family:var(--mono);">Auto Mockup Generator v5.1 · Layer Manager · 2000×2000 HD Export</span>
   </div>
 
 </div>
@@ -746,46 +760,37 @@ let backExportFormat  = 'png';
 
 /* =====================================================================
    LAYER MANAGER
-   Every canvas (front / back) has a LayerManager instance.
-   It tracks all Fabric objects with metadata (name, type, locked, visible).
    ===================================================================== */
 class LayerManager {
   constructor(fabricCanvas, side) {
     this.canvas    = fabricCanvas;
-    this.side      = side; // 'front' | 'back'
-    this.layers    = []; // [{id, obj, name, type, locked, visible}]
+    this.side      = side;
+    this.layers    = [];
     this._idSeq    = 0;
-    this.selected  = null; // id of currently selected layer
+    this.selected  = null;
   }
 
   _nextId() { return ++this._idSeq; }
 
-  /** Register a Fabric object as a layer */
   add(obj, name, type) {
-    // Attach layerId to the Fabric object itself for quick reverse lookup
     const id = this._nextId();
     obj._layerId = id;
     this.layers.push({ id, obj, name, type, locked: false, visible: true });
     this._applyLockState(id);
     this.canvas.add(obj);
-    // Enforce default Z: tshirt at bottom, design above
     this._enforceDefaultOrder();
     this.render();
     return id;
   }
 
-  /** Enforce that any tshirt layer is always below any design layer */
   _enforceDefaultOrder() {
-    // Send all tshirt layers to back, preserve relative order of others
     const tshirtLayers = this.layers.filter(l => l.type === 'tshirt');
     const otherLayers  = this.layers.filter(l => l.type !== 'tshirt');
     tshirtLayers.forEach(l => this.canvas.sendToBack(l.obj));
-    // Bring others on top, in their current relative order
     otherLayers.forEach(l => this.canvas.bringToFront(l.obj));
     this.canvas.renderAll();
   }
 
-  /** Remove a layer by id */
   remove(id) {
     const idx = this.layers.findIndex(l => l.id === id);
     if (idx === -1) return;
@@ -797,23 +802,19 @@ class LayerManager {
     this.canvas.renderAll();
   }
 
-  /** Remove by Fabric object reference */
   removeObj(obj) {
     const layer = this.layers.find(l => l.obj === obj);
     if (layer) this.remove(layer.id);
   }
 
-  /** Get layer by Fabric object */
   getByObj(obj) {
     return this.layers.find(l => l.obj === obj) || null;
   }
 
-  /** Get layer by id */
   getById(id) {
     return this.layers.find(l => l.id === id) || null;
   }
 
-  /** Select a layer (and set it active on canvas) */
   select(id) {
     this.selected = id;
     const layer = this.getById(id);
@@ -824,13 +825,11 @@ class LayerManager {
     this.render();
   }
 
-  /** Get selected layer */
   getSelected() {
     if (!this.selected) return null;
     return this.getById(this.selected);
   }
 
-  /* ---- Z-order operations ---- */
   bringToFront(id) {
     const layer = this.getById(id);
     if (!layer || layer.locked) return;
@@ -863,7 +862,6 @@ class LayerManager {
     this.syncLayerOrderFromCanvas();
   }
 
-  /** After any z-order change, sync this.layers array order to canvas order */
   syncLayerOrderFromCanvas() {
     const canvasObjs = this.canvas.getObjects();
     this.layers.sort((a, b) => {
@@ -872,7 +870,6 @@ class LayerManager {
     this.render();
   }
 
-  /* ---- Lock / Unlock ---- */
   toggleLock(id) {
     const layer = this.getById(id);
     if (!layer) return;
@@ -898,7 +895,6 @@ class LayerManager {
     this.canvas.renderAll();
   }
 
-  /* ---- Visibility ---- */
   toggleVisibility(id) {
     const layer = this.getById(id);
     if (!layer) return;
@@ -911,33 +907,11 @@ class LayerManager {
     this.render();
   }
 
-  /** Prevent layer order from changing during object transform */
-  preserveOrderOnTransform() {
-    // Called before each transform; records current z-indices
-    this._savedOrder = this.canvas.getObjects().slice();
-  }
-
-  restoreOrderAfterTransform() {
-    // Restore saved order if it changed (shouldn't happen normally, but guard)
-    if (!this._savedOrder) return;
-    const current = this.canvas.getObjects();
-    let changed = current.some((o, i) => o !== this._savedOrder[i]);
-    if (changed) {
-      this._savedOrder.forEach((obj, idx) => {
-        this.canvas.moveTo(obj, idx);
-      });
-      this.canvas.renderAll();
-    }
-    this._savedOrder = null;
-  }
-
-  /** Rename a layer */
   rename(id, newName) {
     const layer = this.getById(id);
     if (layer) { layer.name = newName; this.render(); }
   }
 
-  /** Clear all layers */
   clear() {
     this.layers.forEach(l => this.canvas.remove(l.obj));
     this.layers = [];
@@ -946,11 +920,8 @@ class LayerManager {
     this.canvas.renderAll();
   }
 
-  /** Render the layer panel UI */
   render() {
     const listEl  = document.getElementById(this.side + 'LayerList');
-    const lockBtn = document.getElementById((this.side === 'front' ? 'f' : 'b') + '-lock-btn');
-    const visBtn  = document.getElementById((this.side === 'front' ? 'f' : 'b') + '-vis-btn');
     if (!listEl) return;
 
     listEl.innerHTML = '';
@@ -959,9 +930,8 @@ class LayerManager {
       return;
     }
 
-    // Render in REVERSE order (top layer shown at top of list, like Photoshop)
     const reversed = [...this.layers].reverse();
-    reversed.forEach((layer, visualIdx) => {
+    reversed.forEach((layer) => {
       const item = document.createElement('div');
       const isSelected = layer.id === this.selected;
       item.className = 'layer-item' +
@@ -969,19 +939,16 @@ class LayerManager {
         (layer.locked ? ' locked' : '');
       item.dataset.layerId = layer.id;
 
-      // Visibility toggle
       const visSpan = document.createElement('span');
       visSpan.className = 'layer-visibility';
       visSpan.textContent = layer.visible ? '👁' : '🚫';
       visSpan.title = layer.visible ? 'Hide layer' : 'Show layer';
       visSpan.onclick = (e) => { e.stopPropagation(); this.toggleVisibility(layer.id); };
 
-      // Type icon
       const typeIcon = document.createElement('span');
       typeIcon.className = 'layer-type-icon';
       typeIcon.textContent = layer.type === 'tshirt' ? '👕' : (layer.type === 'design' ? '🎨' : '📝');
 
-      // Name
       const nameEl = document.createElement('span');
       nameEl.className = 'layer-name';
       nameEl.textContent = layer.name;
@@ -992,14 +959,12 @@ class LayerManager {
         if (n && n.trim()) this.rename(layer.id, n.trim());
       };
 
-      // Z-index badge
       const zBadge = document.createElement('span');
       zBadge.className = 'layer-index';
       const canvasIdx = this.canvas.getObjects().indexOf(layer.obj);
       zBadge.textContent = 'z:' + canvasIdx;
       zBadge.title = 'Canvas z-index (0 = bottom)';
 
-      // Lock button
       const lockEl = document.createElement('button');
       lockEl.className = 'layer-lock-btn' + (layer.locked ? ' is-locked' : '');
       lockEl.textContent = layer.locked ? '🔒' : '🔓';
@@ -1014,7 +979,6 @@ class LayerManager {
 
       item.onclick = () => { this.select(layer.id); this.updateToolbarLabels(); };
 
-      // Drag-to-reorder (visual only, not z-order drag)
       item.draggable = true;
       item.addEventListener('dragstart', () => item.classList.add('dragging'));
       item.addEventListener('dragend',   () => { item.classList.remove('dragging'); item.classList.remove('drag-over'); });
@@ -1023,7 +987,6 @@ class LayerManager {
       item.addEventListener('drop', (e) => {
         e.preventDefault();
         item.classList.remove('drag-over');
-        // Swap via moveTo
         const srcId  = parseInt(document.querySelector('.layer-item.dragging')?.dataset.layerId);
         const dstId  = layer.id;
         if (srcId && srcId !== dstId) {
@@ -1063,37 +1026,21 @@ const backCanvas  = new fabric.Canvas('previewCanvasBack',  { backgroundColor: '
 const frontLM = new LayerManager(frontCanvas, 'front');
 const backLM  = new LayerManager(backCanvas,  'back');
 
-// Overlay canvases
 const frontOverlayCanvas = document.getElementById('overlayCanvasFront');
 const frontOctx = frontOverlayCanvas.getContext('2d');
 const backOverlayCanvas = document.getElementById('overlayCanvasBack');
 const backOctx = backOverlayCanvas.getContext('2d');
 
 /* =====================================================================
-   LAYER OPERATIONS — bound to UI buttons
+   LAYER OPERATIONS
    ===================================================================== */
 function _getLM(side) { return side === 'front' ? frontLM : backLM; }
 
-function layerBringToFront(side) {
-  const lm = _getLM(side);
-  if (!lm.selected) return;
-  lm.bringToFront(lm.selected);
-}
-function layerBringForward(side) {
-  const lm = _getLM(side);
-  if (!lm.selected) return;
-  lm.bringForward(lm.selected);
-}
-function layerSendBackward(side) {
-  const lm = _getLM(side);
-  if (!lm.selected) return;
-  lm.sendBackward(lm.selected);
-}
-function layerSendToBack(side) {
-  const lm = _getLM(side);
-  if (!lm.selected) return;
-  lm.sendToBack(lm.selected);
-}
+function layerBringToFront(side) { const lm = _getLM(side); if (!lm.selected) return; lm.bringToFront(lm.selected); }
+function layerBringForward(side) { const lm = _getLM(side); if (!lm.selected) return; lm.bringForward(lm.selected); }
+function layerSendBackward(side) { const lm = _getLM(side); if (!lm.selected) return; lm.sendBackward(lm.selected); }
+function layerSendToBack(side)   { const lm = _getLM(side); if (!lm.selected) return; lm.sendToBack(lm.selected); }
+
 function layerToggleLock(side) {
   const lm = _getLM(side);
   if (!lm.selected) return;
@@ -1111,7 +1058,6 @@ function layerDeleteSelected(side) {
   const layer = lm.getSelected();
   if (!layer) return;
   if (!confirm(`Delete layer "${layer.name}"?`)) return;
-  // Also clear references
   if (side === 'front') {
     if (layer.type === 'tshirt') { frontTshirtLayer = null; }
     if (layer.type === 'design') { frontDesignObj = null; frontDesignOriginalSrc = null; document.getElementById('frontDesignInfo').style.display = 'none'; }
@@ -1123,7 +1069,7 @@ function layerDeleteSelected(side) {
 }
 
 /* =====================================================================
-   PREVENT LAYER REORDERING DURING TRANSFORMS
+   CANVAS EVENT LISTENERS
    ===================================================================== */
 ['object:moving','object:scaling','object:rotating'].forEach(evt => {
   frontCanvas.on(evt, () => frontLM.syncLayerOrderFromCanvas());
@@ -1134,7 +1080,6 @@ function layerDeleteSelected(side) {
   backCanvas.on(evt,  () => { backLM.syncLayerOrderFromCanvas(); });
 });
 
-/* Sync layer panel selection when user clicks canvas objects */
 frontCanvas.on('selection:created', (e) => {
   const obj = e.selected?.[0];
   if (obj) { const l = frontLM.getByObj(obj); if (l) frontLM.select(l.id); }
@@ -1156,7 +1101,7 @@ backCanvas.on('selection:updated', (e) => {
 backCanvas.on('selection:cleared', () => { backLM.selected = null; backLM.render(); });
 
 /* =====================================================================
-   EXPORT CONSTANTS / HELPERS
+   FORMAT HELPERS
    ===================================================================== */
 function setFrontFormat(fmt) {
   frontExportFormat = fmt;
@@ -1483,16 +1428,24 @@ function renderTshirtListFront() {
     let cls = 'tshirt-thumb' + (i === frontActiveThumbIndex ? ' active' : '');
     if (frontVariantStates[i]?.saved) cls += ' saved-state';
     wrap.className = cls;
+
     const img = document.createElement('img');
     img.src = src; img.title = frontTshirtNames[i];
-    img.onclick = () => switchVariantFront(i);
+    // FIXED: Variant click ONLY swaps preview image — no layer/position changes
+    img.addEventListener('click', function(e) {
+      e.stopPropagation();
+      switchVariantFront(i);
+    });
+
     const name = document.createElement('div');
     name.className = 'tname'; name.textContent = frontTshirtNames[i];
+
     wrap.ondblclick = (e) => {
       e.stopPropagation();
       const n = prompt('Rename variant:', frontTshirtNames[i]);
       if (n && n.trim()) { frontTshirtNames[i] = n.trim(); renderTshirtListFront(); updateVariantStateUIFront(); if (i === frontActiveThumbIndex) updateVariantInfoPanelFront(); }
     };
+
     const btns = document.createElement('div'); btns.className = 'thumb-btns';
     const rb = document.createElement('button'); rb.className = 'btn warn sm'; rb.textContent = '↺'; rb.title = 'Replace';
     rb.onclick = e => { e.stopPropagation(); replaceTshirtFront(i); };
@@ -1504,12 +1457,48 @@ function renderTshirtListFront() {
   });
 }
 
+// FIXED: switchVariantFront — ONLY swaps image src, preserves all transforms & layer order
 function switchVariantFront(newIndex) {
-  if (newIndex === frontActiveThumbIndex && frontTshirtLayer) { captureVariantStateFront(frontActiveThumbIndex); return; }
+  // No-op if clicking the same variant already loaded
+  if (newIndex === frontActiveThumbIndex && frontTshirtLayer) {
+    return;
+  }
+
+  // Save current state before switching away
   captureVariantStateFront(frontActiveThumbIndex);
   frontActiveThumbIndex = newIndex;
   renderTshirtListFront();
-  setTshirtBackgroundFront(frontTshirtDataURLs[newIndex], newIndex);
+
+  if (frontTshirtLayer) {
+    // FIXED: Use setElement() to swap only the image source.
+    // This does NOT change position, scale, z-order, or any other property.
+    const src = frontTshirtDataURLs[newIndex];
+    fabric.Image.fromURL(src, function(newImg) {
+      // Determine transforms: use saved state for this variant if available,
+      // otherwise keep whatever is currently on the canvas (no reset).
+      const saved = frontVariantStates[newIndex];
+      const applyLeft   = saved ? saved.left   : frontTshirtLayer.left;
+      const applyTop    = saved ? saved.top    : frontTshirtLayer.top;
+      const applyScaleX = saved ? saved.scaleX : frontTshirtLayer.scaleX;
+      const applyScaleY = saved ? saved.scaleY : frontTshirtLayer.scaleY;
+
+      // Swap the underlying image element — preserves all Fabric object properties
+      frontTshirtLayer.setElement(newImg.getElement());
+      frontTshirtLayer.set({
+        left:   applyLeft,
+        top:    applyTop,
+        scaleX: applyScaleX,
+        scaleY: applyScaleY,
+      });
+      // FIXED: DO NOT call bringToFront, sendToBack, or any z-order operations
+      frontCanvas.renderAll();
+      updateVariantInfoPanelFront();
+      updateVariantStateUIFront();
+    });
+  } else {
+    // No layer exists yet — safe to do a full background load
+    setTshirtBackgroundFront(frontTshirtDataURLs[newIndex], newIndex);
+  }
 }
 
 function loadDesignFront(file) {
@@ -1525,11 +1514,9 @@ function loadDesignFront(file) {
         name: 'designLayerFront'
       });
       frontDesignObj = img;
-      // Add via LM (which places it above tshirt automatically)
       frontLM.add(img, '🎨 ' + file.name, 'design');
       frontCanvas.setActiveObject(img);
       frontCanvas.renderAll();
-      // Select this layer in LM
       const l = frontLM.getByObj(img);
       if (l) frontLM.select(l.id);
     });
@@ -1553,7 +1540,6 @@ function loadPreviewFront() {
 
 function setTshirtBackgroundFront(src, index) {
   frontActiveThumbIndex = index;
-  // Remove old tshirt layer from LM (not design)
   if (frontTshirtLayer) { frontLM.removeObj(frontTshirtLayer); frontTshirtLayer = null; }
 
   fabric.Image.fromURL(src, img => {
@@ -1569,13 +1555,11 @@ function setTshirtBackgroundFront(src, index) {
       name: 'tshirtLayerFront'
     });
     frontTshirtLayer = img;
-    // Add via LM — it will enforce tshirt goes to bottom
     frontLM.add(img, '👕 ' + (frontTshirtNames[index] || 'T-shirt'), 'tshirt');
     frontCanvas.renderAll();
     drawOverlayFront();
     updateVariantInfoPanelFront();
     updateVariantStateUIFront();
-    // Select the tshirt layer in panel
     const l = frontLM.getByObj(img);
     if (l) frontLM.select(l.id);
   });
@@ -1606,6 +1590,7 @@ async function generateFront() {
   hideProgress();
 }
 
+// UPDATED: Added click-to-preview on output thumbnails
 function saveFrontOutput(dataURL, index, fmt) {
   frontGeneratedImages.push(dataURL);
   const imgIndex = frontGeneratedImages.length - 1;
@@ -1614,6 +1599,15 @@ function saveFrontOutput(dataURL, index, fmt) {
   const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.value = imgIndex;
   const labelEl = document.createElement('label'); labelEl.appendChild(checkbox); labelEl.appendChild(document.createTextNode(` Front V${index+1} · ${fmt.toUpperCase()}`));
   const img = document.createElement('img'); img.src = dataURL; img.width = 130;
+
+  // NEW: Click output thumbnail → load into front canvas preview with preserved state
+  img.title = 'Click to load in preview';
+  img.style.cursor = 'pointer';
+  img.addEventListener('click', function(e) {
+    e.stopPropagation(); // FIXED: prevent event bubbling
+    loadGeneratedIntoPreviewFront(dataURL, index);
+  });
+
   const resBadge = document.createElement('div');
   resBadge.style.cssText = 'font-family:var(--mono);font-size:9px;color:var(--accent3);background:rgba(67,232,176,0.08);border:1px solid rgba(67,232,176,0.2);padding:2px 6px;border-radius:4px;';
   resBadge.textContent = '2000 × 2000 px';
@@ -1627,6 +1621,45 @@ function saveFrontOutput(dataURL, index, fmt) {
   document.getElementById('frontOutput').appendChild(box);
   updateFrontGenCount();
 }
+
+// NEW: loadGeneratedIntoPreviewFront
+// Loads a generated output image back into the canvas preview.
+// Swaps only the t-shirt image element — DOES NOT touch design position, scale, or layer order.
+function loadGeneratedIntoPreviewFront(dataURL, variantIndex) {
+  // Update active index and sidebar highlight
+  frontActiveThumbIndex = variantIndex;
+  renderTshirtListFront();
+
+  if (!frontTshirtLayer) {
+    // If no fabric layer exists yet, do a full load using the original source
+    if (frontTshirtDataURLs[variantIndex]) {
+      setTshirtBackgroundFront(frontTshirtDataURLs[variantIndex], variantIndex);
+    }
+    return;
+  }
+
+  // FIXED: Use the original source data URL for preview (higher fidelity on canvas)
+  // Fall back to generated dataURL if source is missing
+  const src = frontTshirtDataURLs[variantIndex] || dataURL;
+  fabric.Image.fromURL(src, function(newImg) {
+    const saved = frontVariantStates[variantIndex];
+    // Apply saved state if it exists, else preserve current canvas transforms
+    frontTshirtLayer.setElement(newImg.getElement());
+    if (saved) {
+      frontTshirtLayer.set({
+        left:   saved.left,
+        top:    saved.top,
+        scaleX: saved.scaleX,
+        scaleY: saved.scaleY,
+      });
+    }
+    // FIXED: No bringToFront, no z-order changes whatsoever
+    frontCanvas.renderAll();
+    updateVariantInfoPanelFront();
+    updateVariantStateUIFront();
+  });
+}
+
 function updateFrontGenCount() { document.getElementById('frontGenCount').textContent = document.querySelectorAll('#frontOutput .output-box').length; }
 function selectAllOutputsFront() { document.querySelectorAll('#frontOutput input[type=checkbox]').forEach(cb => cb.checked = true); }
 function downloadSelectedFront() {
@@ -1645,7 +1678,7 @@ function downloadZIPFront() {
 }
 
 /* =====================================================================
-   BACK SYSTEM (mirrors Front)
+   BACK SYSTEM (mirrors Front with same fixes)
    ===================================================================== */
 let backDesignObj = null;
 let backDesignOriginalSrc = null;
@@ -1891,8 +1924,14 @@ function renderTshirtListBack() {
     let cls = 'tshirt-thumb' + (i === backActiveThumbIndex ? ' active-back' : '');
     if (backVariantStates[i]?.saved) cls += ' saved-state';
     wrap.className = cls;
+
     const img = document.createElement('img'); img.src = src; img.title = backTshirtNames[i];
-    img.onclick = () => switchVariantBack(i);
+    // FIXED: Variant click ONLY swaps preview image — no layer/position changes
+    img.addEventListener('click', function(e) {
+      e.stopPropagation();
+      switchVariantBack(i);
+    });
+
     const name = document.createElement('div'); name.className = 'tname'; name.textContent = backTshirtNames[i];
     wrap.ondblclick = (e) => {
       e.stopPropagation();
@@ -1910,12 +1949,45 @@ function renderTshirtListBack() {
   });
 }
 
+// FIXED: switchVariantBack — ONLY swaps image src, preserves all transforms & layer order
 function switchVariantBack(newIndex) {
-  if (newIndex === backActiveThumbIndex && backTshirtLayer) { captureVariantStateBack(backActiveThumbIndex); return; }
+  // No-op if clicking the same variant already loaded
+  if (newIndex === backActiveThumbIndex && backTshirtLayer) {
+    return;
+  }
+
+  // Save current state before switching away
   captureVariantStateBack(backActiveThumbIndex);
   backActiveThumbIndex = newIndex;
   renderTshirtListBack();
-  setTshirtBackgroundBack(backTshirtDataURLs[newIndex], newIndex);
+
+  if (backTshirtLayer) {
+    // FIXED: Use setElement() to swap only the image source.
+    // This does NOT change position, scale, z-order, or any other property.
+    const src = backTshirtDataURLs[newIndex];
+    fabric.Image.fromURL(src, function(newImg) {
+      const saved = backVariantStates[newIndex];
+      const applyLeft   = saved ? saved.left   : backTshirtLayer.left;
+      const applyTop    = saved ? saved.top    : backTshirtLayer.top;
+      const applyScaleX = saved ? saved.scaleX : backTshirtLayer.scaleX;
+      const applyScaleY = saved ? saved.scaleY : backTshirtLayer.scaleY;
+
+      backTshirtLayer.setElement(newImg.getElement());
+      backTshirtLayer.set({
+        left:   applyLeft,
+        top:    applyTop,
+        scaleX: applyScaleX,
+        scaleY: applyScaleY,
+      });
+      // FIXED: DO NOT call bringToFront, sendToBack, or any z-order operations
+      backCanvas.renderAll();
+      updateVariantInfoPanelBack();
+      updateVariantStateUIBack();
+    });
+  } else {
+    // No layer exists yet — safe to do a full background load
+    setTshirtBackgroundBack(backTshirtDataURLs[newIndex], newIndex);
+  }
 }
 
 function loadDesignBack(file) {
@@ -2007,6 +2079,7 @@ async function generateBack() {
   hideProgress();
 }
 
+// UPDATED: Added click-to-preview on output thumbnails
 function saveBackOutput(dataURL, index, fmt) {
   backGeneratedImages.push(dataURL);
   const imgIndex = backGeneratedImages.length - 1;
@@ -2015,6 +2088,15 @@ function saveBackOutput(dataURL, index, fmt) {
   const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.value = imgIndex;
   const labelEl = document.createElement('label'); labelEl.appendChild(checkbox); labelEl.appendChild(document.createTextNode(` Back V${index+1} · ${fmt.toUpperCase()}`));
   const img = document.createElement('img'); img.src = dataURL; img.width = 130;
+
+  // NEW: Click output thumbnail → load into back canvas preview with preserved state
+  img.title = 'Click to load in preview';
+  img.style.cursor = 'pointer';
+  img.addEventListener('click', function(e) {
+    e.stopPropagation(); // FIXED: prevent event bubbling
+    loadGeneratedIntoPreviewBack(dataURL, index);
+  });
+
   const resBadge = document.createElement('div');
   resBadge.style.cssText = 'font-family:var(--mono);font-size:9px;color:var(--accent3);background:rgba(67,232,176,0.08);border:1px solid rgba(67,232,176,0.2);padding:2px 6px;border-radius:4px;';
   resBadge.textContent = '2000 × 2000 px';
@@ -2028,6 +2110,40 @@ function saveBackOutput(dataURL, index, fmt) {
   document.getElementById('backOutput').appendChild(box);
   updateBackGenCount();
 }
+
+// NEW: loadGeneratedIntoPreviewBack
+// Loads a generated output image back into the canvas preview.
+// Swaps only the t-shirt image element — DOES NOT touch design position, scale, or layer order.
+function loadGeneratedIntoPreviewBack(dataURL, variantIndex) {
+  backActiveThumbIndex = variantIndex;
+  renderTshirtListBack();
+
+  if (!backTshirtLayer) {
+    if (backTshirtDataURLs[variantIndex]) {
+      setTshirtBackgroundBack(backTshirtDataURLs[variantIndex], variantIndex);
+    }
+    return;
+  }
+
+  const src = backTshirtDataURLs[variantIndex] || dataURL;
+  fabric.Image.fromURL(src, function(newImg) {
+    const saved = backVariantStates[variantIndex];
+    backTshirtLayer.setElement(newImg.getElement());
+    if (saved) {
+      backTshirtLayer.set({
+        left:   saved.left,
+        top:    saved.top,
+        scaleX: saved.scaleX,
+        scaleY: saved.scaleY,
+      });
+    }
+    // FIXED: No bringToFront, no z-order changes
+    backCanvas.renderAll();
+    updateVariantInfoPanelBack();
+    updateVariantStateUIBack();
+  });
+}
+
 function updateBackGenCount() { document.getElementById('backGenCount').textContent = document.querySelectorAll('#backOutput .output-box').length; }
 function selectAllOutputsBack() { document.querySelectorAll('#backOutput input[type=checkbox]').forEach(cb => cb.checked = true); }
 function downloadSelectedBack() {
@@ -2081,7 +2197,6 @@ async function downloadCombinedZIP() {
    EXIT TOOL
    ===================================================================== */
 function exitTool() {
-  // Show inline confirm inside the tool (no browser dialog)
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,15,19,0.92);z-index:999999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
   overlay.innerHTML = `
@@ -2095,39 +2210,23 @@ function exitTool() {
       </div>
     </div>`;
   document.body.appendChild(overlay);
-
   document.getElementById('exitCancelBtn').onclick = () => document.body.removeChild(overlay);
-
-  document.getElementById('exitConfirmBtn').onclick = () => {
-    document.body.removeChild(overlay);
-    _doExit();
-  };
+  document.getElementById('exitConfirmBtn').onclick = () => { document.body.removeChild(overlay); _doExit(); };
 }
 
 function _doExit() {
-  // 1. Clear localStorage
   try { localStorage.removeItem('mockupData'); } catch(e) {}
-
-  // 2. Dispose Fabric canvases
   try { frontCanvas.dispose(); } catch(e) {}
   try { backCanvas.dispose(); } catch(e) {}
-
-  // 3. Hide app shell
   document.querySelector('header').style.display = 'none';
   document.querySelector('.app').style.display = 'none';
   document.getElementById('progressOverlay').style.display = 'none';
-
-  // 4. Disable all inputs & buttons
   document.querySelectorAll('button, input, select, textarea').forEach(el => {
     el.disabled = true;
     el.style.pointerEvents = 'none';
   });
-
-  // 5. Block all interaction at capture phase
   document.addEventListener('click',   e => e.stopImmediatePropagation(), true);
   document.addEventListener('keydown', e => e.stopImmediatePropagation(), true);
-
-  // 6. Show session-ended screen (force style directly, not just class)
   const screen = document.getElementById('sessionEndedScreen');
   screen.style.cssText = 'display:flex !important; position:fixed; inset:0; background:#0f0f13; z-index:999998; align-items:center; justify-content:center; flex-direction:column; gap:20px;';
 }
